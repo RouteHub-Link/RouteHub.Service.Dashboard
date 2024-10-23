@@ -5,8 +5,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func MapPublicRoutes(e *echo.Echo) {
+func ConfigurePageRoutes(e *echo.Echo) {
 	webHandlers := handlers.NewWebHandler()
 
 	e.GET("/", webHandlers.HomeHandler)
+	e.GET("/hubs", webHandlers.HubsHandler)
 }

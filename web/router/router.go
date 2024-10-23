@@ -12,6 +12,6 @@ func ConfigureRoutes(e *echo.Echo) {
 
 	e.Pre(middleware.RemoveTrailingSlash())
 
-	groups.MapPublicRoutes(e)
+	groups.ConfigurePageRoutes(e)
 	groups.MapMiscRoutes(e)
 }
