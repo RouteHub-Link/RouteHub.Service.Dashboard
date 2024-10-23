@@ -1,0 +1,19 @@
+package pages
+
+import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
+import accountComponents "RouteHub.Service.Dashboard/web/templates/pages/components/account"
+
+
+templ Accounts() {
+    @layouts.Main(layouts.PageDescription{
+        MainContent: accountsPage(),
+    })
+}
+
+templ accountsPage() {
+<div class="container mx-auto">
+
+    @accountComponents.AccountsTable()
+
+</div>
+}

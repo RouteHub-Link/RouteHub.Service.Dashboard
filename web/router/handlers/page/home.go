@@ -1,4 +1,4 @@
-package handlers
+package page
 
 import (
 	"net/http"
@@ -8,6 +8,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (wh WebHandler) HomeHandler(c echo.Context) error {
+func (ph PageHandler) HomeHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, pages.Home())
 }

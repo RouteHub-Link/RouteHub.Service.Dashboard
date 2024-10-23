@@ -1015,6 +1015,14 @@ select {
   height: 0.625rem !important;
 }
 
+.h-1 {
+  height: 0.25rem;
+}
+
+.h-1\.5 {
+  height: 0.375rem;
+}
+
 .h-2 {
   height: 0.5rem;
 }
@@ -1105,6 +1113,10 @@ select {
 
 .shrink-0 {
   flex-shrink: 0;
+}
+
+.grow {
+  flex-grow: 1;
 }
 
 .basis-full {
@@ -1434,6 +1446,11 @@ select {
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
+.bg-gray-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+}
+
 .bg-gray-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity));
@@ -1459,9 +1476,19 @@ select {
   background-color: rgb(244 63 94 / var(--tw-bg-opacity));
 }
 
+.bg-rose-900 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(136 19 55 / var(--tw-bg-opacity));
+}
+
 .bg-teal-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(204 251 241 / var(--tw-bg-opacity));
+}
+
+.bg-teal-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(15 118 110 / var(--tw-bg-opacity));
 }
 
 .bg-white {
@@ -1623,6 +1650,11 @@ select {
           padding-inline-end: 0.75rem;
 }
 
+.pe-6 {
+  -webkit-padding-end: 1.5rem;
+          padding-inline-end: 1.5rem;
+}
+
 .ps-10 {
   -webkit-padding-start: 2.5rem;
           padding-inline-start: 2.5rem;
@@ -1636,6 +1668,11 @@ select {
 .ps-3\.5 {
   -webkit-padding-start: 0.875rem;
           padding-inline-start: 0.875rem;
+}
+
+.ps-6 {
+  -webkit-padding-start: 1.5rem;
+          padding-inline-start: 1.5rem;
 }
 
 .ps-8 {
@@ -1757,6 +1794,10 @@ select {
   letter-spacing: 0em;
 }
 
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
 .text-blue-500 {
   --tw-text-opacity: 1;
   color: rgb(59 130 246 / var(--tw-text-opacity));
@@ -1804,6 +1845,11 @@ select {
 
 .text-inherit {
   color: inherit;
+}
+
+.text-neutral-400 {
+  --tw-text-opacity: 1;
+  color: rgb(163 163 163 / var(--tw-text-opacity));
 }
 
 .text-orange-800 {
@@ -2052,6 +2098,11 @@ select {
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-rose-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(190 18 60 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-zinc-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(113 113 122 / var(--tw-bg-opacity));
@@ -2070,6 +2121,11 @@ select {
 .hover\:text-gray-800:hover {
   --tw-text-opacity: 1;
   color: rgb(31 41 55 / var(--tw-text-opacity));
+}
+
+.hover\:text-neutral-300:hover {
+  --tw-text-opacity: 1;
+  color: rgb(212 212 212 / var(--tw-text-opacity));
 }
 
 .hover\:underline:hover {
@@ -2100,6 +2156,11 @@ select {
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
+.focus\:bg-rose-800:focus {
+  --tw-bg-opacity: 1;
+  background-color: rgb(159 18 57 / var(--tw-bg-opacity));
+}
+
 .focus\:bg-zinc-500:focus {
   --tw-bg-opacity: 1;
   background-color: rgb(113 113 122 / var(--tw-bg-opacity));
@@ -2118,6 +2179,15 @@ select {
 .focus\:text-gray-500:focus {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+
+.focus\:text-neutral-300:focus {
+  --tw-text-opacity: 1;
+  color: rgb(212 212 212 / var(--tw-text-opacity));
+}
+
+.focus\:underline:focus {
+  text-decoration-line: underline;
 }
 
 .focus\:opacity-80:focus {
@@ -2441,6 +2511,11 @@ select {
     background-color: rgb(59 130 246 / var(--tw-bg-opacity));
   }
 
+  .dark\:bg-neutral-200 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(229 229 229 / var(--tw-bg-opacity));
+  }
+
   .dark\:bg-neutral-700 {
     --tw-bg-opacity: 1;
     background-color: rgb(64 64 64 / var(--tw-bg-opacity));
@@ -2470,12 +2545,21 @@ select {
     background-color: rgb(20 184 166 / 0.1);
   }
 
+  .dark\:bg-transparent {
+    background-color: transparent;
+  }
+
   .dark\:bg-opacity-80 {
     --tw-bg-opacity: 0.8;
   }
 
   .dark\:fill-neutral-200 {
     fill: #e5e5e5;
+  }
+
+  .dark\:text-amber-600 {
+    --tw-text-opacity: 1;
+    color: rgb(217 119 6 / var(--tw-text-opacity));
   }
 
   .dark\:text-blue-500 {
@@ -2778,6 +2862,11 @@ select {
     padding-bottom: 3.5rem;
   }
 
+  .lg\:ps-3 {
+    -webkit-padding-start: 0.75rem;
+            padding-inline-start: 0.75rem;
+  }
+
   .lg\:ps-64 {
     -webkit-padding-start: 16rem;
             padding-inline-start: 16rem;
@@ -2786,6 +2875,13 @@ select {
   .lg\:ps-\[260px\] {
     -webkit-padding-start: 260px;
             padding-inline-start: 260px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:ps-0 {
+    -webkit-padding-start: 0px;
+            padding-inline-start: 0px;
   }
 }
 

@@ -1,0 +1,14 @@
+package pages
+import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
+import domainComponents "RouteHub.Service.Dashboard/web/templates/pages/components/domain"
+
+
+templ Domains() {
+    @layouts.Main(layouts.PageDescription{
+        MainContent: domainsPage(),
+    })
+}
+
+templ domainsPage() {
+    @domainComponents.DomainsTable()
+}
