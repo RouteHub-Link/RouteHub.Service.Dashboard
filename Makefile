@@ -20,3 +20,14 @@ run:
 	@echo "Running..."
 	@make tailwind
 	@go run .
+
+ent-describe:
+	@echo "Describing ent..."
+	@go run -mod=mod entgo.io/ent/cmd/ent describe ./ent/schema
+	@echo "Saving the schema to /ent-describe.md"
+	@go run -mod=mod entgo.io/ent/cmd/ent describe ./ent/schema > ent-describe.md
+	@echo "Saved."
+
+ent-generate:
+	@echo "Generating ent..."
+	@cd ent && go generate .

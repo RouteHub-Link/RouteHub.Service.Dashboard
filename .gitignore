@@ -37,3 +37,7 @@ main
 # .DSSotrage
 .DS_Store
 /.vscode
+
+.env
+
+RouteHub.Service.Dashboard

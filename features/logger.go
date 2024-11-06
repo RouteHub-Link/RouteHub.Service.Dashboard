@@ -4,6 +4,8 @@ import (
 	"log/slog"
 	"os"
 	"sync"
+
+	slogotel "github.com/remychantenay/slog-otel"
 )
 
 // LoggerConfigurer is a struct that configures the logger for the server and uses slog
@@ -19,7 +21,11 @@ type LoggerConfigurer struct {
 
 func NewLoggerConfigurer(logLevel slog.Level) LoggerConfigurer {
 	onceConfigureLogger.Do(func() {
-		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: logLevel}))
+		logger = slog.New(slogotel.OtelHandler{
+			Next: slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: logLevel}),
+		})
+
+		slog.SetDefault(logger)
 	})
 
 	return LoggerConfigurer{

@@ -1,15 +1,23 @@
 package groups
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 )
 
 func MapMiscRoutes(e *echo.Echo) {
 	e.HTTPErrorHandler = customHTTPErrorHandler
+	e.GET("/error", echo.WrapHandler(http.HandlerFunc(HandleError)))
+	e.GET("/log", echo.WrapHandler(http.HandlerFunc(HandleLog)))
+	e.GET("/data", echo.WrapHandler(http.HandlerFunc(HandleData)))
+
 }
 
 func customHTTPErrorHandler(err error, c echo.Context) {
@@ -63,4 +71,46 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 
 		c.Render(errorCode, "error", dataAsJSON)
 	}
+}
+
+func HandleLog(w http.ResponseWriter, r *http.Request) {
+	ctx := context.WithValue(r.Context(), "serial_id", "1")
+	switch r.Method {
+	case "GET":
+		slog.InfoContext(ctx, "Handled GET request on /log",
+			slog.Group("Request Info",
+				slog.String("Method", "GET"),
+				slog.String("Path", r.URL.Path),
+			),
+		)
+		fmt.Fprintln(w, "Received a GET request at /log.")
+	case "POST":
+		slog.InfoContext(ctx, "Handled POST request on /log",
+			slog.Group("Request Info",
+				slog.String("Method", "POST"),
+				slog.String("Path", r.URL.Path),
+			),
+		)
+		fmt.Fprintln(w, "Received a POST request at /log.")
+	default:
+		http.Error(w, "Unsupported HTTP method", http.StatusMethodNotAllowed)
+	}
+}
+
+func HandleData(w http.ResponseWriter, r *http.Request) {
+	ctx := context.WithValue(r.Context(), "request_id", fmt.Sprintf("%d", os.Getpid()))
+	slog.InfoContext(ctx, "Data endpoint hit",
+		slog.String("method", r.Method),
+		slog.String("endpoint", "/data"),
+	)
+	fmt.Fprintln(w, "This is the data endpoint. Method used:", r.Method)
+}
+
+func HandleError(w http.ResponseWriter, r *http.Request) {
+	ctx := context.WithValue(r.Context(), "error_id", "error123")
+	slog.ErrorContext(ctx, "Error endpoint accessed",
+		slog.String("method", r.Method),
+		slog.String("endpoint", "/error"),
+	)
+	http.Error(w, "You have reached the error endpoint", http.StatusInternalServerError)
 }

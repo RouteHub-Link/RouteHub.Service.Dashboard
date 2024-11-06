@@ -1,50 +1,40 @@
 package main
 
 import (
-	"context"
+	"log"
 	"log/slog"
-	"net/http"
-	"os"
-	"os/signal"
-	"time"
 
 	"RouteHub.Service.Dashboard/features"
-	"RouteHub.Service.Dashboard/web/router"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"RouteHub.Service.Dashboard/features/configuration"
+	"RouteHub.Service.Dashboard/web"
+	"github.com/ory/graceful"
+)
+
+const (
+	appName = "RouteHub.Service.Dashboard"
 )
 
 func main() {
-	ctx := context.Background()
 	features.NewLoggerConfigurer(slog.LevelDebug)
 	logger := features.GetLogger()
 
-	e := echo.New()
-
-	e.Use(middleware.Recover())
-	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
-		XSSProtection:         "1; mode=block",
-		ContentTypeNosniff:    "nosniff",
-		XFrameOptions:         "DENY",
-		HSTSMaxAge:            31536000,
-		HSTSExcludeSubdomains: true,
-	}))
-
-	router.ConfigureRoutes(e)
-
-	go func() {
-		if err := e.Start(":8080"); err != nil && err != http.ErrServerClosed {
-			logger.Error("Failed to start server", "error", err)
-		}
-	}()
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := e.Shutdown(ctx); err != nil {
-		logger.Error("Failed to shutdown server gracefully", "error", err)
+	err := configuration.Configure(configuration.WithDefaultServerConfig(), configuration.WithLogger(logger))
+	if err != nil {
+		logger.Error("Failed to configure server", "error", err)
+		return
 	}
 
+	config := configuration.Get()
+	app, err := web.NewApplication(config, logger)
+	if err != nil {
+		log.Fatalf("Failed to create application: %v", err)
+	}
+
+	server := graceful.WithDefaults(app.Echo.Server)
+
+	logger.Info("main: Starting server")
+	if err := graceful.Graceful(server.ListenAndServe, server.Shutdown); err != nil {
+		logger.Error("main: Failed to gracefully shutdown", slog.Any("error", err))
+	}
+	logger.Info("main: Server stopped")
 }
