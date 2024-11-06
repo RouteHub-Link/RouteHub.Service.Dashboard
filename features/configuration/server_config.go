@@ -1,11 +1,19 @@
 package configuration
 
-import "github.com/caarlos0/env"
+import (
+	"fmt"
+
+	"github.com/caarlos0/env"
+)
 
 type ServerConfig struct {
 	Scheme string `env:"SCHEME"`
 	Host   string `env:"HOST"`
 	Port   string `env:"PORT"`
+}
+
+func (s *ServerConfig) String() string {
+	return fmt.Sprintf("ServerConfig Scheme: %s Host: %s Port: %s", s.Scheme, s.Host, s.Port)
 }
 
 func (s *ServerConfig) IsEmpty() bool {

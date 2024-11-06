@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/caarlos0/env"
@@ -18,6 +19,10 @@ type OAuthConfig struct {
 	LoginPath     string   `env:"OAUTH_LOGIN_PATH"`
 	LogoutPath    string   `env:"OAUTH_LOGOUT_PATH"`
 	CallbackPath  string   `env:"OAUTH_CALLBACK_PATH"`
+}
+
+func (o *OAuthConfig) String() string {
+	return fmt.Sprintf("OAuthConfig; ClientID: %s Scopes: %v AuthorizerURL: %s TokenURL: %s Issuer: %s Domain: %s Port: %s Insecure: %t LoginPath: %s LogoutPath: %s CallbackPath: %s ", o.ClientID, o.Scopes, o.AuthorizerURL, o.TokenURL, o.Issuer, o.Domain, o.Port, o.Insecure, o.LoginPath, o.LogoutPath, o.CallbackPath)
 }
 
 func (o *OAuthConfig) IsEmpty() bool {

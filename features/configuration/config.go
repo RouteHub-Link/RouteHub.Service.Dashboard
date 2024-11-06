@@ -18,9 +18,14 @@ var (
 )
 
 type Config struct {
-	Server *ServerConfig
-	OAuth  *OAuthConfig
-	OTEL   *OTELConfig
+	Server   *ServerConfig
+	OAuth    *OAuthConfig
+	OTEL     *OTELConfig
+	Database *DatabaseConfig
+}
+
+func (c *Config) String() string {
+	return `Config; Server:` + c.Server.String() + ` OAuth: ` + c.OAuth.String() + ` OTEL: ` + c.OTEL.String() + ` Database: ` + c.Database.String()
 }
 
 type ConfigurationOptionFunc func(*Config) error
@@ -69,12 +74,14 @@ func Configure(opts ...ConfigurationOptionFunc) error {
 		serverConfig := &ServerConfig{}
 		oauthConfig := &OAuthConfig{}
 		otelConfig := &OTELConfig{}
+		databaseConfig := &DatabaseConfig{}
 
 		serverConfig.Parse(config)
 		oauthConfig.Parse(config)
 		otelConfig.Parse(config)
+		databaseConfig.Parse(config)
 
-		logger.Debug("Configuration loaded", "config", &config)
+		logger.Debug("Configuration loaded", slog.Any("config", config))
 	})
 
 	if config.Server == nil {

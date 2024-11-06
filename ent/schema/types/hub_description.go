@@ -1,6 +1,6 @@
 package types
 
-type PlatformDetails struct {
+type HubDetails struct {
 	MetaDescription   MetaDescription
 	NavbarDescription NavbarDescription
 	FooterDescription FooterDescription
@@ -40,7 +40,7 @@ type ImageDescription struct {
 
 type FooterDescription struct {
 	ShowRouteHubBranding bool
-	CompanyBrandingHtml  string
+	CompanyBrandingHTML  string
 	SocialMediaContainer *SocialMediaContainer
 }
 

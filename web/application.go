@@ -1,9 +1,13 @@
 package web
 
 import (
+	"context"
+	"errors"
 	"log/slog"
 	"strings"
+	"sync"
 
+	"RouteHub.Service.Dashboard/ent"
 	"RouteHub.Service.Dashboard/features"
 	"RouteHub.Service.Dashboard/features/auth"
 	"RouteHub.Service.Dashboard/features/configuration"
@@ -16,6 +20,13 @@ import (
 	otel_middleware "go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 )
 
+var (
+	onceApplication sync.Once
+	application     *Application
+
+	ErrApplicationNotInitialized = errors.New("Application not initialized")
+)
+
 // Application structure to hold all components
 type Application struct {
 	Echo          *echo.Echo
@@ -23,39 +34,59 @@ type Application struct {
 	oauthInstance *auth.OAuthInstance
 	Authorizer    *extensions.Authorizer
 	Logger        *slog.Logger
+	Ent           *ent.Client
+}
+
+func GetApplication() (*Application, error) {
+	if application == nil {
+		return nil, ErrApplicationNotInitialized
+	}
+
+	return application, nil
 }
 
 func NewApplication(config *configuration.Config, logger *slog.Logger) (*Application, error) {
-	// Initialize Echo
-	e := echo.New()
-	e.Server.Addr = strings.Join([]string{config.Server.Host, config.Server.Port}, ":")
-	logger.Info("Server Configured", "address", e.Server.Addr)
+	onceApplication.Do(func() {
+		// Initialize Echo
+		e := echo.New()
+		e.Server.Addr = strings.Join([]string{config.Server.Host, config.Server.Port}, ":")
+		logger.Info("Server Configured", "address", e.Server.Addr)
 
-	// Initialize Authorizer
-	oauthInstance, err := auth.NewOAuthInstance(auth.WithOAuthConfig(config.OAuth), auth.WithLogger(logger))
-	if err != nil {
-		return nil, err
-	}
+		// Initialize Authorizer
+		oauthInstance, err := auth.NewOAuthInstance(auth.WithOAuthConfig(config.OAuth), auth.WithLogger(logger))
+		if err != nil {
+			logger.Error("Failed to create OAuthInstance", "error", err)
+			return
+		}
 
-	authorizer, err := extensions.NewAuthorizer(oauthInstance)
-	if err != nil {
-		return nil, err
-	}
+		authorizer, err := extensions.NewAuthorizer(oauthInstance)
+		if err != nil {
+			logger.Error("Failed to create Authorizer", "error", err)
+			return
+		}
 
-	app := &Application{
-		Echo:          e,
-		Authorizer:    authorizer,
-		Logger:        logger,
-		config:        config,
-		oauthInstance: oauthInstance,
-	}
+		app := &Application{
+			Echo:          e,
+			Authorizer:    authorizer,
+			Logger:        logger,
+			config:        config,
+			oauthInstance: oauthInstance,
+		}
 
-	app.ConfigureMiddleware()
+		if err := app.configureDatabase(); err != nil {
+			logger.Error("Failed to configure database", "error", err)
+			return
+		}
 
-	return app, nil
+		app.configureMiddleware()
+
+		application = app
+	})
+
+	return application, nil
 }
 
-func (app *Application) ConfigureMiddleware() {
+func (app *Application) configureMiddleware() {
 	loggingConfig := slogecho.Config{
 		WithSpanID:  true,
 		WithTraceID: true,
@@ -77,16 +108,16 @@ func (app *Application) ConfigureMiddleware() {
 	// TODO When this middleware is added, the application gets an error when trying to access the /auth/logout
 	app.Echo.Use(middlewares.OAuthGuard(app.Authorizer, app.config.OAuth, app.Logger))
 
-	router.ConfigureRoutes(e, app.config, app.Authorizer)
+	router.ConfigureRoutes(e, app.config, app.Logger, app.Authorizer, app.Ent)
 
 	app.Logger.Info("OTEL Status", "enabled", app.config.OTEL.IsEnabled())
 
 	if app.config.OTEL.IsEnabled() {
-		app.ConfigureOTEL()
+		app.configureOTEL()
 	}
 }
 
-func (app *Application) ConfigureOTEL() {
+func (app *Application) configureOTEL() {
 	otelConfig := app.config.OTEL
 
 	appName := otelConfig.GetServiceName()
@@ -101,4 +132,22 @@ func (app *Application) ConfigureOTEL() {
 	ots.InitTracer()
 
 	app.Echo.Use(otel_middleware.Middleware(appName))
+}
+
+func (app *Application) configureDatabase() error {
+
+	ctx := context.Background()
+	dbConfig := app.config.Database
+	client, err := ent.Open("postgres", dbConfig.GetConnectionString())
+	if err != nil {
+		return err
+	}
+
+	if err := client.Schema.Create(ctx); err != nil {
+		return err
+	}
+
+	app.Ent = client
+
+	return nil
 }

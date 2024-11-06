@@ -1,13 +1,15 @@
 package layouts
 
-templ Header() {
+import "github.com/zitadel/oidc/v3/pkg/oidc"
+
+templ Header(UserInfo *oidc.UserInfo) {
 <header
   class="sticky top-0 inset-x-0 flex flex-wrap md:justify-start md:flex-nowrap z-[48] w-full bg-white border-b text-sm py-2.5 lg:ps-[260px] dark:bg-neutral-800 dark:border-neutral-700">
   <nav class="px-4 sm:px-6 flex basis-full items-center w-full mx-auto">
     <div class="me-5 lg:me-0 lg:hidden">
       <a class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-none focus:opacity-80 dark:text-neutral-200 dark:hover:text-neutral-300"
-        href="#" aria-label="RouteHUB">
-        RouteHUB
+        href="/" aria-label="RouteHub">
+        RouteHub
       </a>
     </div>
 
@@ -71,16 +73,7 @@ templ Header() {
           <span class="sr-only">Search</span>
         </button>
 
-        <button type="button"
-          class="size-[38px] relative inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-            fill="currentColor">
-            <path
-              d="M80-560q0-100 44.5-183.5T244-882l47 64q-60 44-95.5 111T160-560H80Zm720 0q0-80-35.5-147T669-818l47-64q75 55 119.5 138.5T880-560h-80ZM160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" />
-          </svg>
-          <span class="sr-only">Workspaces</span>
-        </button>
-
+        if UserInfo != nil {
         <!-- Dropdown -->
         <div class="hs-dropdown [--placement:bottom-right] relative inline-flex">
           <button id="hs-dropdown-account" type="button"
@@ -96,7 +89,7 @@ templ Header() {
             role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-account">
             <div class="py-3 px-5 bg-gray-100 rounded-t-lg dark:bg-neutral-700">
               <p class="text-sm text-gray-500 dark:text-neutral-500">Signed in as</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-neutral-200">james@site.com</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-neutral-200">{ UserInfo.Email }</p>
             </div>
 
             <div class="p-1.5 space-y-0.5">
@@ -143,6 +136,8 @@ templ Header() {
             </div>
           </div>
         </div>
+        }
+
       </div>
     </div>
   </nav>

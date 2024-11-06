@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/caarlos0/env"
@@ -13,6 +14,9 @@ type OTELConfig struct {
 	Insecure          bool   `env:"OTEL_INSECURE" envDefault:"true"`
 }
 
+func (o *OTELConfig) String() string {
+	return fmt.Sprintf("OTELConfig; CollectorEndpoint: %s ServiceName: %s Enabled: %t Insecure: %t ", o.GetCollectorEndpoint(), o.GetServiceName(), o.IsEnabled(), o.IsInsecure())
+}
 func (o *OTELConfig) IsEmpty() bool {
 	if o == nil {
 		return true

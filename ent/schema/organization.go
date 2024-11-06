@@ -57,9 +57,12 @@ func (Organization) Fields() []ent.Field {
 // Edges of the Organization.
 func (Organization) Edges() []ent.Edge {
 	return []ent.Edge{
+		// One Organization has many Domains
 		edge.To("domains", Domain.Type).
-			StorageKey(edge.Column("domain_fk")),
-		edge.To("platforms", Platform.Type).
-			StorageKey(edge.Column("platform_fk")),
+			StorageKey(edge.Column("organization_id")),
+
+		// One Organization has many Hubs
+		edge.To("hubs", Hub.Type).
+			StorageKey(edge.Column("organization_id")),
 	}
 }

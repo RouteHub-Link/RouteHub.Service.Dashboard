@@ -1,12 +1,12 @@
 package groups
 
 import (
-	pageHandlers "RouteHub.Service.Dashboard/web/router/handlers/page"
+	"RouteHub.Service.Dashboard/web/handlers"
 	"github.com/labstack/echo/v4"
 )
 
-func ConfigurePageRoutes(e *echo.Echo) {
-	pageHandlers := pageHandlers.NewPageHandler()
+func ConfigurePageRoutes(e *echo.Echo, handlers *handlers.WebHandlers) {
+	pageHandlers := handlers.PageHandlers
 
 	e.GET("/", pageHandlers.HomeHandler)
 	e.GET("/hubs", pageHandlers.HubsHandler)

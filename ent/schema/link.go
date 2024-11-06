@@ -58,9 +58,9 @@ func (Link) Fields() []ent.Field {
 // Edges of the Link.
 func (Link) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("platform", Platform.Type).
-			Ref("links"). // This points back to the 'links' edge in Platform
-			Unique().     // One link belongs to one platform
-			Required(),   // A platform is required for a link
+		edge.From("hub", Hub.Type).
+			Ref("links"). // This points back to the 'links' edge in Hub
+			Unique().     // One link belongs to one Hub
+			Required(),   // A Hub is required for a link
 	}
 }

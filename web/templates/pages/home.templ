@@ -1,8 +1,11 @@
 package pages
 import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
-templ Home() {
+import "github.com/zitadel/oidc/v3/pkg/oidc"
+
+templ Home(userInfo *oidc.UserInfo) {
 	@layouts.Main(layouts.PageDescription{
 		MainContent:       homePage(),
+    UserInfo:          userInfo,
 	})
 }
 

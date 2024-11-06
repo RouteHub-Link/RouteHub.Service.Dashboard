@@ -55,15 +55,16 @@ func (Domain) Fields() []ent.Field {
 // Edges of the Domains.
 func (Domain) Edges() []ent.Edge {
 	return []ent.Edge{
-		// O2O relationship: One Domain has one Platform (optional for Domain)
-		edge.From("platform", Platform.Type).
-			Ref("domain").
-			Unique(),
+		// One-to-One relationship: One Domain has one Hub (Hub is optional for Domain)
+		edge.From("hub", Hub.Type).
+			Ref("domain"). // Matches the "domain" edge in Hub
+			Unique(),      // One-to-One relationship
+		// Hub is optional for Domain (don't use Required())
 
-		// M2O relationship: A Domain belongs to one Organization
+		// Many-to-One relationship: A Domain belongs to one Organization
 		edge.From("organization", Organization.Type).
-			Ref("domains").
+			Ref("domains"). // Refers to the domains edge in Organization
 			Unique().
-			Required(),
+			Required(), // Domain must belong to an Organization
 	}
 }

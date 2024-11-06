@@ -20,10 +20,9 @@ func (lc LinkContent) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(&lc),
 	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-	return nil
+	err := json.Unmarshal(data, &aux)
+
+	return err
 }
 
 type MetaDescription struct {
@@ -49,11 +48,11 @@ type MetaDescription struct {
 	OGCreator     string
 }
 
-func (og *MetaDescription) ParseFromJson(jsonOpenGraph string) {
+func (og *MetaDescription) ParseFromJSON(jsonOpenGraph string) {
 	json.Unmarshal([]byte(jsonOpenGraph), &og)
 }
 
-func (og *MetaDescription) AsJson() (string, error) {
+func (og *MetaDescription) AsJSON() (string, error) {
 	jsonOpengraph, err := json.Marshal(og)
 	if err != nil {
 		return "", err

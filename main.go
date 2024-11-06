@@ -7,6 +7,7 @@ import (
 	"RouteHub.Service.Dashboard/features"
 	"RouteHub.Service.Dashboard/features/configuration"
 	"RouteHub.Service.Dashboard/web"
+	_ "github.com/lib/pq"
 	"github.com/ory/graceful"
 )
 
