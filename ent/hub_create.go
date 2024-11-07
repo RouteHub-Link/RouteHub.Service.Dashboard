@@ -11,12 +11,12 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // HubCreate is the builder for creating a Hub entity.
@@ -38,13 +38,13 @@ func (hc *HubCreate) SetSlug(s string) *HubCreate {
 	return hc
 }
 
-// SetHubDetails sets the "Hub_details" field.
+// SetHubDetails sets the "hub_details" field.
 func (hc *HubCreate) SetHubDetails(td types.HubDetails) *HubCreate {
 	hc.mutation.SetHubDetails(td)
 	return hc
 }
 
-// SetNillableHubDetails sets the "Hub_details" field if the given value is not nil.
+// SetNillableHubDetails sets the "hub_details" field if the given value is not nil.
 func (hc *HubCreate) SetNillableHubDetails(td *types.HubDetails) *HubCreate {
 	if td != nil {
 		hc.SetHubDetails(*td)
@@ -52,7 +52,7 @@ func (hc *HubCreate) SetNillableHubDetails(td *types.HubDetails) *HubCreate {
 	return hc
 }
 
-// SetTCPAddress sets the "TCPAddress" field.
+// SetTCPAddress sets the "tcp_address" field.
 func (hc *HubCreate) SetTCPAddress(s string) *HubCreate {
 	hc.mutation.SetTCPAddress(s)
 	return hc
@@ -71,21 +71,21 @@ func (hc *HubCreate) SetDefaultRedirection(ho hub.RedirectionOption) *HubCreate 
 }
 
 // SetID sets the "id" field.
-func (hc *HubCreate) SetID(si schema.HubID) *HubCreate {
-	hc.mutation.SetID(si)
+func (hc *HubCreate) SetID(ti typeid.AnyID) *HubCreate {
+	hc.mutation.SetID(ti)
 	return hc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (hc *HubCreate) SetNillableID(si *schema.HubID) *HubCreate {
-	if si != nil {
-		hc.SetID(*si)
+func (hc *HubCreate) SetNillableID(ti *typeid.AnyID) *HubCreate {
+	if ti != nil {
+		hc.SetID(*ti)
 	}
 	return hc
 }
 
 // SetDomainID sets the "domain" edge to the Domain entity by ID.
-func (hc *HubCreate) SetDomainID(id schema.DomainID) *HubCreate {
+func (hc *HubCreate) SetDomainID(id typeid.AnyID) *HubCreate {
 	hc.mutation.SetDomainID(id)
 	return hc
 }
@@ -96,7 +96,7 @@ func (hc *HubCreate) SetDomain(d *Domain) *HubCreate {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (hc *HubCreate) SetOrganizationID(id schema.OrganizationID) *HubCreate {
+func (hc *HubCreate) SetOrganizationID(id typeid.AnyID) *HubCreate {
 	hc.mutation.SetOrganizationID(id)
 	return hc
 }
@@ -107,14 +107,14 @@ func (hc *HubCreate) SetOrganization(o *Organization) *HubCreate {
 }
 
 // AddLinkIDs adds the "links" edge to the Link entity by IDs.
-func (hc *HubCreate) AddLinkIDs(ids ...schema.LinkID) *HubCreate {
+func (hc *HubCreate) AddLinkIDs(ids ...typeid.AnyID) *HubCreate {
 	hc.mutation.AddLinkIDs(ids...)
 	return hc
 }
 
 // AddLinks adds the "links" edges to the Link entity.
 func (hc *HubCreate) AddLinks(l ...*Link) *HubCreate {
-	ids := make([]schema.LinkID, len(l))
+	ids := make([]typeid.AnyID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -181,11 +181,11 @@ func (hc *HubCreate) check() error {
 		}
 	}
 	if _, ok := hc.mutation.TCPAddress(); !ok {
-		return &ValidationError{Name: "TCPAddress", err: errors.New(`ent: missing required field "Hub.TCPAddress"`)}
+		return &ValidationError{Name: "tcp_address", err: errors.New(`ent: missing required field "Hub.tcp_address"`)}
 	}
 	if v, ok := hc.mutation.TCPAddress(); ok {
 		if err := enthub.TCPAddressValidator(v); err != nil {
-			return &ValidationError{Name: "TCPAddress", err: fmt.Errorf(`ent: validator failed for field "Hub.TCPAddress": %w`, err)}
+			return &ValidationError{Name: "tcp_address", err: fmt.Errorf(`ent: validator failed for field "Hub.tcp_address": %w`, err)}
 		}
 	}
 	if _, ok := hc.mutation.Status(); !ok {
@@ -225,7 +225,7 @@ func (hc *HubCreate) sqlSave(ctx context.Context) (*Hub, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*schema.HubID); ok {
+		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
 			_node.ID = *id
 		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
 			return nil, err
@@ -239,7 +239,7 @@ func (hc *HubCreate) sqlSave(ctx context.Context) (*Hub, error) {
 func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Hub{config: hc.config}
-		_spec = sqlgraph.NewCreateSpec(enthub.Table, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(enthub.Table, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString))
 	)
 	if id, ok := hc.mutation.ID(); ok {
 		_node.ID = id
@@ -277,7 +277,7 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 			Columns: []string{enthub.DomainColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -293,7 +293,7 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 			Columns: []string{enthub.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -310,7 +310,7 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 			Columns: []string{enthub.LinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

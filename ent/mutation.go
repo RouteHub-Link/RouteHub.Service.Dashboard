@@ -12,14 +12,16 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
+	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
+	"go.jetify.com/typeid"
 )
 
 const (
@@ -35,6 +37,7 @@ const (
 	TypeHub          = "Hub"
 	TypeLink         = "Link"
 	TypeOrganization = "Organization"
+	TypePerson       = "Person"
 )
 
 // DomainMutation represents an operation that mutates the Domain nodes in the graph.
@@ -42,14 +45,14 @@ type DomainMutation struct {
 	config
 	op                  Op
 	typ                 string
-	id                  *schema.DomainID
+	id                  *typeid.AnyID
 	name                *string
 	url                 *string
 	status              *domain.DomainState
 	clearedFields       map[string]struct{}
-	hub                 *schema.HubID
+	hub                 *typeid.AnyID
 	clearedhub          bool
-	organization        *schema.OrganizationID
+	organization        *typeid.AnyID
 	clearedorganization bool
 	done                bool
 	oldValue            func(context.Context) (*Domain, error)
@@ -76,7 +79,7 @@ func newDomainMutation(c config, op Op, opts ...domainOption) *DomainMutation {
 }
 
 // withDomainID sets the ID field of the mutation.
-func withDomainID(id schema.DomainID) domainOption {
+func withDomainID(id typeid.AnyID) domainOption {
 	return func(m *DomainMutation) {
 		var (
 			err   error
@@ -128,13 +131,13 @@ func (m DomainMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Domain entities.
-func (m *DomainMutation) SetID(id schema.DomainID) {
+func (m *DomainMutation) SetID(id typeid.AnyID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *DomainMutation) ID() (id schema.DomainID, exists bool) {
+func (m *DomainMutation) ID() (id typeid.AnyID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -145,12 +148,12 @@ func (m *DomainMutation) ID() (id schema.DomainID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *DomainMutation) IDs(ctx context.Context) ([]schema.DomainID, error) {
+func (m *DomainMutation) IDs(ctx context.Context) ([]typeid.AnyID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []schema.DomainID{id}, nil
+			return []typeid.AnyID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -269,7 +272,7 @@ func (m *DomainMutation) ResetStatus() {
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by id.
-func (m *DomainMutation) SetHubID(id schema.HubID) {
+func (m *DomainMutation) SetHubID(id typeid.AnyID) {
 	m.hub = &id
 }
 
@@ -284,7 +287,7 @@ func (m *DomainMutation) HubCleared() bool {
 }
 
 // HubID returns the "hub" edge ID in the mutation.
-func (m *DomainMutation) HubID() (id schema.HubID, exists bool) {
+func (m *DomainMutation) HubID() (id typeid.AnyID, exists bool) {
 	if m.hub != nil {
 		return *m.hub, true
 	}
@@ -294,7 +297,7 @@ func (m *DomainMutation) HubID() (id schema.HubID, exists bool) {
 // HubIDs returns the "hub" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // HubID instead. It exists only for internal usage by the builders.
-func (m *DomainMutation) HubIDs() (ids []schema.HubID) {
+func (m *DomainMutation) HubIDs() (ids []typeid.AnyID) {
 	if id := m.hub; id != nil {
 		ids = append(ids, *id)
 	}
@@ -308,7 +311,7 @@ func (m *DomainMutation) ResetHub() {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by id.
-func (m *DomainMutation) SetOrganizationID(id schema.OrganizationID) {
+func (m *DomainMutation) SetOrganizationID(id typeid.AnyID) {
 	m.organization = &id
 }
 
@@ -323,7 +326,7 @@ func (m *DomainMutation) OrganizationCleared() bool {
 }
 
 // OrganizationID returns the "organization" edge ID in the mutation.
-func (m *DomainMutation) OrganizationID() (id schema.OrganizationID, exists bool) {
+func (m *DomainMutation) OrganizationID() (id typeid.AnyID, exists bool) {
 	if m.organization != nil {
 		return *m.organization, true
 	}
@@ -333,7 +336,7 @@ func (m *DomainMutation) OrganizationID() (id schema.OrganizationID, exists bool
 // OrganizationIDs returns the "organization" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // OrganizationID instead. It exists only for internal usage by the builders.
-func (m *DomainMutation) OrganizationIDs() (ids []schema.OrganizationID) {
+func (m *DomainMutation) OrganizationIDs() (ids []typeid.AnyID) {
 	if id := m.organization; id != nil {
 		ids = append(ids, *id)
 	}
@@ -608,20 +611,20 @@ type HubMutation struct {
 	config
 	op                  Op
 	typ                 string
-	id                  *schema.HubID
+	id                  *typeid.AnyID
 	name                *string
 	slug                *string
-	_Hub_details        *types.HubDetails
-	_TCPAddress         *string
+	hub_details         *types.HubDetails
+	tcp_address         *string
 	status              *enums.StatusState
 	default_redirection *hub.RedirectionOption
 	clearedFields       map[string]struct{}
-	domain              *schema.DomainID
+	domain              *typeid.AnyID
 	cleareddomain       bool
-	organization        *schema.OrganizationID
+	organization        *typeid.AnyID
 	clearedorganization bool
-	links               map[schema.LinkID]struct{}
-	removedlinks        map[schema.LinkID]struct{}
+	links               map[typeid.AnyID]struct{}
+	removedlinks        map[typeid.AnyID]struct{}
 	clearedlinks        bool
 	done                bool
 	oldValue            func(context.Context) (*Hub, error)
@@ -648,7 +651,7 @@ func newHubMutation(c config, op Op, opts ...hubOption) *HubMutation {
 }
 
 // withHubID sets the ID field of the mutation.
-func withHubID(id schema.HubID) hubOption {
+func withHubID(id typeid.AnyID) hubOption {
 	return func(m *HubMutation) {
 		var (
 			err   error
@@ -700,13 +703,13 @@ func (m HubMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Hub entities.
-func (m *HubMutation) SetID(id schema.HubID) {
+func (m *HubMutation) SetID(id typeid.AnyID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *HubMutation) ID() (id schema.HubID, exists bool) {
+func (m *HubMutation) ID() (id typeid.AnyID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -717,12 +720,12 @@ func (m *HubMutation) ID() (id schema.HubID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *HubMutation) IDs(ctx context.Context) ([]schema.HubID, error) {
+func (m *HubMutation) IDs(ctx context.Context) ([]typeid.AnyID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []schema.HubID{id}, nil
+			return []typeid.AnyID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -804,21 +807,21 @@ func (m *HubMutation) ResetSlug() {
 	m.slug = nil
 }
 
-// SetHubDetails sets the "Hub_details" field.
+// SetHubDetails sets the "hub_details" field.
 func (m *HubMutation) SetHubDetails(td types.HubDetails) {
-	m._Hub_details = &td
+	m.hub_details = &td
 }
 
-// HubDetails returns the value of the "Hub_details" field in the mutation.
+// HubDetails returns the value of the "hub_details" field in the mutation.
 func (m *HubMutation) HubDetails() (r types.HubDetails, exists bool) {
-	v := m._Hub_details
+	v := m.hub_details
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldHubDetails returns the old "Hub_details" field's value of the Hub entity.
+// OldHubDetails returns the old "hub_details" field's value of the Hub entity.
 // If the Hub object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *HubMutation) OldHubDetails(ctx context.Context) (v types.HubDetails, err error) {
@@ -835,39 +838,39 @@ func (m *HubMutation) OldHubDetails(ctx context.Context) (v types.HubDetails, er
 	return oldValue.HubDetails, nil
 }
 
-// ClearHubDetails clears the value of the "Hub_details" field.
+// ClearHubDetails clears the value of the "hub_details" field.
 func (m *HubMutation) ClearHubDetails() {
-	m._Hub_details = nil
+	m.hub_details = nil
 	m.clearedFields[enthub.FieldHubDetails] = struct{}{}
 }
 
-// HubDetailsCleared returns if the "Hub_details" field was cleared in this mutation.
+// HubDetailsCleared returns if the "hub_details" field was cleared in this mutation.
 func (m *HubMutation) HubDetailsCleared() bool {
 	_, ok := m.clearedFields[enthub.FieldHubDetails]
 	return ok
 }
 
-// ResetHubDetails resets all changes to the "Hub_details" field.
+// ResetHubDetails resets all changes to the "hub_details" field.
 func (m *HubMutation) ResetHubDetails() {
-	m._Hub_details = nil
+	m.hub_details = nil
 	delete(m.clearedFields, enthub.FieldHubDetails)
 }
 
-// SetTCPAddress sets the "TCPAddress" field.
+// SetTCPAddress sets the "tcp_address" field.
 func (m *HubMutation) SetTCPAddress(s string) {
-	m._TCPAddress = &s
+	m.tcp_address = &s
 }
 
-// TCPAddress returns the value of the "TCPAddress" field in the mutation.
+// TCPAddress returns the value of the "tcp_address" field in the mutation.
 func (m *HubMutation) TCPAddress() (r string, exists bool) {
-	v := m._TCPAddress
+	v := m.tcp_address
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTCPAddress returns the old "TCPAddress" field's value of the Hub entity.
+// OldTCPAddress returns the old "tcp_address" field's value of the Hub entity.
 // If the Hub object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *HubMutation) OldTCPAddress(ctx context.Context) (v string, err error) {
@@ -884,9 +887,9 @@ func (m *HubMutation) OldTCPAddress(ctx context.Context) (v string, err error) {
 	return oldValue.TCPAddress, nil
 }
 
-// ResetTCPAddress resets all changes to the "TCPAddress" field.
+// ResetTCPAddress resets all changes to the "tcp_address" field.
 func (m *HubMutation) ResetTCPAddress() {
-	m._TCPAddress = nil
+	m.tcp_address = nil
 }
 
 // SetStatus sets the "status" field.
@@ -962,7 +965,7 @@ func (m *HubMutation) ResetDefaultRedirection() {
 }
 
 // SetDomainID sets the "domain" edge to the Domain entity by id.
-func (m *HubMutation) SetDomainID(id schema.DomainID) {
+func (m *HubMutation) SetDomainID(id typeid.AnyID) {
 	m.domain = &id
 }
 
@@ -977,7 +980,7 @@ func (m *HubMutation) DomainCleared() bool {
 }
 
 // DomainID returns the "domain" edge ID in the mutation.
-func (m *HubMutation) DomainID() (id schema.DomainID, exists bool) {
+func (m *HubMutation) DomainID() (id typeid.AnyID, exists bool) {
 	if m.domain != nil {
 		return *m.domain, true
 	}
@@ -987,7 +990,7 @@ func (m *HubMutation) DomainID() (id schema.DomainID, exists bool) {
 // DomainIDs returns the "domain" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // DomainID instead. It exists only for internal usage by the builders.
-func (m *HubMutation) DomainIDs() (ids []schema.DomainID) {
+func (m *HubMutation) DomainIDs() (ids []typeid.AnyID) {
 	if id := m.domain; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1001,7 +1004,7 @@ func (m *HubMutation) ResetDomain() {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by id.
-func (m *HubMutation) SetOrganizationID(id schema.OrganizationID) {
+func (m *HubMutation) SetOrganizationID(id typeid.AnyID) {
 	m.organization = &id
 }
 
@@ -1016,7 +1019,7 @@ func (m *HubMutation) OrganizationCleared() bool {
 }
 
 // OrganizationID returns the "organization" edge ID in the mutation.
-func (m *HubMutation) OrganizationID() (id schema.OrganizationID, exists bool) {
+func (m *HubMutation) OrganizationID() (id typeid.AnyID, exists bool) {
 	if m.organization != nil {
 		return *m.organization, true
 	}
@@ -1026,7 +1029,7 @@ func (m *HubMutation) OrganizationID() (id schema.OrganizationID, exists bool) {
 // OrganizationIDs returns the "organization" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // OrganizationID instead. It exists only for internal usage by the builders.
-func (m *HubMutation) OrganizationIDs() (ids []schema.OrganizationID) {
+func (m *HubMutation) OrganizationIDs() (ids []typeid.AnyID) {
 	if id := m.organization; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1040,9 +1043,9 @@ func (m *HubMutation) ResetOrganization() {
 }
 
 // AddLinkIDs adds the "links" edge to the Link entity by ids.
-func (m *HubMutation) AddLinkIDs(ids ...schema.LinkID) {
+func (m *HubMutation) AddLinkIDs(ids ...typeid.AnyID) {
 	if m.links == nil {
-		m.links = make(map[schema.LinkID]struct{})
+		m.links = make(map[typeid.AnyID]struct{})
 	}
 	for i := range ids {
 		m.links[ids[i]] = struct{}{}
@@ -1060,9 +1063,9 @@ func (m *HubMutation) LinksCleared() bool {
 }
 
 // RemoveLinkIDs removes the "links" edge to the Link entity by IDs.
-func (m *HubMutation) RemoveLinkIDs(ids ...schema.LinkID) {
+func (m *HubMutation) RemoveLinkIDs(ids ...typeid.AnyID) {
 	if m.removedlinks == nil {
-		m.removedlinks = make(map[schema.LinkID]struct{})
+		m.removedlinks = make(map[typeid.AnyID]struct{})
 	}
 	for i := range ids {
 		delete(m.links, ids[i])
@@ -1071,7 +1074,7 @@ func (m *HubMutation) RemoveLinkIDs(ids ...schema.LinkID) {
 }
 
 // RemovedLinks returns the removed IDs of the "links" edge to the Link entity.
-func (m *HubMutation) RemovedLinksIDs() (ids []schema.LinkID) {
+func (m *HubMutation) RemovedLinksIDs() (ids []typeid.AnyID) {
 	for id := range m.removedlinks {
 		ids = append(ids, id)
 	}
@@ -1079,7 +1082,7 @@ func (m *HubMutation) RemovedLinksIDs() (ids []schema.LinkID) {
 }
 
 // LinksIDs returns the "links" edge IDs in the mutation.
-func (m *HubMutation) LinksIDs() (ids []schema.LinkID) {
+func (m *HubMutation) LinksIDs() (ids []typeid.AnyID) {
 	for id := range m.links {
 		ids = append(ids, id)
 	}
@@ -1134,10 +1137,10 @@ func (m *HubMutation) Fields() []string {
 	if m.slug != nil {
 		fields = append(fields, enthub.FieldSlug)
 	}
-	if m._Hub_details != nil {
+	if m.hub_details != nil {
 		fields = append(fields, enthub.FieldHubDetails)
 	}
-	if m._TCPAddress != nil {
+	if m.tcp_address != nil {
 		fields = append(fields, enthub.FieldTCPAddress)
 	}
 	if m.status != nil {
@@ -1443,13 +1446,13 @@ type LinkMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *schema.LinkID
+	id            *typeid.AnyID
 	target        *string
 	_path         *string
 	link_content  *types.LinkContent
 	status        *enums.StatusState
 	clearedFields map[string]struct{}
-	hub           *schema.HubID
+	hub           *typeid.AnyID
 	clearedhub    bool
 	done          bool
 	oldValue      func(context.Context) (*Link, error)
@@ -1476,7 +1479,7 @@ func newLinkMutation(c config, op Op, opts ...linkOption) *LinkMutation {
 }
 
 // withLinkID sets the ID field of the mutation.
-func withLinkID(id schema.LinkID) linkOption {
+func withLinkID(id typeid.AnyID) linkOption {
 	return func(m *LinkMutation) {
 		var (
 			err   error
@@ -1528,13 +1531,13 @@ func (m LinkMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Link entities.
-func (m *LinkMutation) SetID(id schema.LinkID) {
+func (m *LinkMutation) SetID(id typeid.AnyID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *LinkMutation) ID() (id schema.LinkID, exists bool) {
+func (m *LinkMutation) ID() (id typeid.AnyID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1545,12 +1548,12 @@ func (m *LinkMutation) ID() (id schema.LinkID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *LinkMutation) IDs(ctx context.Context) ([]schema.LinkID, error) {
+func (m *LinkMutation) IDs(ctx context.Context) ([]typeid.AnyID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []schema.LinkID{id}, nil
+			return []typeid.AnyID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1718,7 +1721,7 @@ func (m *LinkMutation) ResetStatus() {
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by id.
-func (m *LinkMutation) SetHubID(id schema.HubID) {
+func (m *LinkMutation) SetHubID(id typeid.AnyID) {
 	m.hub = &id
 }
 
@@ -1733,7 +1736,7 @@ func (m *LinkMutation) HubCleared() bool {
 }
 
 // HubID returns the "hub" edge ID in the mutation.
-func (m *LinkMutation) HubID() (id schema.HubID, exists bool) {
+func (m *LinkMutation) HubID() (id typeid.AnyID, exists bool) {
 	if m.hub != nil {
 		return *m.hub, true
 	}
@@ -1743,7 +1746,7 @@ func (m *LinkMutation) HubID() (id schema.HubID, exists bool) {
 // HubIDs returns the "hub" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // HubID instead. It exists only for internal usage by the builders.
-func (m *LinkMutation) HubIDs() (ids []schema.HubID) {
+func (m *LinkMutation) HubIDs() (ids []typeid.AnyID) {
 	if id := m.hub; id != nil {
 		ids = append(ids, *id)
 	}
@@ -2026,19 +2029,22 @@ type OrganizationMutation struct {
 	config
 	op             Op
 	typ            string
-	id             *schema.OrganizationID
+	id             *typeid.AnyID
 	name           *string
 	website        *string
 	description    *string
-	locagtion      *string
+	location       *string
 	social_medias  *types.SocialMedias
 	clearedFields  map[string]struct{}
-	domains        map[schema.DomainID]struct{}
-	removeddomains map[schema.DomainID]struct{}
+	domains        map[typeid.AnyID]struct{}
+	removeddomains map[typeid.AnyID]struct{}
 	cleareddomains bool
-	hubs           map[schema.HubID]struct{}
-	removedhubs    map[schema.HubID]struct{}
+	hubs           map[typeid.AnyID]struct{}
+	removedhubs    map[typeid.AnyID]struct{}
 	clearedhubs    bool
+	persons        map[typeid.AnyID]struct{}
+	removedpersons map[typeid.AnyID]struct{}
+	clearedpersons bool
 	done           bool
 	oldValue       func(context.Context) (*Organization, error)
 	predicates     []predicate.Organization
@@ -2064,7 +2070,7 @@ func newOrganizationMutation(c config, op Op, opts ...organizationOption) *Organ
 }
 
 // withOrganizationID sets the ID field of the mutation.
-func withOrganizationID(id schema.OrganizationID) organizationOption {
+func withOrganizationID(id typeid.AnyID) organizationOption {
 	return func(m *OrganizationMutation) {
 		var (
 			err   error
@@ -2116,13 +2122,13 @@ func (m OrganizationMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Organization entities.
-func (m *OrganizationMutation) SetID(id schema.OrganizationID) {
+func (m *OrganizationMutation) SetID(id typeid.AnyID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *OrganizationMutation) ID() (id schema.OrganizationID, exists bool) {
+func (m *OrganizationMutation) ID() (id typeid.AnyID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2133,12 +2139,12 @@ func (m *OrganizationMutation) ID() (id schema.OrganizationID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *OrganizationMutation) IDs(ctx context.Context) ([]schema.OrganizationID, error) {
+func (m *OrganizationMutation) IDs(ctx context.Context) ([]typeid.AnyID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []schema.OrganizationID{id}, nil
+			return []typeid.AnyID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -2282,53 +2288,53 @@ func (m *OrganizationMutation) ResetDescription() {
 	delete(m.clearedFields, organization.FieldDescription)
 }
 
-// SetLocagtion sets the "locagtion" field.
-func (m *OrganizationMutation) SetLocagtion(s string) {
-	m.locagtion = &s
+// SetLocation sets the "location" field.
+func (m *OrganizationMutation) SetLocation(s string) {
+	m.location = &s
 }
 
-// Locagtion returns the value of the "locagtion" field in the mutation.
-func (m *OrganizationMutation) Locagtion() (r string, exists bool) {
-	v := m.locagtion
+// Location returns the value of the "location" field in the mutation.
+func (m *OrganizationMutation) Location() (r string, exists bool) {
+	v := m.location
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLocagtion returns the old "locagtion" field's value of the Organization entity.
+// OldLocation returns the old "location" field's value of the Organization entity.
 // If the Organization object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldLocagtion(ctx context.Context) (v string, err error) {
+func (m *OrganizationMutation) OldLocation(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLocagtion is only allowed on UpdateOne operations")
+		return v, errors.New("OldLocation is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLocagtion requires an ID field in the mutation")
+		return v, errors.New("OldLocation requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLocagtion: %w", err)
+		return v, fmt.Errorf("querying old value for OldLocation: %w", err)
 	}
-	return oldValue.Locagtion, nil
+	return oldValue.Location, nil
 }
 
-// ClearLocagtion clears the value of the "locagtion" field.
-func (m *OrganizationMutation) ClearLocagtion() {
-	m.locagtion = nil
-	m.clearedFields[organization.FieldLocagtion] = struct{}{}
+// ClearLocation clears the value of the "location" field.
+func (m *OrganizationMutation) ClearLocation() {
+	m.location = nil
+	m.clearedFields[organization.FieldLocation] = struct{}{}
 }
 
-// LocagtionCleared returns if the "locagtion" field was cleared in this mutation.
-func (m *OrganizationMutation) LocagtionCleared() bool {
-	_, ok := m.clearedFields[organization.FieldLocagtion]
+// LocationCleared returns if the "location" field was cleared in this mutation.
+func (m *OrganizationMutation) LocationCleared() bool {
+	_, ok := m.clearedFields[organization.FieldLocation]
 	return ok
 }
 
-// ResetLocagtion resets all changes to the "locagtion" field.
-func (m *OrganizationMutation) ResetLocagtion() {
-	m.locagtion = nil
-	delete(m.clearedFields, organization.FieldLocagtion)
+// ResetLocation resets all changes to the "location" field.
+func (m *OrganizationMutation) ResetLocation() {
+	m.location = nil
+	delete(m.clearedFields, organization.FieldLocation)
 }
 
 // SetSocialMedias sets the "social_medias" field.
@@ -2381,9 +2387,9 @@ func (m *OrganizationMutation) ResetSocialMedias() {
 }
 
 // AddDomainIDs adds the "domains" edge to the Domain entity by ids.
-func (m *OrganizationMutation) AddDomainIDs(ids ...schema.DomainID) {
+func (m *OrganizationMutation) AddDomainIDs(ids ...typeid.AnyID) {
 	if m.domains == nil {
-		m.domains = make(map[schema.DomainID]struct{})
+		m.domains = make(map[typeid.AnyID]struct{})
 	}
 	for i := range ids {
 		m.domains[ids[i]] = struct{}{}
@@ -2401,9 +2407,9 @@ func (m *OrganizationMutation) DomainsCleared() bool {
 }
 
 // RemoveDomainIDs removes the "domains" edge to the Domain entity by IDs.
-func (m *OrganizationMutation) RemoveDomainIDs(ids ...schema.DomainID) {
+func (m *OrganizationMutation) RemoveDomainIDs(ids ...typeid.AnyID) {
 	if m.removeddomains == nil {
-		m.removeddomains = make(map[schema.DomainID]struct{})
+		m.removeddomains = make(map[typeid.AnyID]struct{})
 	}
 	for i := range ids {
 		delete(m.domains, ids[i])
@@ -2412,7 +2418,7 @@ func (m *OrganizationMutation) RemoveDomainIDs(ids ...schema.DomainID) {
 }
 
 // RemovedDomains returns the removed IDs of the "domains" edge to the Domain entity.
-func (m *OrganizationMutation) RemovedDomainsIDs() (ids []schema.DomainID) {
+func (m *OrganizationMutation) RemovedDomainsIDs() (ids []typeid.AnyID) {
 	for id := range m.removeddomains {
 		ids = append(ids, id)
 	}
@@ -2420,7 +2426,7 @@ func (m *OrganizationMutation) RemovedDomainsIDs() (ids []schema.DomainID) {
 }
 
 // DomainsIDs returns the "domains" edge IDs in the mutation.
-func (m *OrganizationMutation) DomainsIDs() (ids []schema.DomainID) {
+func (m *OrganizationMutation) DomainsIDs() (ids []typeid.AnyID) {
 	for id := range m.domains {
 		ids = append(ids, id)
 	}
@@ -2435,9 +2441,9 @@ func (m *OrganizationMutation) ResetDomains() {
 }
 
 // AddHubIDs adds the "hubs" edge to the Hub entity by ids.
-func (m *OrganizationMutation) AddHubIDs(ids ...schema.HubID) {
+func (m *OrganizationMutation) AddHubIDs(ids ...typeid.AnyID) {
 	if m.hubs == nil {
-		m.hubs = make(map[schema.HubID]struct{})
+		m.hubs = make(map[typeid.AnyID]struct{})
 	}
 	for i := range ids {
 		m.hubs[ids[i]] = struct{}{}
@@ -2455,9 +2461,9 @@ func (m *OrganizationMutation) HubsCleared() bool {
 }
 
 // RemoveHubIDs removes the "hubs" edge to the Hub entity by IDs.
-func (m *OrganizationMutation) RemoveHubIDs(ids ...schema.HubID) {
+func (m *OrganizationMutation) RemoveHubIDs(ids ...typeid.AnyID) {
 	if m.removedhubs == nil {
-		m.removedhubs = make(map[schema.HubID]struct{})
+		m.removedhubs = make(map[typeid.AnyID]struct{})
 	}
 	for i := range ids {
 		delete(m.hubs, ids[i])
@@ -2466,7 +2472,7 @@ func (m *OrganizationMutation) RemoveHubIDs(ids ...schema.HubID) {
 }
 
 // RemovedHubs returns the removed IDs of the "hubs" edge to the Hub entity.
-func (m *OrganizationMutation) RemovedHubsIDs() (ids []schema.HubID) {
+func (m *OrganizationMutation) RemovedHubsIDs() (ids []typeid.AnyID) {
 	for id := range m.removedhubs {
 		ids = append(ids, id)
 	}
@@ -2474,7 +2480,7 @@ func (m *OrganizationMutation) RemovedHubsIDs() (ids []schema.HubID) {
 }
 
 // HubsIDs returns the "hubs" edge IDs in the mutation.
-func (m *OrganizationMutation) HubsIDs() (ids []schema.HubID) {
+func (m *OrganizationMutation) HubsIDs() (ids []typeid.AnyID) {
 	for id := range m.hubs {
 		ids = append(ids, id)
 	}
@@ -2486,6 +2492,60 @@ func (m *OrganizationMutation) ResetHubs() {
 	m.hubs = nil
 	m.clearedhubs = false
 	m.removedhubs = nil
+}
+
+// AddPersonIDs adds the "persons" edge to the Person entity by ids.
+func (m *OrganizationMutation) AddPersonIDs(ids ...typeid.AnyID) {
+	if m.persons == nil {
+		m.persons = make(map[typeid.AnyID]struct{})
+	}
+	for i := range ids {
+		m.persons[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPersons clears the "persons" edge to the Person entity.
+func (m *OrganizationMutation) ClearPersons() {
+	m.clearedpersons = true
+}
+
+// PersonsCleared reports if the "persons" edge to the Person entity was cleared.
+func (m *OrganizationMutation) PersonsCleared() bool {
+	return m.clearedpersons
+}
+
+// RemovePersonIDs removes the "persons" edge to the Person entity by IDs.
+func (m *OrganizationMutation) RemovePersonIDs(ids ...typeid.AnyID) {
+	if m.removedpersons == nil {
+		m.removedpersons = make(map[typeid.AnyID]struct{})
+	}
+	for i := range ids {
+		delete(m.persons, ids[i])
+		m.removedpersons[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPersons returns the removed IDs of the "persons" edge to the Person entity.
+func (m *OrganizationMutation) RemovedPersonsIDs() (ids []typeid.AnyID) {
+	for id := range m.removedpersons {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PersonsIDs returns the "persons" edge IDs in the mutation.
+func (m *OrganizationMutation) PersonsIDs() (ids []typeid.AnyID) {
+	for id := range m.persons {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPersons resets all changes to the "persons" edge.
+func (m *OrganizationMutation) ResetPersons() {
+	m.persons = nil
+	m.clearedpersons = false
+	m.removedpersons = nil
 }
 
 // Where appends a list predicates to the OrganizationMutation builder.
@@ -2532,8 +2592,8 @@ func (m *OrganizationMutation) Fields() []string {
 	if m.description != nil {
 		fields = append(fields, organization.FieldDescription)
 	}
-	if m.locagtion != nil {
-		fields = append(fields, organization.FieldLocagtion)
+	if m.location != nil {
+		fields = append(fields, organization.FieldLocation)
 	}
 	if m.social_medias != nil {
 		fields = append(fields, organization.FieldSocialMedias)
@@ -2552,8 +2612,8 @@ func (m *OrganizationMutation) Field(name string) (ent.Value, bool) {
 		return m.Website()
 	case organization.FieldDescription:
 		return m.Description()
-	case organization.FieldLocagtion:
-		return m.Locagtion()
+	case organization.FieldLocation:
+		return m.Location()
 	case organization.FieldSocialMedias:
 		return m.SocialMedias()
 	}
@@ -2571,8 +2631,8 @@ func (m *OrganizationMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldWebsite(ctx)
 	case organization.FieldDescription:
 		return m.OldDescription(ctx)
-	case organization.FieldLocagtion:
-		return m.OldLocagtion(ctx)
+	case organization.FieldLocation:
+		return m.OldLocation(ctx)
 	case organization.FieldSocialMedias:
 		return m.OldSocialMedias(ctx)
 	}
@@ -2605,12 +2665,12 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDescription(v)
 		return nil
-	case organization.FieldLocagtion:
+	case organization.FieldLocation:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLocagtion(v)
+		m.SetLocation(v)
 		return nil
 	case organization.FieldSocialMedias:
 		v, ok := value.(types.SocialMedias)
@@ -2655,8 +2715,8 @@ func (m *OrganizationMutation) ClearedFields() []string {
 	if m.FieldCleared(organization.FieldDescription) {
 		fields = append(fields, organization.FieldDescription)
 	}
-	if m.FieldCleared(organization.FieldLocagtion) {
-		fields = append(fields, organization.FieldLocagtion)
+	if m.FieldCleared(organization.FieldLocation) {
+		fields = append(fields, organization.FieldLocation)
 	}
 	if m.FieldCleared(organization.FieldSocialMedias) {
 		fields = append(fields, organization.FieldSocialMedias)
@@ -2681,8 +2741,8 @@ func (m *OrganizationMutation) ClearField(name string) error {
 	case organization.FieldDescription:
 		m.ClearDescription()
 		return nil
-	case organization.FieldLocagtion:
-		m.ClearLocagtion()
+	case organization.FieldLocation:
+		m.ClearLocation()
 		return nil
 	case organization.FieldSocialMedias:
 		m.ClearSocialMedias()
@@ -2704,8 +2764,8 @@ func (m *OrganizationMutation) ResetField(name string) error {
 	case organization.FieldDescription:
 		m.ResetDescription()
 		return nil
-	case organization.FieldLocagtion:
-		m.ResetLocagtion()
+	case organization.FieldLocation:
+		m.ResetLocation()
 		return nil
 	case organization.FieldSocialMedias:
 		m.ResetSocialMedias()
@@ -2716,12 +2776,15 @@ func (m *OrganizationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.domains != nil {
 		edges = append(edges, organization.EdgeDomains)
 	}
 	if m.hubs != nil {
 		edges = append(edges, organization.EdgeHubs)
+	}
+	if m.persons != nil {
+		edges = append(edges, organization.EdgePersons)
 	}
 	return edges
 }
@@ -2742,18 +2805,27 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgePersons:
+		ids := make([]ent.Value, 0, len(m.persons))
+		for id := range m.persons {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removeddomains != nil {
 		edges = append(edges, organization.EdgeDomains)
 	}
 	if m.removedhubs != nil {
 		edges = append(edges, organization.EdgeHubs)
+	}
+	if m.removedpersons != nil {
+		edges = append(edges, organization.EdgePersons)
 	}
 	return edges
 }
@@ -2774,18 +2846,27 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgePersons:
+		ids := make([]ent.Value, 0, len(m.removedpersons))
+		for id := range m.removedpersons {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareddomains {
 		edges = append(edges, organization.EdgeDomains)
 	}
 	if m.clearedhubs {
 		edges = append(edges, organization.EdgeHubs)
+	}
+	if m.clearedpersons {
+		edges = append(edges, organization.EdgePersons)
 	}
 	return edges
 }
@@ -2798,6 +2879,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.cleareddomains
 	case organization.EdgeHubs:
 		return m.clearedhubs
+	case organization.EdgePersons:
+		return m.clearedpersons
 	}
 	return false
 }
@@ -2820,6 +2903,516 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 	case organization.EdgeHubs:
 		m.ResetHubs()
 		return nil
+	case organization.EdgePersons:
+		m.ResetPersons()
+		return nil
 	}
 	return fmt.Errorf("unknown Organization edge %s", name)
+}
+
+// PersonMutation represents an operation that mutates the Person nodes in the graph.
+type PersonMutation struct {
+	config
+	op                  Op
+	typ                 string
+	id                  *typeid.AnyID
+	subject_id          *string
+	user_info           *oidc.UserInfo
+	is_active           *bool
+	clearedFields       map[string]struct{}
+	organization        *typeid.AnyID
+	clearedorganization bool
+	done                bool
+	oldValue            func(context.Context) (*Person, error)
+	predicates          []predicate.Person
+}
+
+var _ ent.Mutation = (*PersonMutation)(nil)
+
+// personOption allows management of the mutation configuration using functional options.
+type personOption func(*PersonMutation)
+
+// newPersonMutation creates new mutation for the Person entity.
+func newPersonMutation(c config, op Op, opts ...personOption) *PersonMutation {
+	m := &PersonMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePerson,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPersonID sets the ID field of the mutation.
+func withPersonID(id typeid.AnyID) personOption {
+	return func(m *PersonMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Person
+		)
+		m.oldValue = func(ctx context.Context) (*Person, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Person.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPerson sets the old Person of the mutation.
+func withPerson(node *Person) personOption {
+	return func(m *PersonMutation) {
+		m.oldValue = func(context.Context) (*Person, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PersonMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PersonMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Person entities.
+func (m *PersonMutation) SetID(id typeid.AnyID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PersonMutation) ID() (id typeid.AnyID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PersonMutation) IDs(ctx context.Context) ([]typeid.AnyID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []typeid.AnyID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Person.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetSubjectID sets the "subject_id" field.
+func (m *PersonMutation) SetSubjectID(s string) {
+	m.subject_id = &s
+}
+
+// SubjectID returns the value of the "subject_id" field in the mutation.
+func (m *PersonMutation) SubjectID() (r string, exists bool) {
+	v := m.subject_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubjectID returns the old "subject_id" field's value of the Person entity.
+// If the Person object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonMutation) OldSubjectID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubjectID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubjectID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubjectID: %w", err)
+	}
+	return oldValue.SubjectID, nil
+}
+
+// ResetSubjectID resets all changes to the "subject_id" field.
+func (m *PersonMutation) ResetSubjectID() {
+	m.subject_id = nil
+}
+
+// SetUserInfo sets the "user_info" field.
+func (m *PersonMutation) SetUserInfo(oi oidc.UserInfo) {
+	m.user_info = &oi
+}
+
+// UserInfo returns the value of the "user_info" field in the mutation.
+func (m *PersonMutation) UserInfo() (r oidc.UserInfo, exists bool) {
+	v := m.user_info
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserInfo returns the old "user_info" field's value of the Person entity.
+// If the Person object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonMutation) OldUserInfo(ctx context.Context) (v oidc.UserInfo, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserInfo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserInfo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserInfo: %w", err)
+	}
+	return oldValue.UserInfo, nil
+}
+
+// ResetUserInfo resets all changes to the "user_info" field.
+func (m *PersonMutation) ResetUserInfo() {
+	m.user_info = nil
+}
+
+// SetIsActive sets the "is_active" field.
+func (m *PersonMutation) SetIsActive(b bool) {
+	m.is_active = &b
+}
+
+// IsActive returns the value of the "is_active" field in the mutation.
+func (m *PersonMutation) IsActive() (r bool, exists bool) {
+	v := m.is_active
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsActive returns the old "is_active" field's value of the Person entity.
+// If the Person object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonMutation) OldIsActive(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsActive is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsActive requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsActive: %w", err)
+	}
+	return oldValue.IsActive, nil
+}
+
+// ResetIsActive resets all changes to the "is_active" field.
+func (m *PersonMutation) ResetIsActive() {
+	m.is_active = nil
+}
+
+// SetOrganizationID sets the "organization" edge to the Organization entity by id.
+func (m *PersonMutation) SetOrganizationID(id typeid.AnyID) {
+	m.organization = &id
+}
+
+// ClearOrganization clears the "organization" edge to the Organization entity.
+func (m *PersonMutation) ClearOrganization() {
+	m.clearedorganization = true
+}
+
+// OrganizationCleared reports if the "organization" edge to the Organization entity was cleared.
+func (m *PersonMutation) OrganizationCleared() bool {
+	return m.clearedorganization
+}
+
+// OrganizationID returns the "organization" edge ID in the mutation.
+func (m *PersonMutation) OrganizationID() (id typeid.AnyID, exists bool) {
+	if m.organization != nil {
+		return *m.organization, true
+	}
+	return
+}
+
+// OrganizationIDs returns the "organization" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OrganizationID instead. It exists only for internal usage by the builders.
+func (m *PersonMutation) OrganizationIDs() (ids []typeid.AnyID) {
+	if id := m.organization; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOrganization resets all changes to the "organization" edge.
+func (m *PersonMutation) ResetOrganization() {
+	m.organization = nil
+	m.clearedorganization = false
+}
+
+// Where appends a list predicates to the PersonMutation builder.
+func (m *PersonMutation) Where(ps ...predicate.Person) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PersonMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PersonMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Person, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PersonMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PersonMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Person).
+func (m *PersonMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PersonMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.subject_id != nil {
+		fields = append(fields, person.FieldSubjectID)
+	}
+	if m.user_info != nil {
+		fields = append(fields, person.FieldUserInfo)
+	}
+	if m.is_active != nil {
+		fields = append(fields, person.FieldIsActive)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PersonMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case person.FieldSubjectID:
+		return m.SubjectID()
+	case person.FieldUserInfo:
+		return m.UserInfo()
+	case person.FieldIsActive:
+		return m.IsActive()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PersonMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case person.FieldSubjectID:
+		return m.OldSubjectID(ctx)
+	case person.FieldUserInfo:
+		return m.OldUserInfo(ctx)
+	case person.FieldIsActive:
+		return m.OldIsActive(ctx)
+	}
+	return nil, fmt.Errorf("unknown Person field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PersonMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case person.FieldSubjectID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubjectID(v)
+		return nil
+	case person.FieldUserInfo:
+		v, ok := value.(oidc.UserInfo)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserInfo(v)
+		return nil
+	case person.FieldIsActive:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsActive(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Person field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PersonMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PersonMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PersonMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Person numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PersonMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PersonMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PersonMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Person nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PersonMutation) ResetField(name string) error {
+	switch name {
+	case person.FieldSubjectID:
+		m.ResetSubjectID()
+		return nil
+	case person.FieldUserInfo:
+		m.ResetUserInfo()
+		return nil
+	case person.FieldIsActive:
+		m.ResetIsActive()
+		return nil
+	}
+	return fmt.Errorf("unknown Person field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PersonMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.organization != nil {
+		edges = append(edges, person.EdgeOrganization)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PersonMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case person.EdgeOrganization:
+		if id := m.organization; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PersonMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PersonMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PersonMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedorganization {
+		edges = append(edges, person.EdgeOrganization)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PersonMutation) EdgeCleared(name string) bool {
+	switch name {
+	case person.EdgeOrganization:
+		return m.clearedorganization
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PersonMutation) ClearEdge(name string) error {
+	switch name {
+	case person.EdgeOrganization:
+		m.ClearOrganization()
+		return nil
+	}
+	return fmt.Errorf("unknown Person unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PersonMutation) ResetEdge(name string) error {
+	switch name {
+	case person.EdgeOrganization:
+		m.ResetOrganization()
+		return nil
+	}
+	return fmt.Errorf("unknown Person edge %s", name)
 }

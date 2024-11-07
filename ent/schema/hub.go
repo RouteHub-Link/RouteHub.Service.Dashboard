@@ -3,51 +3,43 @@ package schema
 import (
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	enums_hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
-
-type HubPrefix struct{}
-
-func (HubPrefix) Prefix() string {
-	return "Hub"
-}
-
-type HubID struct {
-	typeid.TypeID[HubPrefix]
-}
 
 type Hub struct {
 	ent.Schema
 }
 
-func NewHubID() HubID {
-	id, _ := typeid.New[HubID]()
-	return id
+const (
+	hubPrefix = "hub"
+)
+
+func (Hub) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.IDMixin{Prefix: hubPrefix},
+	}
 }
 
 // Fields of the Hub.
 func (Hub) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", HubID{}).
-			Default(NewHubID),
-
 		field.String("name").
 			NotEmpty(),
 
 		field.String("slug").
 			NotEmpty(),
 
-		field.JSON("Hub_details", types.HubDetails{}).
+		field.JSON("hub_details", types.HubDetails{}).
 			Optional().
 			Annotations(entgql.Type("HubDetails")),
 
-		field.String("TCPAddress").NotEmpty(),
+		field.String("tcp_address").NotEmpty(),
 
 		field.Enum("status").
 			GoType(enums.StatusState(0)).

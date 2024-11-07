@@ -10,12 +10,12 @@ import (
 var (
 	// DomainsColumns holds the columns for the "domains" table.
 	DomainsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "url", Type: field.TypeString, Unique: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PASSIVE", "DNS_STATUS_PENDING", "DNS_STATUS_VERIFIED", "DNS_STATUS_FAILED", "ACTIVE"}, Default: "PASSIVE"},
-		{Name: "domain_fk", Type: field.TypeUUID, Unique: true, Nullable: true},
-		{Name: "organization_id", Type: field.TypeUUID},
+		{Name: "domain_fk", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "organization_id", Type: field.TypeString},
 	}
 	// DomainsTable holds the schema information for the "domains" table.
 	DomainsTable = &schema.Table{
@@ -39,14 +39,14 @@ var (
 	}
 	// HubsColumns holds the columns for the "hubs" table.
 	HubsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "slug", Type: field.TypeString},
 		{Name: "hub_details", Type: field.TypeJSON, Nullable: true},
 		{Name: "tcp_address", Type: field.TypeString},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"STATUS_INACTIVE", "STATUS_ACTIVE"}, Default: "STATUS_INACTIVE"},
 		{Name: "default_redirection", Type: field.TypeEnum, Enums: []string{"TIMED", "NOT_AUTO_REDIRECT", "DIRECT_HTTP_REDIRECT", "CONFIRM_REDIRECT", "CUSTOM"}, Default: "TIMED"},
-		{Name: "organization_id", Type: field.TypeUUID},
+		{Name: "organization_id", Type: field.TypeString},
 	}
 	// HubsTable holds the schema information for the "hubs" table.
 	HubsTable = &schema.Table{
@@ -64,12 +64,12 @@ var (
 	}
 	// LinksColumns holds the columns for the "links" table.
 	LinksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeString},
 		{Name: "target", Type: field.TypeString},
 		{Name: "path", Type: field.TypeString, Unique: true},
 		{Name: "link_content", Type: field.TypeJSON, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"STATUS_INACTIVE", "STATUS_ACTIVE"}},
-		{Name: "link_fk", Type: field.TypeUUID},
+		{Name: "link_fk", Type: field.TypeString},
 	}
 	// LinksTable holds the schema information for the "links" table.
 	LinksTable = &schema.Table{
@@ -87,11 +87,11 @@ var (
 	}
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
+		{Name: "id", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "website", Type: field.TypeString, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "locagtion", Type: field.TypeString, Nullable: true},
+		{Name: "location", Type: field.TypeString, Nullable: true},
 		{Name: "social_medias", Type: field.TypeJSON, Nullable: true},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
@@ -100,12 +100,49 @@ var (
 		Columns:    OrganizationsColumns,
 		PrimaryKey: []*schema.Column{OrganizationsColumns[0]},
 	}
+	// PersonsColumns holds the columns for the "persons" table.
+	PersonsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "subject_id", Type: field.TypeString, Unique: true},
+		{Name: "user_info", Type: field.TypeJSON},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "organization_id", Type: field.TypeString, Nullable: true},
+		{Name: "organization_fk", Type: field.TypeString, Nullable: true},
+	}
+	// PersonsTable holds the schema information for the "persons" table.
+	PersonsTable = &schema.Table{
+		Name:       "persons",
+		Columns:    PersonsColumns,
+		PrimaryKey: []*schema.Column{PersonsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "persons_organizations_persons",
+				Columns:    []*schema.Column{PersonsColumns[4]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "persons_organizations_organization",
+				Columns:    []*schema.Column{PersonsColumns[5]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "person_subject_id",
+				Unique:  true,
+				Columns: []*schema.Column{PersonsColumns[1]},
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		DomainsTable,
 		HubsTable,
 		LinksTable,
 		OrganizationsTable,
+		PersonsTable,
 	}
 )
 
@@ -114,4 +151,6 @@ func init() {
 	DomainsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	HubsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	LinksTable.ForeignKeys[0].RefTable = HubsTable
+	PersonsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	PersonsTable.ForeignKeys[1].RefTable = OrganizationsTable
 }

@@ -10,12 +10,13 @@ import (
 	"reflect"
 
 	"RouteHub.Service.Dashboard/ent/migrate"
-	"RouteHub.Service.Dashboard/ent/schema"
+	"go.jetify.com/typeid"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/person"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -35,6 +36,8 @@ type Client struct {
 	Link *LinkClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// Person is the client for interacting with the Person builders.
+	Person *PersonClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -50,6 +53,7 @@ func (c *Client) init() {
 	c.Hub = NewHubClient(c.config)
 	c.Link = NewLinkClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
+	c.Person = NewPersonClient(c.config)
 }
 
 type (
@@ -146,6 +150,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Hub:          NewHubClient(cfg),
 		Link:         NewLinkClient(cfg),
 		Organization: NewOrganizationClient(cfg),
+		Person:       NewPersonClient(cfg),
 	}, nil
 }
 
@@ -169,6 +174,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Hub:          NewHubClient(cfg),
 		Link:         NewLinkClient(cfg),
 		Organization: NewOrganizationClient(cfg),
+		Person:       NewPersonClient(cfg),
 	}, nil
 }
 
@@ -201,6 +207,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Hub.Use(hooks...)
 	c.Link.Use(hooks...)
 	c.Organization.Use(hooks...)
+	c.Person.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
@@ -210,6 +217,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Hub.Intercept(interceptors...)
 	c.Link.Intercept(interceptors...)
 	c.Organization.Intercept(interceptors...)
+	c.Person.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -223,6 +231,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Link.mutate(ctx, m)
 	case *OrganizationMutation:
 		return c.Organization.mutate(ctx, m)
+	case *PersonMutation:
+		return c.Person.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -289,7 +299,7 @@ func (c *DomainClient) UpdateOne(d *Domain) *DomainUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *DomainClient) UpdateOneID(id schema.DomainID) *DomainUpdateOne {
+func (c *DomainClient) UpdateOneID(id typeid.AnyID) *DomainUpdateOne {
 	mutation := newDomainMutation(c.config, OpUpdateOne, withDomainID(id))
 	return &DomainUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -306,7 +316,7 @@ func (c *DomainClient) DeleteOne(d *Domain) *DomainDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *DomainClient) DeleteOneID(id schema.DomainID) *DomainDeleteOne {
+func (c *DomainClient) DeleteOneID(id typeid.AnyID) *DomainDeleteOne {
 	builder := c.Delete().Where(entdomain.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -323,12 +333,12 @@ func (c *DomainClient) Query() *DomainQuery {
 }
 
 // Get returns a Domain entity by its id.
-func (c *DomainClient) Get(ctx context.Context, id schema.DomainID) (*Domain, error) {
+func (c *DomainClient) Get(ctx context.Context, id typeid.AnyID) (*Domain, error) {
 	return c.Query().Where(entdomain.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *DomainClient) GetX(ctx context.Context, id schema.DomainID) *Domain {
+func (c *DomainClient) GetX(ctx context.Context, id typeid.AnyID) *Domain {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -454,7 +464,7 @@ func (c *HubClient) UpdateOne(h *Hub) *HubUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *HubClient) UpdateOneID(id schema.HubID) *HubUpdateOne {
+func (c *HubClient) UpdateOneID(id typeid.AnyID) *HubUpdateOne {
 	mutation := newHubMutation(c.config, OpUpdateOne, withHubID(id))
 	return &HubUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -471,7 +481,7 @@ func (c *HubClient) DeleteOne(h *Hub) *HubDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *HubClient) DeleteOneID(id schema.HubID) *HubDeleteOne {
+func (c *HubClient) DeleteOneID(id typeid.AnyID) *HubDeleteOne {
 	builder := c.Delete().Where(enthub.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -488,12 +498,12 @@ func (c *HubClient) Query() *HubQuery {
 }
 
 // Get returns a Hub entity by its id.
-func (c *HubClient) Get(ctx context.Context, id schema.HubID) (*Hub, error) {
+func (c *HubClient) Get(ctx context.Context, id typeid.AnyID) (*Hub, error) {
 	return c.Query().Where(enthub.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *HubClient) GetX(ctx context.Context, id schema.HubID) *Hub {
+func (c *HubClient) GetX(ctx context.Context, id typeid.AnyID) *Hub {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -635,7 +645,7 @@ func (c *LinkClient) UpdateOne(l *Link) *LinkUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *LinkClient) UpdateOneID(id schema.LinkID) *LinkUpdateOne {
+func (c *LinkClient) UpdateOneID(id typeid.AnyID) *LinkUpdateOne {
 	mutation := newLinkMutation(c.config, OpUpdateOne, withLinkID(id))
 	return &LinkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -652,7 +662,7 @@ func (c *LinkClient) DeleteOne(l *Link) *LinkDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *LinkClient) DeleteOneID(id schema.LinkID) *LinkDeleteOne {
+func (c *LinkClient) DeleteOneID(id typeid.AnyID) *LinkDeleteOne {
 	builder := c.Delete().Where(link.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -669,12 +679,12 @@ func (c *LinkClient) Query() *LinkQuery {
 }
 
 // Get returns a Link entity by its id.
-func (c *LinkClient) Get(ctx context.Context, id schema.LinkID) (*Link, error) {
+func (c *LinkClient) Get(ctx context.Context, id typeid.AnyID) (*Link, error) {
 	return c.Query().Where(link.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *LinkClient) GetX(ctx context.Context, id schema.LinkID) *Link {
+func (c *LinkClient) GetX(ctx context.Context, id typeid.AnyID) *Link {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -784,7 +794,7 @@ func (c *OrganizationClient) UpdateOne(o *Organization) *OrganizationUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *OrganizationClient) UpdateOneID(id schema.OrganizationID) *OrganizationUpdateOne {
+func (c *OrganizationClient) UpdateOneID(id typeid.AnyID) *OrganizationUpdateOne {
 	mutation := newOrganizationMutation(c.config, OpUpdateOne, withOrganizationID(id))
 	return &OrganizationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -801,7 +811,7 @@ func (c *OrganizationClient) DeleteOne(o *Organization) *OrganizationDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *OrganizationClient) DeleteOneID(id schema.OrganizationID) *OrganizationDeleteOne {
+func (c *OrganizationClient) DeleteOneID(id typeid.AnyID) *OrganizationDeleteOne {
 	builder := c.Delete().Where(organization.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -818,12 +828,12 @@ func (c *OrganizationClient) Query() *OrganizationQuery {
 }
 
 // Get returns a Organization entity by its id.
-func (c *OrganizationClient) Get(ctx context.Context, id schema.OrganizationID) (*Organization, error) {
+func (c *OrganizationClient) Get(ctx context.Context, id typeid.AnyID) (*Organization, error) {
 	return c.Query().Where(organization.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *OrganizationClient) GetX(ctx context.Context, id schema.OrganizationID) *Organization {
+func (c *OrganizationClient) GetX(ctx context.Context, id typeid.AnyID) *Organization {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -863,6 +873,22 @@ func (c *OrganizationClient) QueryHubs(o *Organization) *HubQuery {
 	return query
 }
 
+// QueryPersons queries the persons edge of a Organization.
+func (c *OrganizationClient) QueryPersons(o *Organization) *PersonQuery {
+	query := (&PersonClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(person.Table, person.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.PersonsTable, organization.PersonsColumn),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *OrganizationClient) Hooks() []Hook {
 	return c.hooks.Organization
@@ -888,12 +914,161 @@ func (c *OrganizationClient) mutate(ctx context.Context, m *OrganizationMutation
 	}
 }
 
+// PersonClient is a client for the Person schema.
+type PersonClient struct {
+	config
+}
+
+// NewPersonClient returns a client for the Person from the given config.
+func NewPersonClient(c config) *PersonClient {
+	return &PersonClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `person.Hooks(f(g(h())))`.
+func (c *PersonClient) Use(hooks ...Hook) {
+	c.hooks.Person = append(c.hooks.Person, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `person.Intercept(f(g(h())))`.
+func (c *PersonClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Person = append(c.inters.Person, interceptors...)
+}
+
+// Create returns a builder for creating a Person entity.
+func (c *PersonClient) Create() *PersonCreate {
+	mutation := newPersonMutation(c.config, OpCreate)
+	return &PersonCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Person entities.
+func (c *PersonClient) CreateBulk(builders ...*PersonCreate) *PersonCreateBulk {
+	return &PersonCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PersonClient) MapCreateBulk(slice any, setFunc func(*PersonCreate, int)) *PersonCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PersonCreateBulk{err: fmt.Errorf("calling to PersonClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PersonCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PersonCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Person.
+func (c *PersonClient) Update() *PersonUpdate {
+	mutation := newPersonMutation(c.config, OpUpdate)
+	return &PersonUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PersonClient) UpdateOne(pe *Person) *PersonUpdateOne {
+	mutation := newPersonMutation(c.config, OpUpdateOne, withPerson(pe))
+	return &PersonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PersonClient) UpdateOneID(id typeid.AnyID) *PersonUpdateOne {
+	mutation := newPersonMutation(c.config, OpUpdateOne, withPersonID(id))
+	return &PersonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Person.
+func (c *PersonClient) Delete() *PersonDelete {
+	mutation := newPersonMutation(c.config, OpDelete)
+	return &PersonDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PersonClient) DeleteOne(pe *Person) *PersonDeleteOne {
+	return c.DeleteOneID(pe.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PersonClient) DeleteOneID(id typeid.AnyID) *PersonDeleteOne {
+	builder := c.Delete().Where(person.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PersonDeleteOne{builder}
+}
+
+// Query returns a query builder for Person.
+func (c *PersonClient) Query() *PersonQuery {
+	return &PersonQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePerson},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Person entity by its id.
+func (c *PersonClient) Get(ctx context.Context, id typeid.AnyID) (*Person, error) {
+	return c.Query().Where(person.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PersonClient) GetX(ctx context.Context, id typeid.AnyID) *Person {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOrganization queries the organization edge of a Person.
+func (c *PersonClient) QueryOrganization(pe *Person) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pe.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(person.Table, person.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, person.OrganizationTable, person.OrganizationColumn),
+		)
+		fromV = sqlgraph.Neighbors(pe.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PersonClient) Hooks() []Hook {
+	return c.hooks.Person
+}
+
+// Interceptors returns the client interceptors.
+func (c *PersonClient) Interceptors() []Interceptor {
+	return c.inters.Person
+}
+
+func (c *PersonClient) mutate(ctx context.Context, m *PersonMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PersonCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PersonUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PersonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PersonDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Person mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Domain, Hub, Link, Organization []ent.Hook
+		Domain, Hub, Link, Organization, Person []ent.Hook
 	}
 	inters struct {
-		Domain, Hub, Link, Organization []ent.Interceptor
+		Domain, Hub, Link, Organization, Person []ent.Interceptor
 	}
 )

@@ -5,11 +5,11 @@ package enthub
 import (
 	"fmt"
 
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"go.jetify.com/typeid"
 )
 
 const (
@@ -23,7 +23,7 @@ const (
 	FieldSlug = "slug"
 	// FieldHubDetails holds the string denoting the hub_details field in the database.
 	FieldHubDetails = "hub_details"
-	// FieldTCPAddress holds the string denoting the tcpaddress field in the database.
+	// FieldTCPAddress holds the string denoting the tcp_address field in the database.
 	FieldTCPAddress = "tcp_address"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
@@ -97,10 +97,10 @@ var (
 	NameValidator func(string) error
 	// SlugValidator is a validator for the "slug" field. It is called by the builders before save.
 	SlugValidator func(string) error
-	// TCPAddressValidator is a validator for the "TCPAddress" field. It is called by the builders before save.
+	// TCPAddressValidator is a validator for the "tcp_address" field. It is called by the builders before save.
 	TCPAddressValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() schema.HubID
+	DefaultID func() typeid.AnyID
 )
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
@@ -141,7 +141,7 @@ func BySlug(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSlug, opts...).ToFunc()
 }
 
-// ByTCPAddress orders the results by the TCPAddress field.
+// ByTCPAddress orders the results by the tcp_address field.
 func ByTCPAddress(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTCPAddress, opts...).ToFunc()
 }

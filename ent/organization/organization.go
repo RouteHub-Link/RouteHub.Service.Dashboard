@@ -3,9 +3,9 @@
 package organization
 
 import (
-	"RouteHub.Service.Dashboard/ent/schema"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"go.jetify.com/typeid"
 )
 
 const (
@@ -19,14 +19,16 @@ const (
 	FieldWebsite = "website"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldLocagtion holds the string denoting the locagtion field in the database.
-	FieldLocagtion = "locagtion"
+	// FieldLocation holds the string denoting the location field in the database.
+	FieldLocation = "location"
 	// FieldSocialMedias holds the string denoting the social_medias field in the database.
 	FieldSocialMedias = "social_medias"
 	// EdgeDomains holds the string denoting the domains edge name in mutations.
 	EdgeDomains = "domains"
 	// EdgeHubs holds the string denoting the hubs edge name in mutations.
 	EdgeHubs = "hubs"
+	// EdgePersons holds the string denoting the persons edge name in mutations.
+	EdgePersons = "persons"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
 	// DomainsTable is the table that holds the domains relation/edge.
@@ -43,6 +45,13 @@ const (
 	HubsInverseTable = "hubs"
 	// HubsColumn is the table column denoting the hubs relation/edge.
 	HubsColumn = "organization_id"
+	// PersonsTable is the table that holds the persons relation/edge.
+	PersonsTable = "persons"
+	// PersonsInverseTable is the table name for the Person entity.
+	// It exists in this package in order to avoid circular dependency with the "person" package.
+	PersonsInverseTable = "persons"
+	// PersonsColumn is the table column denoting the persons relation/edge.
+	PersonsColumn = "organization_id"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -51,7 +60,7 @@ var Columns = []string{
 	FieldName,
 	FieldWebsite,
 	FieldDescription,
-	FieldLocagtion,
+	FieldLocation,
 	FieldSocialMedias,
 }
 
@@ -69,7 +78,7 @@ var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() schema.OrganizationID
+	DefaultID func() typeid.AnyID
 )
 
 // OrderOption defines the ordering options for the Organization queries.
@@ -95,9 +104,9 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
-// ByLocagtion orders the results by the locagtion field.
-func ByLocagtion(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLocagtion, opts...).ToFunc()
+// ByLocation orders the results by the location field.
+func ByLocation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocation, opts...).ToFunc()
 }
 
 // ByDomainsCount orders the results by domains count.
@@ -127,6 +136,20 @@ func ByHubs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newHubsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByPersonsCount orders the results by persons count.
+func ByPersonsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPersonsStep(), opts...)
+	}
+}
+
+// ByPersons orders the results by persons terms.
+func ByPersons(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPersonsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newDomainsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -139,5 +162,12 @@ func newHubsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(HubsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, HubsTable, HubsColumn),
+	)
+}
+func newPersonsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PersonsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PersonsTable, PersonsColumn),
 	)
 }

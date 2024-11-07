@@ -2,27 +2,22 @@ package schema
 
 import (
 	"RouteHub.Service.Dashboard/ent/schema/enums"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
-type LinkPrefix struct{}
+const (
+	linkPrefix = "link"
+)
 
-func (LinkPrefix) Prefix() string {
-	return "link"
-}
-
-type LinkID struct {
-	typeid.TypeID[LinkPrefix]
-}
-
-func NewLinkID() LinkID {
-	id, _ := typeid.New[LinkID]()
-	return id
+func (Link) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.IDMixin{Prefix: linkPrefix},
+	}
 }
 
 // Link holds the schema definition for the Link entity.
@@ -33,9 +28,6 @@ type Link struct {
 // Fields of the Link.
 func (Link) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", LinkID{}).
-			Default(NewLinkID),
-
 		field.String("target").
 			NotEmpty(),
 

@@ -2,12 +2,12 @@ package schema
 
 import (
 	enums_domain "RouteHub.Service.Dashboard/ent/schema/enums/domain"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // Domain holds the schema definition for the Domain entity.
@@ -15,27 +15,20 @@ type Domain struct {
 	ent.Schema
 }
 
-type DomainPrefix struct{}
+const (
+	domainPrefix = "domain"
+)
 
-func (DomainPrefix) Prefix() string {
-	return "domain"
-}
-
-type DomainID struct {
-	typeid.TypeID[DomainPrefix]
-}
-
-func NewDomainID() DomainID {
-	id, _ := typeid.New[DomainID]()
-	return id
+func (Domain) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		// Add the mixin IDMixin to the Domain schema
+		mixin.IDMixin{Prefix: domainPrefix},
+	}
 }
 
 // Fields of the Domains.
 func (Domain) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", DomainID{}).
-			Default(NewDomainID),
-
 		field.String("name").
 			NotEmpty(),
 

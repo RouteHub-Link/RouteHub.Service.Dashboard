@@ -11,11 +11,11 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // DomainUpdate is the builder for updating Domain entities.
@@ -74,13 +74,13 @@ func (du *DomainUpdate) SetNillableStatus(ds *domain.DomainState) *DomainUpdate 
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (du *DomainUpdate) SetHubID(id schema.HubID) *DomainUpdate {
+func (du *DomainUpdate) SetHubID(id typeid.AnyID) *DomainUpdate {
 	du.mutation.SetHubID(id)
 	return du
 }
 
 // SetNillableHubID sets the "hub" edge to the Hub entity by ID if the given value is not nil.
-func (du *DomainUpdate) SetNillableHubID(id *schema.HubID) *DomainUpdate {
+func (du *DomainUpdate) SetNillableHubID(id *typeid.AnyID) *DomainUpdate {
 	if id != nil {
 		du = du.SetHubID(*id)
 	}
@@ -93,7 +93,7 @@ func (du *DomainUpdate) SetHub(h *Hub) *DomainUpdate {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (du *DomainUpdate) SetOrganizationID(id schema.OrganizationID) *DomainUpdate {
+func (du *DomainUpdate) SetOrganizationID(id typeid.AnyID) *DomainUpdate {
 	du.mutation.SetOrganizationID(id)
 	return du
 }
@@ -174,7 +174,7 @@ func (du *DomainUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := du.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(entdomain.Table, entdomain.Columns, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(entdomain.Table, entdomain.Columns, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString))
 	if ps := du.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -199,7 +199,7 @@ func (du *DomainUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{entdomain.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -212,7 +212,7 @@ func (du *DomainUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{entdomain.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -228,7 +228,7 @@ func (du *DomainUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{entdomain.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -241,7 +241,7 @@ func (du *DomainUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{entdomain.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -312,13 +312,13 @@ func (duo *DomainUpdateOne) SetNillableStatus(ds *domain.DomainState) *DomainUpd
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (duo *DomainUpdateOne) SetHubID(id schema.HubID) *DomainUpdateOne {
+func (duo *DomainUpdateOne) SetHubID(id typeid.AnyID) *DomainUpdateOne {
 	duo.mutation.SetHubID(id)
 	return duo
 }
 
 // SetNillableHubID sets the "hub" edge to the Hub entity by ID if the given value is not nil.
-func (duo *DomainUpdateOne) SetNillableHubID(id *schema.HubID) *DomainUpdateOne {
+func (duo *DomainUpdateOne) SetNillableHubID(id *typeid.AnyID) *DomainUpdateOne {
 	if id != nil {
 		duo = duo.SetHubID(*id)
 	}
@@ -331,7 +331,7 @@ func (duo *DomainUpdateOne) SetHub(h *Hub) *DomainUpdateOne {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (duo *DomainUpdateOne) SetOrganizationID(id schema.OrganizationID) *DomainUpdateOne {
+func (duo *DomainUpdateOne) SetOrganizationID(id typeid.AnyID) *DomainUpdateOne {
 	duo.mutation.SetOrganizationID(id)
 	return duo
 }
@@ -425,7 +425,7 @@ func (duo *DomainUpdateOne) sqlSave(ctx context.Context) (_node *Domain, err err
 	if err := duo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(entdomain.Table, entdomain.Columns, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(entdomain.Table, entdomain.Columns, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString))
 	id, ok := duo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Domain.id" for update`)}
@@ -467,7 +467,7 @@ func (duo *DomainUpdateOne) sqlSave(ctx context.Context) (_node *Domain, err err
 			Columns: []string{entdomain.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -480,7 +480,7 @@ func (duo *DomainUpdateOne) sqlSave(ctx context.Context) (_node *Domain, err err
 			Columns: []string{entdomain.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -496,7 +496,7 @@ func (duo *DomainUpdateOne) sqlSave(ctx context.Context) (_node *Domain, err err
 			Columns: []string{entdomain.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -509,7 +509,7 @@ func (duo *DomainUpdateOne) sqlSave(ctx context.Context) (_node *Domain, err err
 			Columns: []string{entdomain.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

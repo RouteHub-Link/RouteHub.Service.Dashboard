@@ -7,67 +7,98 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/schema"
+	"go.jetify.com/typeid"
 )
 
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	entdomainMixin := schema.Domain{}.Mixin()
+	entdomainMixinFields0 := entdomainMixin[0].Fields()
+	_ = entdomainMixinFields0
 	entdomainFields := schema.Domain{}.Fields()
 	_ = entdomainFields
 	// entdomainDescName is the schema descriptor for name field.
-	entdomainDescName := entdomainFields[1].Descriptor()
+	entdomainDescName := entdomainFields[0].Descriptor()
 	// entdomain.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	entdomain.NameValidator = entdomainDescName.Validators[0].(func(string) error)
 	// entdomainDescURL is the schema descriptor for url field.
-	entdomainDescURL := entdomainFields[2].Descriptor()
+	entdomainDescURL := entdomainFields[1].Descriptor()
 	// entdomain.URLValidator is a validator for the "url" field. It is called by the builders before save.
 	entdomain.URLValidator = entdomainDescURL.Validators[0].(func(string) error)
 	// entdomainDescID is the schema descriptor for id field.
-	entdomainDescID := entdomainFields[0].Descriptor()
+	entdomainDescID := entdomainMixinFields0[0].Descriptor()
 	// entdomain.DefaultID holds the default value on creation for the id field.
-	entdomain.DefaultID = entdomainDescID.Default.(func() schema.DomainID)
+	entdomain.DefaultID = entdomainDescID.Default.(func() typeid.AnyID)
+	enthubMixin := schema.Hub{}.Mixin()
+	enthubMixinFields0 := enthubMixin[0].Fields()
+	_ = enthubMixinFields0
 	enthubFields := schema.Hub{}.Fields()
 	_ = enthubFields
 	// enthubDescName is the schema descriptor for name field.
-	enthubDescName := enthubFields[1].Descriptor()
+	enthubDescName := enthubFields[0].Descriptor()
 	// enthub.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	enthub.NameValidator = enthubDescName.Validators[0].(func(string) error)
 	// enthubDescSlug is the schema descriptor for slug field.
-	enthubDescSlug := enthubFields[2].Descriptor()
+	enthubDescSlug := enthubFields[1].Descriptor()
 	// enthub.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
 	enthub.SlugValidator = enthubDescSlug.Validators[0].(func(string) error)
-	// enthubDescTCPAddress is the schema descriptor for TCPAddress field.
-	enthubDescTCPAddress := enthubFields[4].Descriptor()
-	// enthub.TCPAddressValidator is a validator for the "TCPAddress" field. It is called by the builders before save.
+	// enthubDescTCPAddress is the schema descriptor for tcp_address field.
+	enthubDescTCPAddress := enthubFields[3].Descriptor()
+	// enthub.TCPAddressValidator is a validator for the "tcp_address" field. It is called by the builders before save.
 	enthub.TCPAddressValidator = enthubDescTCPAddress.Validators[0].(func(string) error)
 	// enthubDescID is the schema descriptor for id field.
-	enthubDescID := enthubFields[0].Descriptor()
+	enthubDescID := enthubMixinFields0[0].Descriptor()
 	// enthub.DefaultID holds the default value on creation for the id field.
-	enthub.DefaultID = enthubDescID.Default.(func() schema.HubID)
+	enthub.DefaultID = enthubDescID.Default.(func() typeid.AnyID)
+	linkMixin := schema.Link{}.Mixin()
+	linkMixinFields0 := linkMixin[0].Fields()
+	_ = linkMixinFields0
 	linkFields := schema.Link{}.Fields()
 	_ = linkFields
 	// linkDescTarget is the schema descriptor for target field.
-	linkDescTarget := linkFields[1].Descriptor()
+	linkDescTarget := linkFields[0].Descriptor()
 	// link.TargetValidator is a validator for the "target" field. It is called by the builders before save.
 	link.TargetValidator = linkDescTarget.Validators[0].(func(string) error)
 	// linkDescPath is the schema descriptor for path field.
-	linkDescPath := linkFields[2].Descriptor()
+	linkDescPath := linkFields[1].Descriptor()
 	// link.PathValidator is a validator for the "path" field. It is called by the builders before save.
 	link.PathValidator = linkDescPath.Validators[0].(func(string) error)
 	// linkDescID is the schema descriptor for id field.
-	linkDescID := linkFields[0].Descriptor()
+	linkDescID := linkMixinFields0[0].Descriptor()
 	// link.DefaultID holds the default value on creation for the id field.
-	link.DefaultID = linkDescID.Default.(func() schema.LinkID)
+	link.DefaultID = linkDescID.Default.(func() typeid.AnyID)
+	organizationMixin := schema.Organization{}.Mixin()
+	organizationMixinFields0 := organizationMixin[0].Fields()
+	_ = organizationMixinFields0
 	organizationFields := schema.Organization{}.Fields()
 	_ = organizationFields
 	// organizationDescName is the schema descriptor for name field.
-	organizationDescName := organizationFields[1].Descriptor()
+	organizationDescName := organizationFields[0].Descriptor()
 	// organization.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	organization.NameValidator = organizationDescName.Validators[0].(func(string) error)
 	// organizationDescID is the schema descriptor for id field.
-	organizationDescID := organizationFields[0].Descriptor()
+	organizationDescID := organizationMixinFields0[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
-	organization.DefaultID = organizationDescID.Default.(func() schema.OrganizationID)
+	organization.DefaultID = organizationDescID.Default.(func() typeid.AnyID)
+	personMixin := schema.Person{}.Mixin()
+	personMixinFields0 := personMixin[0].Fields()
+	_ = personMixinFields0
+	personFields := schema.Person{}.Fields()
+	_ = personFields
+	// personDescSubjectID is the schema descriptor for subject_id field.
+	personDescSubjectID := personFields[0].Descriptor()
+	// person.SubjectIDValidator is a validator for the "subject_id" field. It is called by the builders before save.
+	person.SubjectIDValidator = personDescSubjectID.Validators[0].(func(string) error)
+	// personDescIsActive is the schema descriptor for is_active field.
+	personDescIsActive := personFields[2].Descriptor()
+	// person.DefaultIsActive holds the default value on creation for the is_active field.
+	person.DefaultIsActive = personDescIsActive.Default.(bool)
+	// personDescID is the schema descriptor for id field.
+	personDescID := personMixinFields0[0].Descriptor()
+	// person.DefaultID holds the default value on creation for the id field.
+	person.DefaultID = personDescID.Default.(func() typeid.AnyID)
 }

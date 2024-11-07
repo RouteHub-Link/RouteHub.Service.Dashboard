@@ -12,6 +12,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/lib/pq v1.10.9
+	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/ory/graceful v0.1.3
 	github.com/remychantenay/slog-otel v1.3.2
 	github.com/samber/slog-echo v1.14.7

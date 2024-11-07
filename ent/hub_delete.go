@@ -41,7 +41,7 @@ func (hd *HubDelete) ExecX(ctx context.Context) int {
 }
 
 func (hd *HubDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(enthub.Table, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewDeleteSpec(enthub.Table, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString))
 	if ps := hd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

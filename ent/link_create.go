@@ -9,11 +9,11 @@ import (
 
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // LinkCreate is the builder for creating a Link entity.
@@ -56,21 +56,21 @@ func (lc *LinkCreate) SetStatus(es enums.StatusState) *LinkCreate {
 }
 
 // SetID sets the "id" field.
-func (lc *LinkCreate) SetID(si schema.LinkID) *LinkCreate {
-	lc.mutation.SetID(si)
+func (lc *LinkCreate) SetID(ti typeid.AnyID) *LinkCreate {
+	lc.mutation.SetID(ti)
 	return lc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableID(si *schema.LinkID) *LinkCreate {
-	if si != nil {
-		lc.SetID(*si)
+func (lc *LinkCreate) SetNillableID(ti *typeid.AnyID) *LinkCreate {
+	if ti != nil {
+		lc.SetID(*ti)
 	}
 	return lc
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (lc *LinkCreate) SetHubID(id schema.HubID) *LinkCreate {
+func (lc *LinkCreate) SetHubID(id typeid.AnyID) *LinkCreate {
 	lc.mutation.SetHubID(id)
 	return lc
 }
@@ -165,7 +165,7 @@ func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*schema.LinkID); ok {
+		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
 			_node.ID = *id
 		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
 			return nil, err
@@ -179,7 +179,7 @@ func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
 func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Link{config: lc.config}
-		_spec = sqlgraph.NewCreateSpec(link.Table, sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(link.Table, sqlgraph.NewFieldSpec(link.FieldID, field.TypeString))
 	)
 	if id, ok := lc.mutation.ID(); ok {
 		_node.ID = id
@@ -209,7 +209,7 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

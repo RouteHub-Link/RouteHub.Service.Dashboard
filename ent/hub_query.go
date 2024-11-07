@@ -13,11 +13,11 @@ import (
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // HubQuery is the builder for querying Hub entities.
@@ -157,8 +157,8 @@ func (hq *HubQuery) FirstX(ctx context.Context) *Hub {
 
 // FirstID returns the first Hub ID from the query.
 // Returns a *NotFoundError when no Hub ID was found.
-func (hq *HubQuery) FirstID(ctx context.Context) (id schema.HubID, err error) {
-	var ids []schema.HubID
+func (hq *HubQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error) {
+	var ids []typeid.AnyID
 	if ids, err = hq.Limit(1).IDs(setContextOp(ctx, hq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -170,7 +170,7 @@ func (hq *HubQuery) FirstID(ctx context.Context) (id schema.HubID, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (hq *HubQuery) FirstIDX(ctx context.Context) schema.HubID {
+func (hq *HubQuery) FirstIDX(ctx context.Context) typeid.AnyID {
 	id, err := hq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -208,8 +208,8 @@ func (hq *HubQuery) OnlyX(ctx context.Context) *Hub {
 // OnlyID is like Only, but returns the only Hub ID in the query.
 // Returns a *NotSingularError when more than one Hub ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (hq *HubQuery) OnlyID(ctx context.Context) (id schema.HubID, err error) {
-	var ids []schema.HubID
+func (hq *HubQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) {
+	var ids []typeid.AnyID
 	if ids, err = hq.Limit(2).IDs(setContextOp(ctx, hq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -225,7 +225,7 @@ func (hq *HubQuery) OnlyID(ctx context.Context) (id schema.HubID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (hq *HubQuery) OnlyIDX(ctx context.Context) schema.HubID {
+func (hq *HubQuery) OnlyIDX(ctx context.Context) typeid.AnyID {
 	id, err := hq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -253,7 +253,7 @@ func (hq *HubQuery) AllX(ctx context.Context) []*Hub {
 }
 
 // IDs executes the query and returns a list of Hub IDs.
-func (hq *HubQuery) IDs(ctx context.Context) (ids []schema.HubID, err error) {
+func (hq *HubQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) {
 	if hq.ctx.Unique == nil && hq.path != nil {
 		hq.Unique(true)
 	}
@@ -265,7 +265,7 @@ func (hq *HubQuery) IDs(ctx context.Context) (ids []schema.HubID, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (hq *HubQuery) IDsX(ctx context.Context) []schema.HubID {
+func (hq *HubQuery) IDsX(ctx context.Context) []typeid.AnyID {
 	ids, err := hq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -500,7 +500,7 @@ func (hq *HubQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Hub, err
 
 func (hq *HubQuery) loadDomain(ctx context.Context, query *DomainQuery, nodes []*Hub, init func(*Hub), assign func(*Hub, *Domain)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[schema.HubID]*Hub)
+	nodeids := make(map[typeid.AnyID]*Hub)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -527,8 +527,8 @@ func (hq *HubQuery) loadDomain(ctx context.Context, query *DomainQuery, nodes []
 	return nil
 }
 func (hq *HubQuery) loadOrganization(ctx context.Context, query *OrganizationQuery, nodes []*Hub, init func(*Hub), assign func(*Hub, *Organization)) error {
-	ids := make([]schema.OrganizationID, 0, len(nodes))
-	nodeids := make(map[schema.OrganizationID][]*Hub)
+	ids := make([]typeid.AnyID, 0, len(nodes))
+	nodeids := make(map[typeid.AnyID][]*Hub)
 	for i := range nodes {
 		if nodes[i].organization_id == nil {
 			continue
@@ -560,7 +560,7 @@ func (hq *HubQuery) loadOrganization(ctx context.Context, query *OrganizationQue
 }
 func (hq *HubQuery) loadLinks(ctx context.Context, query *LinkQuery, nodes []*Hub, init func(*Hub), assign func(*Hub, *Link)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[schema.HubID]*Hub)
+	nodeids := make(map[typeid.AnyID]*Hub)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -600,7 +600,7 @@ func (hq *HubQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (hq *HubQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(enthub.Table, enthub.Columns, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewQuerySpec(enthub.Table, enthub.Columns, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString))
 	_spec.From = hq.sql
 	if unique := hq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

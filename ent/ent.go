@@ -18,6 +18,7 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/person"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -82,6 +83,7 @@ func checkColumn(table, column string) error {
 			enthub.Table:       enthub.ValidColumn,
 			link.Table:         link.ValidColumn,
 			organization.Table: organization.ValidColumn,
+			person.Table:       person.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

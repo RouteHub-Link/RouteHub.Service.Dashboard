@@ -12,8 +12,7 @@ type ServerEchoContext struct {
 }
 
 const (
-	loggerKey         = "logger"
-	clientServicesKey = "clientServices"
+	loggerKey = "logger"
 )
 
 func ApplyMiddleware(e *echo.Echo) {

@@ -5,6 +5,8 @@ import (
 
 	"RouteHub.Service.Dashboard/ent"
 	"RouteHub.Service.Dashboard/web/extensions"
+	"github.com/labstack/echo/v4"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
 )
 
 type PageHandler struct {
@@ -19,4 +21,20 @@ func NewPageHandler(logger *slog.Logger, authorizer *extensions.Authorizer, ent 
 		Authorizer: authorizer,
 		Ent:        ent,
 	}
+}
+
+func (ph PageHandler) GetUserInfo(c echo.Context) (*oidc.UserInfo, error) {
+
+	var userInfo *oidc.UserInfo
+	data, err := ph.Authorizer.AUTHN.IsAuthenticated(c.Request())
+
+	if err != nil {
+		return nil, err
+	}
+
+	userInfo = data.GetUserInfo()
+
+	ph.Logger.Info("User info", "data", userInfo)
+
+	return userInfo, nil
 }

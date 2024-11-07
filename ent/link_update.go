@@ -10,12 +10,12 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // LinkUpdate is the builder for updating Link entities.
@@ -94,7 +94,7 @@ func (lu *LinkUpdate) SetNillableStatus(es *enums.StatusState) *LinkUpdate {
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (lu *LinkUpdate) SetHubID(id schema.HubID) *LinkUpdate {
+func (lu *LinkUpdate) SetHubID(id typeid.AnyID) *LinkUpdate {
 	lu.mutation.SetHubID(id)
 	return lu
 }
@@ -169,7 +169,7 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := lu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(link.Table, link.Columns, sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(link.Table, link.Columns, sqlgraph.NewFieldSpec(link.FieldID, field.TypeString))
 	if ps := lu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -200,7 +200,7 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -213,7 +213,7 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -304,7 +304,7 @@ func (luo *LinkUpdateOne) SetNillableStatus(es *enums.StatusState) *LinkUpdateOn
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (luo *LinkUpdateOne) SetHubID(id schema.HubID) *LinkUpdateOne {
+func (luo *LinkUpdateOne) SetHubID(id typeid.AnyID) *LinkUpdateOne {
 	luo.mutation.SetHubID(id)
 	return luo
 }
@@ -392,7 +392,7 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) 
 	if err := luo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(link.Table, link.Columns, sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(link.Table, link.Columns, sqlgraph.NewFieldSpec(link.FieldID, field.TypeString))
 	id, ok := luo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Link.id" for update`)}
@@ -440,7 +440,7 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) 
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -453,7 +453,7 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) 
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

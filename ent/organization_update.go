@@ -10,12 +10,13 @@ import (
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // OrganizationUpdate is the builder for updating Organization entities.
@@ -85,23 +86,23 @@ func (ou *OrganizationUpdate) ClearDescription() *OrganizationUpdate {
 	return ou
 }
 
-// SetLocagtion sets the "locagtion" field.
-func (ou *OrganizationUpdate) SetLocagtion(s string) *OrganizationUpdate {
-	ou.mutation.SetLocagtion(s)
+// SetLocation sets the "location" field.
+func (ou *OrganizationUpdate) SetLocation(s string) *OrganizationUpdate {
+	ou.mutation.SetLocation(s)
 	return ou
 }
 
-// SetNillableLocagtion sets the "locagtion" field if the given value is not nil.
-func (ou *OrganizationUpdate) SetNillableLocagtion(s *string) *OrganizationUpdate {
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableLocation(s *string) *OrganizationUpdate {
 	if s != nil {
-		ou.SetLocagtion(*s)
+		ou.SetLocation(*s)
 	}
 	return ou
 }
 
-// ClearLocagtion clears the value of the "locagtion" field.
-func (ou *OrganizationUpdate) ClearLocagtion() *OrganizationUpdate {
-	ou.mutation.ClearLocagtion()
+// ClearLocation clears the value of the "location" field.
+func (ou *OrganizationUpdate) ClearLocation() *OrganizationUpdate {
+	ou.mutation.ClearLocation()
 	return ou
 }
 
@@ -126,14 +127,14 @@ func (ou *OrganizationUpdate) ClearSocialMedias() *OrganizationUpdate {
 }
 
 // AddDomainIDs adds the "domains" edge to the Domain entity by IDs.
-func (ou *OrganizationUpdate) AddDomainIDs(ids ...schema.DomainID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddDomainIDs(ids ...typeid.AnyID) *OrganizationUpdate {
 	ou.mutation.AddDomainIDs(ids...)
 	return ou
 }
 
 // AddDomains adds the "domains" edges to the Domain entity.
 func (ou *OrganizationUpdate) AddDomains(d ...*Domain) *OrganizationUpdate {
-	ids := make([]schema.DomainID, len(d))
+	ids := make([]typeid.AnyID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -141,18 +142,33 @@ func (ou *OrganizationUpdate) AddDomains(d ...*Domain) *OrganizationUpdate {
 }
 
 // AddHubIDs adds the "hubs" edge to the Hub entity by IDs.
-func (ou *OrganizationUpdate) AddHubIDs(ids ...schema.HubID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddHubIDs(ids ...typeid.AnyID) *OrganizationUpdate {
 	ou.mutation.AddHubIDs(ids...)
 	return ou
 }
 
 // AddHubs adds the "hubs" edges to the Hub entity.
 func (ou *OrganizationUpdate) AddHubs(h ...*Hub) *OrganizationUpdate {
-	ids := make([]schema.HubID, len(h))
+	ids := make([]typeid.AnyID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
 	return ou.AddHubIDs(ids...)
+}
+
+// AddPersonIDs adds the "persons" edge to the Person entity by IDs.
+func (ou *OrganizationUpdate) AddPersonIDs(ids ...typeid.AnyID) *OrganizationUpdate {
+	ou.mutation.AddPersonIDs(ids...)
+	return ou
+}
+
+// AddPersons adds the "persons" edges to the Person entity.
+func (ou *OrganizationUpdate) AddPersons(p ...*Person) *OrganizationUpdate {
+	ids := make([]typeid.AnyID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ou.AddPersonIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -167,14 +183,14 @@ func (ou *OrganizationUpdate) ClearDomains() *OrganizationUpdate {
 }
 
 // RemoveDomainIDs removes the "domains" edge to Domain entities by IDs.
-func (ou *OrganizationUpdate) RemoveDomainIDs(ids ...schema.DomainID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemoveDomainIDs(ids ...typeid.AnyID) *OrganizationUpdate {
 	ou.mutation.RemoveDomainIDs(ids...)
 	return ou
 }
 
 // RemoveDomains removes "domains" edges to Domain entities.
 func (ou *OrganizationUpdate) RemoveDomains(d ...*Domain) *OrganizationUpdate {
-	ids := make([]schema.DomainID, len(d))
+	ids := make([]typeid.AnyID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -188,18 +204,39 @@ func (ou *OrganizationUpdate) ClearHubs() *OrganizationUpdate {
 }
 
 // RemoveHubIDs removes the "hubs" edge to Hub entities by IDs.
-func (ou *OrganizationUpdate) RemoveHubIDs(ids ...schema.HubID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemoveHubIDs(ids ...typeid.AnyID) *OrganizationUpdate {
 	ou.mutation.RemoveHubIDs(ids...)
 	return ou
 }
 
 // RemoveHubs removes "hubs" edges to Hub entities.
 func (ou *OrganizationUpdate) RemoveHubs(h ...*Hub) *OrganizationUpdate {
-	ids := make([]schema.HubID, len(h))
+	ids := make([]typeid.AnyID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
 	return ou.RemoveHubIDs(ids...)
+}
+
+// ClearPersons clears all "persons" edges to the Person entity.
+func (ou *OrganizationUpdate) ClearPersons() *OrganizationUpdate {
+	ou.mutation.ClearPersons()
+	return ou
+}
+
+// RemovePersonIDs removes the "persons" edge to Person entities by IDs.
+func (ou *OrganizationUpdate) RemovePersonIDs(ids ...typeid.AnyID) *OrganizationUpdate {
+	ou.mutation.RemovePersonIDs(ids...)
+	return ou
+}
+
+// RemovePersons removes "persons" edges to Person entities.
+func (ou *OrganizationUpdate) RemovePersons(p ...*Person) *OrganizationUpdate {
+	ids := make([]typeid.AnyID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ou.RemovePersonIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -243,7 +280,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ou.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString))
 	if ps := ou.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -266,11 +303,11 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ou.mutation.DescriptionCleared() {
 		_spec.ClearField(organization.FieldDescription, field.TypeString)
 	}
-	if value, ok := ou.mutation.Locagtion(); ok {
-		_spec.SetField(organization.FieldLocagtion, field.TypeString, value)
+	if value, ok := ou.mutation.Location(); ok {
+		_spec.SetField(organization.FieldLocation, field.TypeString, value)
 	}
-	if ou.mutation.LocagtionCleared() {
-		_spec.ClearField(organization.FieldLocagtion, field.TypeString)
+	if ou.mutation.LocationCleared() {
+		_spec.ClearField(organization.FieldLocation, field.TypeString)
 	}
 	if value, ok := ou.mutation.SocialMedias(); ok {
 		_spec.SetField(organization.FieldSocialMedias, field.TypeJSON, value)
@@ -286,7 +323,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.DomainsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -299,7 +336,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.DomainsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -315,7 +352,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.DomainsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -331,7 +368,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.HubsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -344,7 +381,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.HubsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -360,7 +397,52 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.HubsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ou.mutation.PersonsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.PersonsTable,
+			Columns: []string{organization.PersonsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(person.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedPersonsIDs(); len(nodes) > 0 && !ou.mutation.PersonsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.PersonsTable,
+			Columns: []string{organization.PersonsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(person.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.PersonsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.PersonsTable,
+			Columns: []string{organization.PersonsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(person.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -442,23 +524,23 @@ func (ouo *OrganizationUpdateOne) ClearDescription() *OrganizationUpdateOne {
 	return ouo
 }
 
-// SetLocagtion sets the "locagtion" field.
-func (ouo *OrganizationUpdateOne) SetLocagtion(s string) *OrganizationUpdateOne {
-	ouo.mutation.SetLocagtion(s)
+// SetLocation sets the "location" field.
+func (ouo *OrganizationUpdateOne) SetLocation(s string) *OrganizationUpdateOne {
+	ouo.mutation.SetLocation(s)
 	return ouo
 }
 
-// SetNillableLocagtion sets the "locagtion" field if the given value is not nil.
-func (ouo *OrganizationUpdateOne) SetNillableLocagtion(s *string) *OrganizationUpdateOne {
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableLocation(s *string) *OrganizationUpdateOne {
 	if s != nil {
-		ouo.SetLocagtion(*s)
+		ouo.SetLocation(*s)
 	}
 	return ouo
 }
 
-// ClearLocagtion clears the value of the "locagtion" field.
-func (ouo *OrganizationUpdateOne) ClearLocagtion() *OrganizationUpdateOne {
-	ouo.mutation.ClearLocagtion()
+// ClearLocation clears the value of the "location" field.
+func (ouo *OrganizationUpdateOne) ClearLocation() *OrganizationUpdateOne {
+	ouo.mutation.ClearLocation()
 	return ouo
 }
 
@@ -483,14 +565,14 @@ func (ouo *OrganizationUpdateOne) ClearSocialMedias() *OrganizationUpdateOne {
 }
 
 // AddDomainIDs adds the "domains" edge to the Domain entity by IDs.
-func (ouo *OrganizationUpdateOne) AddDomainIDs(ids ...schema.DomainID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddDomainIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
 	ouo.mutation.AddDomainIDs(ids...)
 	return ouo
 }
 
 // AddDomains adds the "domains" edges to the Domain entity.
 func (ouo *OrganizationUpdateOne) AddDomains(d ...*Domain) *OrganizationUpdateOne {
-	ids := make([]schema.DomainID, len(d))
+	ids := make([]typeid.AnyID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -498,18 +580,33 @@ func (ouo *OrganizationUpdateOne) AddDomains(d ...*Domain) *OrganizationUpdateOn
 }
 
 // AddHubIDs adds the "hubs" edge to the Hub entity by IDs.
-func (ouo *OrganizationUpdateOne) AddHubIDs(ids ...schema.HubID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddHubIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
 	ouo.mutation.AddHubIDs(ids...)
 	return ouo
 }
 
 // AddHubs adds the "hubs" edges to the Hub entity.
 func (ouo *OrganizationUpdateOne) AddHubs(h ...*Hub) *OrganizationUpdateOne {
-	ids := make([]schema.HubID, len(h))
+	ids := make([]typeid.AnyID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
 	return ouo.AddHubIDs(ids...)
+}
+
+// AddPersonIDs adds the "persons" edge to the Person entity by IDs.
+func (ouo *OrganizationUpdateOne) AddPersonIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
+	ouo.mutation.AddPersonIDs(ids...)
+	return ouo
+}
+
+// AddPersons adds the "persons" edges to the Person entity.
+func (ouo *OrganizationUpdateOne) AddPersons(p ...*Person) *OrganizationUpdateOne {
+	ids := make([]typeid.AnyID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ouo.AddPersonIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -524,14 +621,14 @@ func (ouo *OrganizationUpdateOne) ClearDomains() *OrganizationUpdateOne {
 }
 
 // RemoveDomainIDs removes the "domains" edge to Domain entities by IDs.
-func (ouo *OrganizationUpdateOne) RemoveDomainIDs(ids ...schema.DomainID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemoveDomainIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
 	ouo.mutation.RemoveDomainIDs(ids...)
 	return ouo
 }
 
 // RemoveDomains removes "domains" edges to Domain entities.
 func (ouo *OrganizationUpdateOne) RemoveDomains(d ...*Domain) *OrganizationUpdateOne {
-	ids := make([]schema.DomainID, len(d))
+	ids := make([]typeid.AnyID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -545,18 +642,39 @@ func (ouo *OrganizationUpdateOne) ClearHubs() *OrganizationUpdateOne {
 }
 
 // RemoveHubIDs removes the "hubs" edge to Hub entities by IDs.
-func (ouo *OrganizationUpdateOne) RemoveHubIDs(ids ...schema.HubID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemoveHubIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
 	ouo.mutation.RemoveHubIDs(ids...)
 	return ouo
 }
 
 // RemoveHubs removes "hubs" edges to Hub entities.
 func (ouo *OrganizationUpdateOne) RemoveHubs(h ...*Hub) *OrganizationUpdateOne {
-	ids := make([]schema.HubID, len(h))
+	ids := make([]typeid.AnyID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
 	return ouo.RemoveHubIDs(ids...)
+}
+
+// ClearPersons clears all "persons" edges to the Person entity.
+func (ouo *OrganizationUpdateOne) ClearPersons() *OrganizationUpdateOne {
+	ouo.mutation.ClearPersons()
+	return ouo
+}
+
+// RemovePersonIDs removes the "persons" edge to Person entities by IDs.
+func (ouo *OrganizationUpdateOne) RemovePersonIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
+	ouo.mutation.RemovePersonIDs(ids...)
+	return ouo
+}
+
+// RemovePersons removes "persons" edges to Person entities.
+func (ouo *OrganizationUpdateOne) RemovePersons(p ...*Person) *OrganizationUpdateOne {
+	ids := make([]typeid.AnyID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ouo.RemovePersonIDs(ids...)
 }
 
 // Where appends a list predicates to the OrganizationUpdate builder.
@@ -613,7 +731,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	if err := ouo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString))
 	id, ok := ouo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Organization.id" for update`)}
@@ -653,11 +771,11 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	if ouo.mutation.DescriptionCleared() {
 		_spec.ClearField(organization.FieldDescription, field.TypeString)
 	}
-	if value, ok := ouo.mutation.Locagtion(); ok {
-		_spec.SetField(organization.FieldLocagtion, field.TypeString, value)
+	if value, ok := ouo.mutation.Location(); ok {
+		_spec.SetField(organization.FieldLocation, field.TypeString, value)
 	}
-	if ouo.mutation.LocagtionCleared() {
-		_spec.ClearField(organization.FieldLocagtion, field.TypeString)
+	if ouo.mutation.LocationCleared() {
+		_spec.ClearField(organization.FieldLocation, field.TypeString)
 	}
 	if value, ok := ouo.mutation.SocialMedias(); ok {
 		_spec.SetField(organization.FieldSocialMedias, field.TypeJSON, value)
@@ -673,7 +791,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.DomainsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -686,7 +804,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.DomainsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -702,7 +820,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.DomainsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -718,7 +836,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.HubsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -731,7 +849,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.HubsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -747,7 +865,52 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.HubsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.PersonsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.PersonsTable,
+			Columns: []string{organization.PersonsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(person.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedPersonsIDs(); len(nodes) > 0 && !ouo.mutation.PersonsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.PersonsTable,
+			Columns: []string{organization.PersonsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(person.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.PersonsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.PersonsTable,
+			Columns: []string{organization.PersonsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(person.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

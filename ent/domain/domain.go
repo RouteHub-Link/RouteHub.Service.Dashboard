@@ -5,10 +5,10 @@ package entdomain
 import (
 	"fmt"
 
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"go.jetify.com/typeid"
 )
 
 const (
@@ -80,7 +80,7 @@ var (
 	// URLValidator is a validator for the "url" field. It is called by the builders before save.
 	URLValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() schema.DomainID
+	DefaultID func() typeid.AnyID
 )
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.

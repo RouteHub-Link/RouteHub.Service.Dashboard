@@ -4,54 +4,54 @@ package link
 
 import (
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"go.jetify.com/typeid"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id schema.LinkID) predicate.Link {
+func ID(id typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id schema.LinkID) predicate.Link {
+func IDEQ(id typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id schema.LinkID) predicate.Link {
+func IDNEQ(id typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...schema.LinkID) predicate.Link {
+func IDIn(ids ...typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...schema.LinkID) predicate.Link {
+func IDNotIn(ids ...typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id schema.LinkID) predicate.Link {
+func IDGT(id typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id schema.LinkID) predicate.Link {
+func IDGTE(id typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id schema.LinkID) predicate.Link {
+func IDLT(id typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id schema.LinkID) predicate.Link {
+func IDLTE(id typeid.AnyID) predicate.Link {
 	return predicate.Link(sql.FieldLTE(FieldID, id))
 }
 

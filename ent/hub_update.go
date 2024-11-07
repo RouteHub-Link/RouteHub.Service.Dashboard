@@ -12,13 +12,13 @@ import (
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // HubUpdate is the builder for updating Hub entities.
@@ -62,13 +62,13 @@ func (hu *HubUpdate) SetNillableSlug(s *string) *HubUpdate {
 	return hu
 }
 
-// SetHubDetails sets the "Hub_details" field.
+// SetHubDetails sets the "hub_details" field.
 func (hu *HubUpdate) SetHubDetails(td types.HubDetails) *HubUpdate {
 	hu.mutation.SetHubDetails(td)
 	return hu
 }
 
-// SetNillableHubDetails sets the "Hub_details" field if the given value is not nil.
+// SetNillableHubDetails sets the "hub_details" field if the given value is not nil.
 func (hu *HubUpdate) SetNillableHubDetails(td *types.HubDetails) *HubUpdate {
 	if td != nil {
 		hu.SetHubDetails(*td)
@@ -76,19 +76,19 @@ func (hu *HubUpdate) SetNillableHubDetails(td *types.HubDetails) *HubUpdate {
 	return hu
 }
 
-// ClearHubDetails clears the value of the "Hub_details" field.
+// ClearHubDetails clears the value of the "hub_details" field.
 func (hu *HubUpdate) ClearHubDetails() *HubUpdate {
 	hu.mutation.ClearHubDetails()
 	return hu
 }
 
-// SetTCPAddress sets the "TCPAddress" field.
+// SetTCPAddress sets the "tcp_address" field.
 func (hu *HubUpdate) SetTCPAddress(s string) *HubUpdate {
 	hu.mutation.SetTCPAddress(s)
 	return hu
 }
 
-// SetNillableTCPAddress sets the "TCPAddress" field if the given value is not nil.
+// SetNillableTCPAddress sets the "tcp_address" field if the given value is not nil.
 func (hu *HubUpdate) SetNillableTCPAddress(s *string) *HubUpdate {
 	if s != nil {
 		hu.SetTCPAddress(*s)
@@ -125,7 +125,7 @@ func (hu *HubUpdate) SetNillableDefaultRedirection(ho *hub.RedirectionOption) *H
 }
 
 // SetDomainID sets the "domain" edge to the Domain entity by ID.
-func (hu *HubUpdate) SetDomainID(id schema.DomainID) *HubUpdate {
+func (hu *HubUpdate) SetDomainID(id typeid.AnyID) *HubUpdate {
 	hu.mutation.SetDomainID(id)
 	return hu
 }
@@ -136,7 +136,7 @@ func (hu *HubUpdate) SetDomain(d *Domain) *HubUpdate {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (hu *HubUpdate) SetOrganizationID(id schema.OrganizationID) *HubUpdate {
+func (hu *HubUpdate) SetOrganizationID(id typeid.AnyID) *HubUpdate {
 	hu.mutation.SetOrganizationID(id)
 	return hu
 }
@@ -147,14 +147,14 @@ func (hu *HubUpdate) SetOrganization(o *Organization) *HubUpdate {
 }
 
 // AddLinkIDs adds the "links" edge to the Link entity by IDs.
-func (hu *HubUpdate) AddLinkIDs(ids ...schema.LinkID) *HubUpdate {
+func (hu *HubUpdate) AddLinkIDs(ids ...typeid.AnyID) *HubUpdate {
 	hu.mutation.AddLinkIDs(ids...)
 	return hu
 }
 
 // AddLinks adds the "links" edges to the Link entity.
 func (hu *HubUpdate) AddLinks(l ...*Link) *HubUpdate {
-	ids := make([]schema.LinkID, len(l))
+	ids := make([]typeid.AnyID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -185,14 +185,14 @@ func (hu *HubUpdate) ClearLinks() *HubUpdate {
 }
 
 // RemoveLinkIDs removes the "links" edge to Link entities by IDs.
-func (hu *HubUpdate) RemoveLinkIDs(ids ...schema.LinkID) *HubUpdate {
+func (hu *HubUpdate) RemoveLinkIDs(ids ...typeid.AnyID) *HubUpdate {
 	hu.mutation.RemoveLinkIDs(ids...)
 	return hu
 }
 
 // RemoveLinks removes "links" edges to Link entities.
 func (hu *HubUpdate) RemoveLinks(l ...*Link) *HubUpdate {
-	ids := make([]schema.LinkID, len(l))
+	ids := make([]typeid.AnyID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -240,7 +240,7 @@ func (hu *HubUpdate) check() error {
 	}
 	if v, ok := hu.mutation.TCPAddress(); ok {
 		if err := enthub.TCPAddressValidator(v); err != nil {
-			return &ValidationError{Name: "TCPAddress", err: fmt.Errorf(`ent: validator failed for field "Hub.TCPAddress": %w`, err)}
+			return &ValidationError{Name: "tcp_address", err: fmt.Errorf(`ent: validator failed for field "Hub.tcp_address": %w`, err)}
 		}
 	}
 	if v, ok := hu.mutation.Status(); ok {
@@ -266,7 +266,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := hu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(enthub.Table, enthub.Columns, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(enthub.Table, enthub.Columns, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString))
 	if ps := hu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -303,7 +303,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{enthub.DomainColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -316,7 +316,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{enthub.DomainColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -332,7 +332,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{enthub.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -345,7 +345,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{enthub.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -361,7 +361,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{enthub.LinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -374,7 +374,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{enthub.LinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -390,7 +390,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{enthub.LinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -446,13 +446,13 @@ func (huo *HubUpdateOne) SetNillableSlug(s *string) *HubUpdateOne {
 	return huo
 }
 
-// SetHubDetails sets the "Hub_details" field.
+// SetHubDetails sets the "hub_details" field.
 func (huo *HubUpdateOne) SetHubDetails(td types.HubDetails) *HubUpdateOne {
 	huo.mutation.SetHubDetails(td)
 	return huo
 }
 
-// SetNillableHubDetails sets the "Hub_details" field if the given value is not nil.
+// SetNillableHubDetails sets the "hub_details" field if the given value is not nil.
 func (huo *HubUpdateOne) SetNillableHubDetails(td *types.HubDetails) *HubUpdateOne {
 	if td != nil {
 		huo.SetHubDetails(*td)
@@ -460,19 +460,19 @@ func (huo *HubUpdateOne) SetNillableHubDetails(td *types.HubDetails) *HubUpdateO
 	return huo
 }
 
-// ClearHubDetails clears the value of the "Hub_details" field.
+// ClearHubDetails clears the value of the "hub_details" field.
 func (huo *HubUpdateOne) ClearHubDetails() *HubUpdateOne {
 	huo.mutation.ClearHubDetails()
 	return huo
 }
 
-// SetTCPAddress sets the "TCPAddress" field.
+// SetTCPAddress sets the "tcp_address" field.
 func (huo *HubUpdateOne) SetTCPAddress(s string) *HubUpdateOne {
 	huo.mutation.SetTCPAddress(s)
 	return huo
 }
 
-// SetNillableTCPAddress sets the "TCPAddress" field if the given value is not nil.
+// SetNillableTCPAddress sets the "tcp_address" field if the given value is not nil.
 func (huo *HubUpdateOne) SetNillableTCPAddress(s *string) *HubUpdateOne {
 	if s != nil {
 		huo.SetTCPAddress(*s)
@@ -509,7 +509,7 @@ func (huo *HubUpdateOne) SetNillableDefaultRedirection(ho *hub.RedirectionOption
 }
 
 // SetDomainID sets the "domain" edge to the Domain entity by ID.
-func (huo *HubUpdateOne) SetDomainID(id schema.DomainID) *HubUpdateOne {
+func (huo *HubUpdateOne) SetDomainID(id typeid.AnyID) *HubUpdateOne {
 	huo.mutation.SetDomainID(id)
 	return huo
 }
@@ -520,7 +520,7 @@ func (huo *HubUpdateOne) SetDomain(d *Domain) *HubUpdateOne {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (huo *HubUpdateOne) SetOrganizationID(id schema.OrganizationID) *HubUpdateOne {
+func (huo *HubUpdateOne) SetOrganizationID(id typeid.AnyID) *HubUpdateOne {
 	huo.mutation.SetOrganizationID(id)
 	return huo
 }
@@ -531,14 +531,14 @@ func (huo *HubUpdateOne) SetOrganization(o *Organization) *HubUpdateOne {
 }
 
 // AddLinkIDs adds the "links" edge to the Link entity by IDs.
-func (huo *HubUpdateOne) AddLinkIDs(ids ...schema.LinkID) *HubUpdateOne {
+func (huo *HubUpdateOne) AddLinkIDs(ids ...typeid.AnyID) *HubUpdateOne {
 	huo.mutation.AddLinkIDs(ids...)
 	return huo
 }
 
 // AddLinks adds the "links" edges to the Link entity.
 func (huo *HubUpdateOne) AddLinks(l ...*Link) *HubUpdateOne {
-	ids := make([]schema.LinkID, len(l))
+	ids := make([]typeid.AnyID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -569,14 +569,14 @@ func (huo *HubUpdateOne) ClearLinks() *HubUpdateOne {
 }
 
 // RemoveLinkIDs removes the "links" edge to Link entities by IDs.
-func (huo *HubUpdateOne) RemoveLinkIDs(ids ...schema.LinkID) *HubUpdateOne {
+func (huo *HubUpdateOne) RemoveLinkIDs(ids ...typeid.AnyID) *HubUpdateOne {
 	huo.mutation.RemoveLinkIDs(ids...)
 	return huo
 }
 
 // RemoveLinks removes "links" edges to Link entities.
 func (huo *HubUpdateOne) RemoveLinks(l ...*Link) *HubUpdateOne {
-	ids := make([]schema.LinkID, len(l))
+	ids := make([]typeid.AnyID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -637,7 +637,7 @@ func (huo *HubUpdateOne) check() error {
 	}
 	if v, ok := huo.mutation.TCPAddress(); ok {
 		if err := enthub.TCPAddressValidator(v); err != nil {
-			return &ValidationError{Name: "TCPAddress", err: fmt.Errorf(`ent: validator failed for field "Hub.TCPAddress": %w`, err)}
+			return &ValidationError{Name: "tcp_address", err: fmt.Errorf(`ent: validator failed for field "Hub.tcp_address": %w`, err)}
 		}
 	}
 	if v, ok := huo.mutation.Status(); ok {
@@ -663,7 +663,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 	if err := huo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(enthub.Table, enthub.Columns, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(enthub.Table, enthub.Columns, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString))
 	id, ok := huo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Hub.id" for update`)}
@@ -717,7 +717,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 			Columns: []string{enthub.DomainColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -730,7 +730,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 			Columns: []string{enthub.DomainColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -746,7 +746,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 			Columns: []string{enthub.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -759,7 +759,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 			Columns: []string{enthub.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -775,7 +775,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 			Columns: []string{enthub.LinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -788,7 +788,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 			Columns: []string{enthub.LinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -804,7 +804,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 			Columns: []string{enthub.LinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

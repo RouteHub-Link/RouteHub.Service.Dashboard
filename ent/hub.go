@@ -10,27 +10,27 @@ import (
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"go.jetify.com/typeid"
 )
 
 // Hub is the model entity for the Hub schema.
 type Hub struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID schema.HubID `json:"id,omitempty"`
+	ID typeid.AnyID `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Slug holds the value of the "slug" field.
 	Slug string `json:"slug,omitempty"`
-	// HubDetails holds the value of the "Hub_details" field.
-	HubDetails types.HubDetails `json:"Hub_details,omitempty"`
-	// TCPAddress holds the value of the "TCPAddress" field.
-	TCPAddress string `json:"TCPAddress,omitempty"`
+	// HubDetails holds the value of the "hub_details" field.
+	HubDetails types.HubDetails `json:"hub_details,omitempty"`
+	// TCPAddress holds the value of the "tcp_address" field.
+	TCPAddress string `json:"tcp_address,omitempty"`
 	// Status holds the value of the "status" field.
 	Status enums.StatusState `json:"status,omitempty"`
 	// DefaultRedirection holds the value of the "default_redirection" field.
@@ -38,7 +38,7 @@ type Hub struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the HubQuery when eager-loading is set.
 	Edges           HubEdges `json:"edges"`
-	organization_id *schema.OrganizationID
+	organization_id *typeid.AnyID
 	selectValues    sql.SelectValues
 }
 
@@ -97,12 +97,12 @@ func (*Hub) scanValues(columns []string) ([]any, error) {
 			values[i] = new(enums.StatusState)
 		case enthub.FieldDefaultRedirection:
 			values[i] = new(hub.RedirectionOption)
-		case enthub.FieldID:
-			values[i] = new(schema.HubID)
 		case enthub.FieldName, enthub.FieldSlug, enthub.FieldTCPAddress:
 			values[i] = new(sql.NullString)
+		case enthub.FieldID:
+			values[i] = new(typeid.AnyID)
 		case enthub.ForeignKeys[0]: // organization_id
-			values[i] = &sql.NullScanner{S: new(schema.OrganizationID)}
+			values[i] = &sql.NullScanner{S: new(typeid.AnyID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -119,7 +119,7 @@ func (h *Hub) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case enthub.FieldID:
-			if value, ok := values[i].(*schema.HubID); !ok {
+			if value, ok := values[i].(*typeid.AnyID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				h.ID = *value
@@ -138,15 +138,15 @@ func (h *Hub) assignValues(columns []string, values []any) error {
 			}
 		case enthub.FieldHubDetails:
 			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field Hub_details", values[i])
+				return fmt.Errorf("unexpected type %T for field hub_details", values[i])
 			} else if value != nil && len(*value) > 0 {
 				if err := json.Unmarshal(*value, &h.HubDetails); err != nil {
-					return fmt.Errorf("unmarshal field Hub_details: %w", err)
+					return fmt.Errorf("unmarshal field hub_details: %w", err)
 				}
 			}
 		case enthub.FieldTCPAddress:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field TCPAddress", values[i])
+				return fmt.Errorf("unexpected type %T for field tcp_address", values[i])
 			} else if value.Valid {
 				h.TCPAddress = value.String
 			}
@@ -166,8 +166,8 @@ func (h *Hub) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
 			} else if value.Valid {
-				h.organization_id = new(schema.OrganizationID)
-				*h.organization_id = *value.S.(*schema.OrganizationID)
+				h.organization_id = new(typeid.AnyID)
+				*h.organization_id = *value.S.(*typeid.AnyID)
 			}
 		default:
 			h.selectValues.Set(columns[i], values[i])
@@ -226,10 +226,10 @@ func (h *Hub) String() string {
 	builder.WriteString("slug=")
 	builder.WriteString(h.Slug)
 	builder.WriteString(", ")
-	builder.WriteString("Hub_details=")
+	builder.WriteString("hub_details=")
 	builder.WriteString(fmt.Sprintf("%v", h.HubDetails))
 	builder.WriteString(", ")
-	builder.WriteString("TCPAddress=")
+	builder.WriteString("tcp_address=")
 	builder.WriteString(h.TCPAddress)
 	builder.WriteString(", ")
 	builder.WriteString("status=")

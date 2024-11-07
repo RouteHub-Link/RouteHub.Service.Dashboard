@@ -10,19 +10,20 @@ import (
 type OTELConfig struct {
 	CollectorEndpoint string `env:"OTEL_COLLECTOR_ENDPOINT" envDefault:"localhost:4317"`
 	ServiceName       string `env:"OTEL_SERVICE_NAME" envDefault:"RouteHub.Dashboard"`
+	Headers           string `env:"OTEL_HEADERS" envDefault:""`
 	Enabled           bool   `env:"OTEL_ENABLED" envDefault:"false"`
 	Insecure          bool   `env:"OTEL_INSECURE" envDefault:"true"`
 }
 
 func (o *OTELConfig) String() string {
-	return fmt.Sprintf("OTELConfig; CollectorEndpoint: %s ServiceName: %s Enabled: %t Insecure: %t ", o.GetCollectorEndpoint(), o.GetServiceName(), o.IsEnabled(), o.IsInsecure())
+	return fmt.Sprintf("OTELConfig; CollectorEndpoint: %s ServiceName: %s Enabled: %t Insecure: %t Headers: %s", o.CollectorEndpoint, o.ServiceName, o.Enabled, o.Insecure, o.Headers)
 }
 func (o *OTELConfig) IsEmpty() bool {
 	if o == nil {
 		return true
 	}
 
-	return o.CollectorEndpoint == "" && o.ServiceName == "" && !o.Enabled && !o.Insecure
+	return o.CollectorEndpoint == "" && o.ServiceName == "" && !o.Enabled && !o.Insecure && o.Headers == ""
 }
 
 func (o *OTELConfig) GetCollectorEndpoint() string {
@@ -43,6 +44,10 @@ func (o *OTELConfig) IsInsecure() bool {
 
 func (o *OTELConfig) IsInsecureAsString() string {
 	return strconv.FormatBool(o.Insecure)
+}
+
+func (o *OTELConfig) GetHeaders() string {
+	return o.Headers
 }
 
 func (o *OTELConfig) Parse(config *Config) {

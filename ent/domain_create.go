@@ -10,10 +10,10 @@ import (
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // DomainCreate is the builder for creating a Domain entity.
@@ -42,27 +42,27 @@ func (dc *DomainCreate) SetStatus(ds domain.DomainState) *DomainCreate {
 }
 
 // SetID sets the "id" field.
-func (dc *DomainCreate) SetID(si schema.DomainID) *DomainCreate {
-	dc.mutation.SetID(si)
+func (dc *DomainCreate) SetID(ti typeid.AnyID) *DomainCreate {
+	dc.mutation.SetID(ti)
 	return dc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (dc *DomainCreate) SetNillableID(si *schema.DomainID) *DomainCreate {
-	if si != nil {
-		dc.SetID(*si)
+func (dc *DomainCreate) SetNillableID(ti *typeid.AnyID) *DomainCreate {
+	if ti != nil {
+		dc.SetID(*ti)
 	}
 	return dc
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (dc *DomainCreate) SetHubID(id schema.HubID) *DomainCreate {
+func (dc *DomainCreate) SetHubID(id typeid.AnyID) *DomainCreate {
 	dc.mutation.SetHubID(id)
 	return dc
 }
 
 // SetNillableHubID sets the "hub" edge to the Hub entity by ID if the given value is not nil.
-func (dc *DomainCreate) SetNillableHubID(id *schema.HubID) *DomainCreate {
+func (dc *DomainCreate) SetNillableHubID(id *typeid.AnyID) *DomainCreate {
 	if id != nil {
 		dc = dc.SetHubID(*id)
 	}
@@ -75,7 +75,7 @@ func (dc *DomainCreate) SetHub(h *Hub) *DomainCreate {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (dc *DomainCreate) SetOrganizationID(id schema.OrganizationID) *DomainCreate {
+func (dc *DomainCreate) SetOrganizationID(id typeid.AnyID) *DomainCreate {
 	dc.mutation.SetOrganizationID(id)
 	return dc
 }
@@ -170,7 +170,7 @@ func (dc *DomainCreate) sqlSave(ctx context.Context) (*Domain, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*schema.DomainID); ok {
+		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
 			_node.ID = *id
 		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
 			return nil, err
@@ -184,7 +184,7 @@ func (dc *DomainCreate) sqlSave(ctx context.Context) (*Domain, error) {
 func (dc *DomainCreate) createSpec() (*Domain, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Domain{config: dc.config}
-		_spec = sqlgraph.NewCreateSpec(entdomain.Table, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(entdomain.Table, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString))
 	)
 	if id, ok := dc.mutation.ID(); ok {
 		_node.ID = id
@@ -210,7 +210,7 @@ func (dc *DomainCreate) createSpec() (*Domain, *sqlgraph.CreateSpec) {
 			Columns: []string{entdomain.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -227,7 +227,7 @@ func (dc *DomainCreate) createSpec() (*Domain, *sqlgraph.CreateSpec) {
 			Columns: []string{entdomain.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

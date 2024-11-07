@@ -23,5 +23,5 @@ func ConfigureRoutes(e *echo.Echo, config *configuration.Config, logger *slog.Lo
 	groups.ConfigurePageRoutes(e, webHandlers)
 	groups.MapMiscRoutes(e)
 
-	groups.ConfigureAuthRoutes(e, config.OAuth, authorizer)
+	groups.ConfigureAuthRoutes(e, config.OAuth, authorizer, ent)
 }

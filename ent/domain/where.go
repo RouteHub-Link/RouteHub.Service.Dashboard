@@ -4,54 +4,54 @@ package entdomain
 
 import (
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"go.jetify.com/typeid"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id schema.DomainID) predicate.Domain {
+func ID(id typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id schema.DomainID) predicate.Domain {
+func IDEQ(id typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id schema.DomainID) predicate.Domain {
+func IDNEQ(id typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...schema.DomainID) predicate.Domain {
+func IDIn(ids ...typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...schema.DomainID) predicate.Domain {
+func IDNotIn(ids ...typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id schema.DomainID) predicate.Domain {
+func IDGT(id typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id schema.DomainID) predicate.Domain {
+func IDGTE(id typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id schema.DomainID) predicate.Domain {
+func IDLT(id typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id schema.DomainID) predicate.Domain {
+func IDLTE(id typeid.AnyID) predicate.Domain {
 	return predicate.Domain(sql.FieldLTE(FieldID, id))
 }
 

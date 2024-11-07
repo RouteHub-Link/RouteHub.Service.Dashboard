@@ -11,11 +11,11 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // DomainQuery is the builder for querying Domain entities.
@@ -132,8 +132,8 @@ func (dq *DomainQuery) FirstX(ctx context.Context) *Domain {
 
 // FirstID returns the first Domain ID from the query.
 // Returns a *NotFoundError when no Domain ID was found.
-func (dq *DomainQuery) FirstID(ctx context.Context) (id schema.DomainID, err error) {
-	var ids []schema.DomainID
+func (dq *DomainQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error) {
+	var ids []typeid.AnyID
 	if ids, err = dq.Limit(1).IDs(setContextOp(ctx, dq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -145,7 +145,7 @@ func (dq *DomainQuery) FirstID(ctx context.Context) (id schema.DomainID, err err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (dq *DomainQuery) FirstIDX(ctx context.Context) schema.DomainID {
+func (dq *DomainQuery) FirstIDX(ctx context.Context) typeid.AnyID {
 	id, err := dq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -183,8 +183,8 @@ func (dq *DomainQuery) OnlyX(ctx context.Context) *Domain {
 // OnlyID is like Only, but returns the only Domain ID in the query.
 // Returns a *NotSingularError when more than one Domain ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (dq *DomainQuery) OnlyID(ctx context.Context) (id schema.DomainID, err error) {
-	var ids []schema.DomainID
+func (dq *DomainQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) {
+	var ids []typeid.AnyID
 	if ids, err = dq.Limit(2).IDs(setContextOp(ctx, dq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -200,7 +200,7 @@ func (dq *DomainQuery) OnlyID(ctx context.Context) (id schema.DomainID, err erro
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (dq *DomainQuery) OnlyIDX(ctx context.Context) schema.DomainID {
+func (dq *DomainQuery) OnlyIDX(ctx context.Context) typeid.AnyID {
 	id, err := dq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -228,7 +228,7 @@ func (dq *DomainQuery) AllX(ctx context.Context) []*Domain {
 }
 
 // IDs executes the query and returns a list of Domain IDs.
-func (dq *DomainQuery) IDs(ctx context.Context) (ids []schema.DomainID, err error) {
+func (dq *DomainQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) {
 	if dq.ctx.Unique == nil && dq.path != nil {
 		dq.Unique(true)
 	}
@@ -240,7 +240,7 @@ func (dq *DomainQuery) IDs(ctx context.Context) (ids []schema.DomainID, err erro
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (dq *DomainQuery) IDsX(ctx context.Context) []schema.DomainID {
+func (dq *DomainQuery) IDsX(ctx context.Context) []typeid.AnyID {
 	ids, err := dq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -454,8 +454,8 @@ func (dq *DomainQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Domai
 }
 
 func (dq *DomainQuery) loadHub(ctx context.Context, query *HubQuery, nodes []*Domain, init func(*Domain), assign func(*Domain, *Hub)) error {
-	ids := make([]schema.HubID, 0, len(nodes))
-	nodeids := make(map[schema.HubID][]*Domain)
+	ids := make([]typeid.AnyID, 0, len(nodes))
+	nodeids := make(map[typeid.AnyID][]*Domain)
 	for i := range nodes {
 		if nodes[i].domain_fk == nil {
 			continue
@@ -486,8 +486,8 @@ func (dq *DomainQuery) loadHub(ctx context.Context, query *HubQuery, nodes []*Do
 	return nil
 }
 func (dq *DomainQuery) loadOrganization(ctx context.Context, query *OrganizationQuery, nodes []*Domain, init func(*Domain), assign func(*Domain, *Organization)) error {
-	ids := make([]schema.OrganizationID, 0, len(nodes))
-	nodeids := make(map[schema.OrganizationID][]*Domain)
+	ids := make([]typeid.AnyID, 0, len(nodes))
+	nodeids := make(map[typeid.AnyID][]*Domain)
 	for i := range nodes {
 		if nodes[i].organization_id == nil {
 			continue
@@ -528,7 +528,7 @@ func (dq *DomainQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (dq *DomainQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(entdomain.Table, entdomain.Columns, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewQuerySpec(entdomain.Table, entdomain.Columns, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString))
 	_spec.From = dq.sql
 	if unique := dq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

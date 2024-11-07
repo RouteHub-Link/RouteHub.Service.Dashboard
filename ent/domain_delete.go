@@ -41,7 +41,7 @@ func (dd *DomainDelete) ExecX(ctx context.Context) int {
 }
 
 func (dd *DomainDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(entdomain.Table, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewDeleteSpec(entdomain.Table, sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString))
 	if ps := dd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

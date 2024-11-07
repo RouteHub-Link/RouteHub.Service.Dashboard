@@ -33,6 +33,6 @@ ent-generate:
 	@cd ent && go generate .
 
 postgres:
-	@echo "Running postgres container on port 5432..."
-	@docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+	@echo "Running postgres container on port 5433..."
+	@docker run --name rh-postgres -e POSTGRES_PASSWORD=postgres -p 5433:5432 -d postgres
 	@echo "Done."

@@ -8,25 +8,25 @@ import (
 	"strings"
 
 	"RouteHub.Service.Dashboard/ent/organization"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"go.jetify.com/typeid"
 )
 
 // Organization is the model entity for the Organization schema.
 type Organization struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID schema.OrganizationID `json:"id,omitempty"`
+	ID typeid.AnyID `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Website holds the value of the "website" field.
 	Website string `json:"website,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
-	// Locagtion holds the value of the "locagtion" field.
-	Locagtion string `json:"locagtion,omitempty"`
+	// Location holds the value of the "location" field.
+	Location string `json:"location,omitempty"`
 	// SocialMedias holds the value of the "social_medias" field.
 	SocialMedias types.SocialMedias `json:"social_medias,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -41,9 +41,11 @@ type OrganizationEdges struct {
 	Domains []*Domain `json:"domains,omitempty"`
 	// Hubs holds the value of the hubs edge.
 	Hubs []*Hub `json:"hubs,omitempty"`
+	// Persons holds the value of the persons edge.
+	Persons []*Person `json:"persons,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // DomainsOrErr returns the Domains value or an error if the edge
@@ -64,6 +66,15 @@ func (e OrganizationEdges) HubsOrErr() ([]*Hub, error) {
 	return nil, &NotLoadedError{edge: "hubs"}
 }
 
+// PersonsOrErr returns the Persons value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) PersonsOrErr() ([]*Person, error) {
+	if e.loadedTypes[2] {
+		return e.Persons, nil
+	}
+	return nil, &NotLoadedError{edge: "persons"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -71,10 +82,10 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case organization.FieldSocialMedias:
 			values[i] = new([]byte)
-		case organization.FieldID:
-			values[i] = new(schema.OrganizationID)
-		case organization.FieldName, organization.FieldWebsite, organization.FieldDescription, organization.FieldLocagtion:
+		case organization.FieldName, organization.FieldWebsite, organization.FieldDescription, organization.FieldLocation:
 			values[i] = new(sql.NullString)
+		case organization.FieldID:
+			values[i] = new(typeid.AnyID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -91,7 +102,7 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case organization.FieldID:
-			if value, ok := values[i].(*schema.OrganizationID); !ok {
+			if value, ok := values[i].(*typeid.AnyID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				o.ID = *value
@@ -114,11 +125,11 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				o.Description = value.String
 			}
-		case organization.FieldLocagtion:
+		case organization.FieldLocation:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field locagtion", values[i])
+				return fmt.Errorf("unexpected type %T for field location", values[i])
 			} else if value.Valid {
-				o.Locagtion = value.String
+				o.Location = value.String
 			}
 		case organization.FieldSocialMedias:
 			if value, ok := values[i].(*[]byte); !ok {
@@ -149,6 +160,11 @@ func (o *Organization) QueryDomains() *DomainQuery {
 // QueryHubs queries the "hubs" edge of the Organization entity.
 func (o *Organization) QueryHubs() *HubQuery {
 	return NewOrganizationClient(o.config).QueryHubs(o)
+}
+
+// QueryPersons queries the "persons" edge of the Organization entity.
+func (o *Organization) QueryPersons() *PersonQuery {
+	return NewOrganizationClient(o.config).QueryPersons(o)
 }
 
 // Update returns a builder for updating this Organization.
@@ -183,8 +199,8 @@ func (o *Organization) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(o.Description)
 	builder.WriteString(", ")
-	builder.WriteString("locagtion=")
-	builder.WriteString(o.Locagtion)
+	builder.WriteString("location=")
+	builder.WriteString(o.Location)
 	builder.WriteString(", ")
 	builder.WriteString("social_medias=")
 	builder.WriteString(fmt.Sprintf("%v", o.SocialMedias))

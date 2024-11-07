@@ -4,53 +4,53 @@ package organization
 
 import (
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"go.jetify.com/typeid"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id schema.OrganizationID) predicate.Organization {
+func ID(id typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id schema.OrganizationID) predicate.Organization {
+func IDEQ(id typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id schema.OrganizationID) predicate.Organization {
+func IDNEQ(id typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...schema.OrganizationID) predicate.Organization {
+func IDIn(ids ...typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...schema.OrganizationID) predicate.Organization {
+func IDNotIn(ids ...typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id schema.OrganizationID) predicate.Organization {
+func IDGT(id typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id schema.OrganizationID) predicate.Organization {
+func IDGTE(id typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id schema.OrganizationID) predicate.Organization {
+func IDLT(id typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id schema.OrganizationID) predicate.Organization {
+func IDLTE(id typeid.AnyID) predicate.Organization {
 	return predicate.Organization(sql.FieldLTE(FieldID, id))
 }
 
@@ -69,9 +69,9 @@ func Description(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldDescription, v))
 }
 
-// Locagtion applies equality check predicate on the "locagtion" field. It's identical to LocagtionEQ.
-func Locagtion(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldEQ(FieldLocagtion, v))
+// Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
+func Location(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldLocation, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -289,79 +289,79 @@ func DescriptionContainsFold(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// LocagtionEQ applies the EQ predicate on the "locagtion" field.
-func LocagtionEQ(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldEQ(FieldLocagtion, v))
+// LocationEQ applies the EQ predicate on the "location" field.
+func LocationEQ(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldLocation, v))
 }
 
-// LocagtionNEQ applies the NEQ predicate on the "locagtion" field.
-func LocagtionNEQ(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldNEQ(FieldLocagtion, v))
+// LocationNEQ applies the NEQ predicate on the "location" field.
+func LocationNEQ(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldNEQ(FieldLocation, v))
 }
 
-// LocagtionIn applies the In predicate on the "locagtion" field.
-func LocagtionIn(vs ...string) predicate.Organization {
-	return predicate.Organization(sql.FieldIn(FieldLocagtion, vs...))
+// LocationIn applies the In predicate on the "location" field.
+func LocationIn(vs ...string) predicate.Organization {
+	return predicate.Organization(sql.FieldIn(FieldLocation, vs...))
 }
 
-// LocagtionNotIn applies the NotIn predicate on the "locagtion" field.
-func LocagtionNotIn(vs ...string) predicate.Organization {
-	return predicate.Organization(sql.FieldNotIn(FieldLocagtion, vs...))
+// LocationNotIn applies the NotIn predicate on the "location" field.
+func LocationNotIn(vs ...string) predicate.Organization {
+	return predicate.Organization(sql.FieldNotIn(FieldLocation, vs...))
 }
 
-// LocagtionGT applies the GT predicate on the "locagtion" field.
-func LocagtionGT(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldGT(FieldLocagtion, v))
+// LocationGT applies the GT predicate on the "location" field.
+func LocationGT(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldGT(FieldLocation, v))
 }
 
-// LocagtionGTE applies the GTE predicate on the "locagtion" field.
-func LocagtionGTE(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldGTE(FieldLocagtion, v))
+// LocationGTE applies the GTE predicate on the "location" field.
+func LocationGTE(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldGTE(FieldLocation, v))
 }
 
-// LocagtionLT applies the LT predicate on the "locagtion" field.
-func LocagtionLT(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldLT(FieldLocagtion, v))
+// LocationLT applies the LT predicate on the "location" field.
+func LocationLT(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldLT(FieldLocation, v))
 }
 
-// LocagtionLTE applies the LTE predicate on the "locagtion" field.
-func LocagtionLTE(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldLTE(FieldLocagtion, v))
+// LocationLTE applies the LTE predicate on the "location" field.
+func LocationLTE(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldLTE(FieldLocation, v))
 }
 
-// LocagtionContains applies the Contains predicate on the "locagtion" field.
-func LocagtionContains(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldContains(FieldLocagtion, v))
+// LocationContains applies the Contains predicate on the "location" field.
+func LocationContains(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContains(FieldLocation, v))
 }
 
-// LocagtionHasPrefix applies the HasPrefix predicate on the "locagtion" field.
-func LocagtionHasPrefix(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldHasPrefix(FieldLocagtion, v))
+// LocationHasPrefix applies the HasPrefix predicate on the "location" field.
+func LocationHasPrefix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasPrefix(FieldLocation, v))
 }
 
-// LocagtionHasSuffix applies the HasSuffix predicate on the "locagtion" field.
-func LocagtionHasSuffix(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldHasSuffix(FieldLocagtion, v))
+// LocationHasSuffix applies the HasSuffix predicate on the "location" field.
+func LocationHasSuffix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasSuffix(FieldLocation, v))
 }
 
-// LocagtionIsNil applies the IsNil predicate on the "locagtion" field.
-func LocagtionIsNil() predicate.Organization {
-	return predicate.Organization(sql.FieldIsNull(FieldLocagtion))
+// LocationIsNil applies the IsNil predicate on the "location" field.
+func LocationIsNil() predicate.Organization {
+	return predicate.Organization(sql.FieldIsNull(FieldLocation))
 }
 
-// LocagtionNotNil applies the NotNil predicate on the "locagtion" field.
-func LocagtionNotNil() predicate.Organization {
-	return predicate.Organization(sql.FieldNotNull(FieldLocagtion))
+// LocationNotNil applies the NotNil predicate on the "location" field.
+func LocationNotNil() predicate.Organization {
+	return predicate.Organization(sql.FieldNotNull(FieldLocation))
 }
 
-// LocagtionEqualFold applies the EqualFold predicate on the "locagtion" field.
-func LocagtionEqualFold(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldEqualFold(FieldLocagtion, v))
+// LocationEqualFold applies the EqualFold predicate on the "location" field.
+func LocationEqualFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEqualFold(FieldLocation, v))
 }
 
-// LocagtionContainsFold applies the ContainsFold predicate on the "locagtion" field.
-func LocagtionContainsFold(v string) predicate.Organization {
-	return predicate.Organization(sql.FieldContainsFold(FieldLocagtion, v))
+// LocationContainsFold applies the ContainsFold predicate on the "location" field.
+func LocationContainsFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContainsFold(FieldLocation, v))
 }
 
 // SocialMediasIsNil applies the IsNil predicate on the "social_medias" field.
@@ -412,6 +412,29 @@ func HasHubs() predicate.Organization {
 func HasHubsWith(preds ...predicate.Hub) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
 		step := newHubsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPersons applies the HasEdge predicate on the "persons" edge.
+func HasPersons() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PersonsTable, PersonsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPersonsWith applies the HasEdge predicate on the "persons" edge with a given conditions (other predicates).
+func HasPersonsWith(preds ...predicate.Person) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newPersonsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

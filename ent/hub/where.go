@@ -4,55 +4,55 @@ package enthub
 
 import (
 	"RouteHub.Service.Dashboard/ent/predicate"
-	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"go.jetify.com/typeid"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id schema.HubID) predicate.Hub {
+func ID(id typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id schema.HubID) predicate.Hub {
+func IDEQ(id typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id schema.HubID) predicate.Hub {
+func IDNEQ(id typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...schema.HubID) predicate.Hub {
+func IDIn(ids ...typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...schema.HubID) predicate.Hub {
+func IDNotIn(ids ...typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id schema.HubID) predicate.Hub {
+func IDGT(id typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id schema.HubID) predicate.Hub {
+func IDGTE(id typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id schema.HubID) predicate.Hub {
+func IDLT(id typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id schema.HubID) predicate.Hub {
+func IDLTE(id typeid.AnyID) predicate.Hub {
 	return predicate.Hub(sql.FieldLTE(FieldID, id))
 }
 
@@ -66,7 +66,7 @@ func Slug(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldEQ(FieldSlug, v))
 }
 
-// TCPAddress applies equality check predicate on the "TCPAddress" field. It's identical to TCPAddressEQ.
+// TCPAddress applies equality check predicate on the "tcp_address" field. It's identical to TCPAddressEQ.
 func TCPAddress(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldEQ(FieldTCPAddress, v))
 }
@@ -201,77 +201,77 @@ func SlugContainsFold(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldContainsFold(FieldSlug, v))
 }
 
-// HubDetailsIsNil applies the IsNil predicate on the "Hub_details" field.
+// HubDetailsIsNil applies the IsNil predicate on the "hub_details" field.
 func HubDetailsIsNil() predicate.Hub {
 	return predicate.Hub(sql.FieldIsNull(FieldHubDetails))
 }
 
-// HubDetailsNotNil applies the NotNil predicate on the "Hub_details" field.
+// HubDetailsNotNil applies the NotNil predicate on the "hub_details" field.
 func HubDetailsNotNil() predicate.Hub {
 	return predicate.Hub(sql.FieldNotNull(FieldHubDetails))
 }
 
-// TCPAddressEQ applies the EQ predicate on the "TCPAddress" field.
+// TCPAddressEQ applies the EQ predicate on the "tcp_address" field.
 func TCPAddressEQ(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldEQ(FieldTCPAddress, v))
 }
 
-// TCPAddressNEQ applies the NEQ predicate on the "TCPAddress" field.
+// TCPAddressNEQ applies the NEQ predicate on the "tcp_address" field.
 func TCPAddressNEQ(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldNEQ(FieldTCPAddress, v))
 }
 
-// TCPAddressIn applies the In predicate on the "TCPAddress" field.
+// TCPAddressIn applies the In predicate on the "tcp_address" field.
 func TCPAddressIn(vs ...string) predicate.Hub {
 	return predicate.Hub(sql.FieldIn(FieldTCPAddress, vs...))
 }
 
-// TCPAddressNotIn applies the NotIn predicate on the "TCPAddress" field.
+// TCPAddressNotIn applies the NotIn predicate on the "tcp_address" field.
 func TCPAddressNotIn(vs ...string) predicate.Hub {
 	return predicate.Hub(sql.FieldNotIn(FieldTCPAddress, vs...))
 }
 
-// TCPAddressGT applies the GT predicate on the "TCPAddress" field.
+// TCPAddressGT applies the GT predicate on the "tcp_address" field.
 func TCPAddressGT(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldGT(FieldTCPAddress, v))
 }
 
-// TCPAddressGTE applies the GTE predicate on the "TCPAddress" field.
+// TCPAddressGTE applies the GTE predicate on the "tcp_address" field.
 func TCPAddressGTE(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldGTE(FieldTCPAddress, v))
 }
 
-// TCPAddressLT applies the LT predicate on the "TCPAddress" field.
+// TCPAddressLT applies the LT predicate on the "tcp_address" field.
 func TCPAddressLT(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldLT(FieldTCPAddress, v))
 }
 
-// TCPAddressLTE applies the LTE predicate on the "TCPAddress" field.
+// TCPAddressLTE applies the LTE predicate on the "tcp_address" field.
 func TCPAddressLTE(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldLTE(FieldTCPAddress, v))
 }
 
-// TCPAddressContains applies the Contains predicate on the "TCPAddress" field.
+// TCPAddressContains applies the Contains predicate on the "tcp_address" field.
 func TCPAddressContains(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldContains(FieldTCPAddress, v))
 }
 
-// TCPAddressHasPrefix applies the HasPrefix predicate on the "TCPAddress" field.
+// TCPAddressHasPrefix applies the HasPrefix predicate on the "tcp_address" field.
 func TCPAddressHasPrefix(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldHasPrefix(FieldTCPAddress, v))
 }
 
-// TCPAddressHasSuffix applies the HasSuffix predicate on the "TCPAddress" field.
+// TCPAddressHasSuffix applies the HasSuffix predicate on the "tcp_address" field.
 func TCPAddressHasSuffix(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldHasSuffix(FieldTCPAddress, v))
 }
 
-// TCPAddressEqualFold applies the EqualFold predicate on the "TCPAddress" field.
+// TCPAddressEqualFold applies the EqualFold predicate on the "tcp_address" field.
 func TCPAddressEqualFold(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldEqualFold(FieldTCPAddress, v))
 }
 
-// TCPAddressContainsFold applies the ContainsFold predicate on the "TCPAddress" field.
+// TCPAddressContainsFold applies the ContainsFold predicate on the "tcp_address" field.
 func TCPAddressContainsFold(v string) predicate.Hub {
 	return predicate.Hub(sql.FieldContainsFold(FieldTCPAddress, v))
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"log/slog"
+	"os"
 	"strings"
 
 	"go.opentelemetry.io/otel"
@@ -38,6 +39,7 @@ type OpenTelemetryConfig struct {
 	CollectorURL string
 	Insecure     string
 	Logger       *slog.Logger
+	Headers      map[string]string // Add this field to store headers
 }
 
 func (c *OpenTelemetryConfig) SetServiceName(serviceName string) {
@@ -50,6 +52,17 @@ func (c *OpenTelemetryConfig) SetCollectorURL(collectorURL string) {
 
 func (c *OpenTelemetryConfig) SetInsecure(insecure string) {
 	c.Insecure = insecure
+}
+
+func (c *OpenTelemetryConfig) SetHeaders(headers string) {
+	//  Headers: uptrace-dsn=http://project_home_secret_token@localhost:14318?grpc=14317
+	rawHeaders := strings.Split(headers, ";")
+	c.Headers = make(map[string]string)
+	for _, rawHeader := range rawHeaders {
+		header := strings.Split(rawHeader, "=")
+		c.Headers[header[0]] = strings.Join(header[1:], "")
+	}
+
 }
 
 // Options
@@ -80,6 +93,12 @@ func WithLogger(logger *slog.Logger) OpenTelemetryOption {
 	}
 }
 
+func WithHeaders(headers string) OpenTelemetryOption {
+	return func(c *OpenTelemetryConfig) {
+		c.SetHeaders(headers)
+	}
+}
+
 // Tracer
 func (ots OpenTelemetryService) InitTracer() func(context.Context) error {
 
@@ -92,11 +111,18 @@ func (ots OpenTelemetryService) InitTracer() func(context.Context) error {
 		secureOption = otlptracegrpc.WithInsecure()
 	}
 
+	// Convert headers map to otlptracegrpc.Option
+	var headersOption otlptracegrpc.Option
+	if len(otc.Headers) > 0 {
+		headersOption = otlptracegrpc.WithHeaders(ots.config.Headers)
+	}
+
 	exporter, err := otlptrace.New(
 		context.Background(),
 		otlptracegrpc.NewClient(
 			secureOption,
 			otlptracegrpc.WithEndpoint(otc.CollectorURL),
+			headersOption,
 		),
 	)
 
@@ -108,7 +134,13 @@ func (ots OpenTelemetryService) InitTracer() func(context.Context) error {
 		resource.WithAttributes(
 			attribute.String("service.name", otc.ServiceName),
 			attribute.String("library.language", "go"),
+			attribute.String("library.version", "0.1.0"),
+			attribute.String("deployment.environment", os.Getenv("ENVIRONMENT")),
+			attribute.String("host.name", os.Getenv("HOSTNAME")),
 		),
+		resource.WithFromEnv(),
+		resource.WithHost(),
+		resource.WithTelemetrySDK(),
 	)
 	if err != nil {
 		log.Fatalf("Could not set resources: %v", err)

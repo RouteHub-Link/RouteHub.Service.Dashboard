@@ -10,10 +10,11 @@ import (
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
-	"RouteHub.Service.Dashboard/ent/schema"
+	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"go.jetify.com/typeid"
 )
 
 // OrganizationCreate is the builder for creating a Organization entity.
@@ -57,16 +58,16 @@ func (oc *OrganizationCreate) SetNillableDescription(s *string) *OrganizationCre
 	return oc
 }
 
-// SetLocagtion sets the "locagtion" field.
-func (oc *OrganizationCreate) SetLocagtion(s string) *OrganizationCreate {
-	oc.mutation.SetLocagtion(s)
+// SetLocation sets the "location" field.
+func (oc *OrganizationCreate) SetLocation(s string) *OrganizationCreate {
+	oc.mutation.SetLocation(s)
 	return oc
 }
 
-// SetNillableLocagtion sets the "locagtion" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableLocagtion(s *string) *OrganizationCreate {
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableLocation(s *string) *OrganizationCreate {
 	if s != nil {
-		oc.SetLocagtion(*s)
+		oc.SetLocation(*s)
 	}
 	return oc
 }
@@ -86,28 +87,28 @@ func (oc *OrganizationCreate) SetNillableSocialMedias(tm *types.SocialMedias) *O
 }
 
 // SetID sets the "id" field.
-func (oc *OrganizationCreate) SetID(si schema.OrganizationID) *OrganizationCreate {
-	oc.mutation.SetID(si)
+func (oc *OrganizationCreate) SetID(ti typeid.AnyID) *OrganizationCreate {
+	oc.mutation.SetID(ti)
 	return oc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableID(si *schema.OrganizationID) *OrganizationCreate {
-	if si != nil {
-		oc.SetID(*si)
+func (oc *OrganizationCreate) SetNillableID(ti *typeid.AnyID) *OrganizationCreate {
+	if ti != nil {
+		oc.SetID(*ti)
 	}
 	return oc
 }
 
 // AddDomainIDs adds the "domains" edge to the Domain entity by IDs.
-func (oc *OrganizationCreate) AddDomainIDs(ids ...schema.DomainID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddDomainIDs(ids ...typeid.AnyID) *OrganizationCreate {
 	oc.mutation.AddDomainIDs(ids...)
 	return oc
 }
 
 // AddDomains adds the "domains" edges to the Domain entity.
 func (oc *OrganizationCreate) AddDomains(d ...*Domain) *OrganizationCreate {
-	ids := make([]schema.DomainID, len(d))
+	ids := make([]typeid.AnyID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -115,18 +116,33 @@ func (oc *OrganizationCreate) AddDomains(d ...*Domain) *OrganizationCreate {
 }
 
 // AddHubIDs adds the "hubs" edge to the Hub entity by IDs.
-func (oc *OrganizationCreate) AddHubIDs(ids ...schema.HubID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddHubIDs(ids ...typeid.AnyID) *OrganizationCreate {
 	oc.mutation.AddHubIDs(ids...)
 	return oc
 }
 
 // AddHubs adds the "hubs" edges to the Hub entity.
 func (oc *OrganizationCreate) AddHubs(h ...*Hub) *OrganizationCreate {
-	ids := make([]schema.HubID, len(h))
+	ids := make([]typeid.AnyID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
 	return oc.AddHubIDs(ids...)
+}
+
+// AddPersonIDs adds the "persons" edge to the Person entity by IDs.
+func (oc *OrganizationCreate) AddPersonIDs(ids ...typeid.AnyID) *OrganizationCreate {
+	oc.mutation.AddPersonIDs(ids...)
+	return oc
+}
+
+// AddPersons adds the "persons" edges to the Person entity.
+func (oc *OrganizationCreate) AddPersons(p ...*Person) *OrganizationCreate {
+	ids := make([]typeid.AnyID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return oc.AddPersonIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -195,7 +211,7 @@ func (oc *OrganizationCreate) sqlSave(ctx context.Context) (*Organization, error
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*schema.OrganizationID); ok {
+		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
 			_node.ID = *id
 		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
 			return nil, err
@@ -209,7 +225,7 @@ func (oc *OrganizationCreate) sqlSave(ctx context.Context) (*Organization, error
 func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Organization{config: oc.config}
-		_spec = sqlgraph.NewCreateSpec(organization.Table, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(organization.Table, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString))
 	)
 	if id, ok := oc.mutation.ID(); ok {
 		_node.ID = id
@@ -227,9 +243,9 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		_spec.SetField(organization.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := oc.mutation.Locagtion(); ok {
-		_spec.SetField(organization.FieldLocagtion, field.TypeString, value)
-		_node.Locagtion = value
+	if value, ok := oc.mutation.Location(); ok {
+		_spec.SetField(organization.FieldLocation, field.TypeString, value)
+		_node.Location = value
 	}
 	if value, ok := oc.mutation.SocialMedias(); ok {
 		_spec.SetField(organization.FieldSocialMedias, field.TypeJSON, value)
@@ -243,7 +259,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.DomainsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -259,7 +275,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.HubsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.PersonsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.PersonsTable,
+			Columns: []string{organization.PersonsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(person.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

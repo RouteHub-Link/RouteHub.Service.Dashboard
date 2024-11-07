@@ -1,12 +1,12 @@
 package schema
 
 import (
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // Organization holds the schema definition for the Organization entity.
@@ -14,27 +14,19 @@ type Organization struct {
 	ent.Schema
 }
 
-type OrganizationPrefix struct{}
+const (
+	organizationPrefix = "organization"
+)
 
-func (OrganizationPrefix) Prefix() string {
-	return "organization"
-}
-
-type OrganizationID struct {
-	typeid.TypeID[OrganizationPrefix]
-}
-
-func NewOrganizationID() OrganizationID {
-	id, _ := typeid.New[OrganizationID]()
-	return id
+func (Organization) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.IDMixin{Prefix: organizationPrefix},
+	}
 }
 
 // Fields of the Organization.
 func (Organization) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", OrganizationID{}).
-			Default(NewOrganizationID),
-
 		field.String("name").
 			NotEmpty(),
 
@@ -44,7 +36,7 @@ func (Organization) Fields() []ent.Field {
 		field.String("description").
 			Optional(),
 
-		field.String("locagtion").
+		field.String("location").
 			Optional(),
 
 		field.JSON("social_medias", types.SocialMedias{}).
@@ -63,6 +55,10 @@ func (Organization) Edges() []ent.Edge {
 
 		// One Organization has many Hubs
 		edge.To("hubs", Hub.Type).
+			StorageKey(edge.Column("organization_id")),
+
+		// One Organization has many persons
+		edge.To("persons", Person.Type).
 			StorageKey(edge.Column("organization_id")),
 	}
 }

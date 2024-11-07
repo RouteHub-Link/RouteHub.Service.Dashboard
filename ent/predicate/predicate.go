@@ -17,3 +17,6 @@ type Link func(*sql.Selector)
 
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)
+
+// Person is the predicate function for person builders.
+type Person func(*sql.Selector)

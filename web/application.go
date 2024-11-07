@@ -3,11 +3,13 @@ package web
 import (
 	"context"
 	"errors"
+	"log"
 	"log/slog"
 	"strings"
 	"sync"
 
 	"RouteHub.Service.Dashboard/ent"
+	"RouteHub.Service.Dashboard/ent/migrate"
 	"RouteHub.Service.Dashboard/features"
 	"RouteHub.Service.Dashboard/features/auth"
 	"RouteHub.Service.Dashboard/features/configuration"
@@ -105,10 +107,12 @@ func (app *Application) configureMiddleware() {
 		HSTSExcludeSubdomains: true,
 	}))
 
+	router.ConfigureRoutes(e, app.config, app.Logger, app.Authorizer, app.Ent)
+
 	// TODO When this middleware is added, the application gets an error when trying to access the /auth/logout
 	app.Echo.Use(middlewares.OAuthGuard(app.Authorizer, app.config.OAuth, app.Logger))
 
-	router.ConfigureRoutes(e, app.config, app.Logger, app.Authorizer, app.Ent)
+	app.Echo.Use(middlewares.PersonMiddleware(app.Authorizer, app.Logger, app.Ent))
 
 	app.Logger.Info("OTEL Status", "enabled", app.config.OTEL.IsEnabled())
 
@@ -126,6 +130,7 @@ func (app *Application) configureOTEL() {
 		features.WithServiceName(appName),
 		features.WithCollectorURL(otelConfig.GetCollectorEndpoint()),
 		features.WithLogger(app.Logger),
+		features.WithHeaders(otelConfig.GetHeaders()),
 	}
 
 	ots := features.NewOpenTelemetryService(openTelemetryOptions...)
@@ -135,7 +140,6 @@ func (app *Application) configureOTEL() {
 }
 
 func (app *Application) configureDatabase() error {
-
 	ctx := context.Background()
 	dbConfig := app.config.Database
 	client, err := ent.Open("postgres", dbConfig.GetConnectionString())
@@ -143,10 +147,9 @@ func (app *Application) configureDatabase() error {
 		return err
 	}
 
-	if err := client.Schema.Create(ctx); err != nil {
-		return err
+	if err := client.Schema.Create(ctx, migrate.WithGlobalUniqueID(false)); err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
 	}
-
 	app.Ent = client
 
 	return nil
