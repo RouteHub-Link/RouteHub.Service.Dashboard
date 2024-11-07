@@ -11,11 +11,11 @@ import (
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // LinkUpdate is the builder for updating Link entities.
@@ -94,7 +94,7 @@ func (lu *LinkUpdate) SetNillableStatus(es *enums.StatusState) *LinkUpdate {
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (lu *LinkUpdate) SetHubID(id typeid.AnyID) *LinkUpdate {
+func (lu *LinkUpdate) SetHubID(id mixin.ID) *LinkUpdate {
 	lu.mutation.SetHubID(id)
 	return lu
 }
@@ -304,7 +304,7 @@ func (luo *LinkUpdateOne) SetNillableStatus(es *enums.StatusState) *LinkUpdateOn
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (luo *LinkUpdateOne) SetHubID(id typeid.AnyID) *LinkUpdateOne {
+func (luo *LinkUpdateOne) SetHubID(id mixin.ID) *LinkUpdateOne {
 	luo.mutation.SetHubID(id)
 	return luo
 }

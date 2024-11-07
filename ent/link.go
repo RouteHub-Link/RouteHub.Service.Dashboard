@@ -10,17 +10,17 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"go.jetify.com/typeid"
 )
 
 // Link is the model entity for the Link schema.
 type Link struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID typeid.AnyID `json:"id,omitempty"`
+	ID mixin.ID `json:"id,omitempty"`
 	// Target holds the value of the "target" field.
 	Target string `json:"target,omitempty"`
 	// Path holds the value of the "path" field.
@@ -32,7 +32,7 @@ type Link struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the LinkQuery when eager-loading is set.
 	Edges        LinkEdges `json:"edges"`
-	link_fk      *typeid.AnyID
+	link_fk      *mixin.ID
 	selectValues sql.SelectValues
 }
 
@@ -65,12 +65,10 @@ func (*Link) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case link.FieldStatus:
 			values[i] = new(enums.StatusState)
-		case link.FieldTarget, link.FieldPath:
+		case link.FieldID, link.FieldTarget, link.FieldPath:
 			values[i] = new(sql.NullString)
-		case link.FieldID:
-			values[i] = new(typeid.AnyID)
 		case link.ForeignKeys[0]: // link_fk
-			values[i] = &sql.NullScanner{S: new(typeid.AnyID)}
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -87,10 +85,10 @@ func (l *Link) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case link.FieldID:
-			if value, ok := values[i].(*typeid.AnyID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				l.ID = *value
+			} else if value.Valid {
+				l.ID = mixin.ID(value.String)
 			}
 		case link.FieldTarget:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -119,11 +117,11 @@ func (l *Link) assignValues(columns []string, values []any) error {
 				l.Status = *value
 			}
 		case link.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field link_fk", values[i])
 			} else if value.Valid {
-				l.link_fk = new(typeid.AnyID)
-				*l.link_fk = *value.S.(*typeid.AnyID)
+				l.link_fk = new(mixin.ID)
+				*l.link_fk = mixin.ID(value.String)
 			}
 		default:
 			l.selectValues.Set(columns[i], values[i])

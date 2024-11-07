@@ -8,12 +8,11 @@ import (
 	"fmt"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // DomainCreate is the builder for creating a Domain entity.
@@ -42,40 +41,21 @@ func (dc *DomainCreate) SetStatus(ds domain.DomainState) *DomainCreate {
 }
 
 // SetID sets the "id" field.
-func (dc *DomainCreate) SetID(ti typeid.AnyID) *DomainCreate {
-	dc.mutation.SetID(ti)
+func (dc *DomainCreate) SetID(m mixin.ID) *DomainCreate {
+	dc.mutation.SetID(m)
 	return dc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (dc *DomainCreate) SetNillableID(ti *typeid.AnyID) *DomainCreate {
-	if ti != nil {
-		dc.SetID(*ti)
+func (dc *DomainCreate) SetNillableID(m *mixin.ID) *DomainCreate {
+	if m != nil {
+		dc.SetID(*m)
 	}
 	return dc
-}
-
-// SetHubID sets the "hub" edge to the Hub entity by ID.
-func (dc *DomainCreate) SetHubID(id typeid.AnyID) *DomainCreate {
-	dc.mutation.SetHubID(id)
-	return dc
-}
-
-// SetNillableHubID sets the "hub" edge to the Hub entity by ID if the given value is not nil.
-func (dc *DomainCreate) SetNillableHubID(id *typeid.AnyID) *DomainCreate {
-	if id != nil {
-		dc = dc.SetHubID(*id)
-	}
-	return dc
-}
-
-// SetHub sets the "hub" edge to the Hub entity.
-func (dc *DomainCreate) SetHub(h *Hub) *DomainCreate {
-	return dc.SetHubID(h.ID)
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (dc *DomainCreate) SetOrganizationID(id typeid.AnyID) *DomainCreate {
+func (dc *DomainCreate) SetOrganizationID(id mixin.ID) *DomainCreate {
 	dc.mutation.SetOrganizationID(id)
 	return dc
 }
@@ -170,10 +150,10 @@ func (dc *DomainCreate) sqlSave(ctx context.Context) (*Domain, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(mixin.ID); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Domain.ID type: %T", _spec.ID.Value)
 		}
 	}
 	dc.mutation.id = &_node.ID
@@ -188,7 +168,7 @@ func (dc *DomainCreate) createSpec() (*Domain, *sqlgraph.CreateSpec) {
 	)
 	if id, ok := dc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := dc.mutation.Name(); ok {
 		_spec.SetField(entdomain.FieldName, field.TypeString, value)
@@ -201,23 +181,6 @@ func (dc *DomainCreate) createSpec() (*Domain, *sqlgraph.CreateSpec) {
 	if value, ok := dc.mutation.Status(); ok {
 		_spec.SetField(entdomain.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
-	}
-	if nodes := dc.mutation.HubIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   entdomain.HubTable,
-			Columns: []string{entdomain.HubColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.domain_fk = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := dc.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

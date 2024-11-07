@@ -9,17 +9,17 @@ import (
 
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/zitadel/oidc/v3/pkg/oidc"
-	"go.jetify.com/typeid"
 )
 
 // Person is the model entity for the Person schema.
 type Person struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID typeid.AnyID `json:"id,omitempty"`
+	ID mixin.ID `json:"id,omitempty"`
 	// SubjectID holds the value of the "subject_id" field.
 	SubjectID string `json:"subject_id,omitempty"`
 	// UserInfo holds the value of the "user_info" field.
@@ -29,8 +29,7 @@ type Person struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PersonQuery when eager-loading is set.
 	Edges           PersonEdges `json:"edges"`
-	organization_id *typeid.AnyID
-	organization_fk *typeid.AnyID
+	organization_fk *mixin.ID
 	selectValues    sql.SelectValues
 }
 
@@ -63,14 +62,10 @@ func (*Person) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case person.FieldIsActive:
 			values[i] = new(sql.NullBool)
-		case person.FieldSubjectID:
+		case person.FieldID, person.FieldSubjectID:
 			values[i] = new(sql.NullString)
-		case person.FieldID:
-			values[i] = new(typeid.AnyID)
-		case person.ForeignKeys[0]: // organization_id
-			values[i] = &sql.NullScanner{S: new(typeid.AnyID)}
-		case person.ForeignKeys[1]: // organization_fk
-			values[i] = &sql.NullScanner{S: new(typeid.AnyID)}
+		case person.ForeignKeys[0]: // organization_fk
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -87,10 +82,10 @@ func (pe *Person) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case person.FieldID:
-			if value, ok := values[i].(*typeid.AnyID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				pe.ID = *value
+			} else if value.Valid {
+				pe.ID = mixin.ID(value.String)
 			}
 		case person.FieldSubjectID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -113,18 +108,11 @@ func (pe *Person) assignValues(columns []string, values []any) error {
 				pe.IsActive = value.Bool
 			}
 		case person.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
-			} else if value.Valid {
-				pe.organization_id = new(typeid.AnyID)
-				*pe.organization_id = *value.S.(*typeid.AnyID)
-			}
-		case person.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_fk", values[i])
 			} else if value.Valid {
-				pe.organization_fk = new(typeid.AnyID)
-				*pe.organization_fk = *value.S.(*typeid.AnyID)
+				pe.organization_fk = new(mixin.ID)
+				*pe.organization_fk = mixin.ID(value.String)
 			}
 		default:
 			pe.selectValues.Set(columns[i], values[i])

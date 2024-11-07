@@ -7,9 +7,9 @@ import (
 
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"go.jetify.com/typeid"
 )
 
 const (
@@ -38,7 +38,7 @@ const (
 	// Table holds the table name of the hub in the database.
 	Table = "hubs"
 	// DomainTable is the table that holds the domain relation/edge.
-	DomainTable = "domains"
+	DomainTable = "hubs"
 	// DomainInverseTable is the table name for the Domain entity.
 	// It exists in this package in order to avoid circular dependency with the "entdomain" package.
 	DomainInverseTable = "domains"
@@ -74,6 +74,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "hubs"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
+	"domain_fk",
 	"organization_id",
 }
 
@@ -100,7 +101,7 @@ var (
 	// TCPAddressValidator is a validator for the "tcp_address" field. It is called by the builders before save.
 	TCPAddressValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() typeid.AnyID
+	DefaultID func() mixin.ID
 )
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
@@ -187,7 +188,7 @@ func newDomainStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DomainInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, DomainTable, DomainColumn),
+		sqlgraph.Edge(sqlgraph.M2O, false, DomainTable, DomainColumn),
 	)
 }
 func newOrganizationStep() *sqlgraph.Step {

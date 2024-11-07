@@ -13,10 +13,10 @@ import (
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // HubCreate is the builder for creating a Hub entity.
@@ -71,21 +71,21 @@ func (hc *HubCreate) SetDefaultRedirection(ho hub.RedirectionOption) *HubCreate 
 }
 
 // SetID sets the "id" field.
-func (hc *HubCreate) SetID(ti typeid.AnyID) *HubCreate {
-	hc.mutation.SetID(ti)
+func (hc *HubCreate) SetID(m mixin.ID) *HubCreate {
+	hc.mutation.SetID(m)
 	return hc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (hc *HubCreate) SetNillableID(ti *typeid.AnyID) *HubCreate {
-	if ti != nil {
-		hc.SetID(*ti)
+func (hc *HubCreate) SetNillableID(m *mixin.ID) *HubCreate {
+	if m != nil {
+		hc.SetID(*m)
 	}
 	return hc
 }
 
 // SetDomainID sets the "domain" edge to the Domain entity by ID.
-func (hc *HubCreate) SetDomainID(id typeid.AnyID) *HubCreate {
+func (hc *HubCreate) SetDomainID(id mixin.ID) *HubCreate {
 	hc.mutation.SetDomainID(id)
 	return hc
 }
@@ -96,7 +96,7 @@ func (hc *HubCreate) SetDomain(d *Domain) *HubCreate {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (hc *HubCreate) SetOrganizationID(id typeid.AnyID) *HubCreate {
+func (hc *HubCreate) SetOrganizationID(id mixin.ID) *HubCreate {
 	hc.mutation.SetOrganizationID(id)
 	return hc
 }
@@ -107,14 +107,14 @@ func (hc *HubCreate) SetOrganization(o *Organization) *HubCreate {
 }
 
 // AddLinkIDs adds the "links" edge to the Link entity by IDs.
-func (hc *HubCreate) AddLinkIDs(ids ...typeid.AnyID) *HubCreate {
+func (hc *HubCreate) AddLinkIDs(ids ...mixin.ID) *HubCreate {
 	hc.mutation.AddLinkIDs(ids...)
 	return hc
 }
 
 // AddLinks adds the "links" edges to the Link entity.
 func (hc *HubCreate) AddLinks(l ...*Link) *HubCreate {
-	ids := make([]typeid.AnyID, len(l))
+	ids := make([]mixin.ID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -225,10 +225,10 @@ func (hc *HubCreate) sqlSave(ctx context.Context) (*Hub, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(mixin.ID); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Hub.ID type: %T", _spec.ID.Value)
 		}
 	}
 	hc.mutation.id = &_node.ID
@@ -243,7 +243,7 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 	)
 	if id, ok := hc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := hc.mutation.Name(); ok {
 		_spec.SetField(enthub.FieldName, field.TypeString, value)
@@ -271,7 +271,7 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 	}
 	if nodes := hc.mutation.DomainIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   enthub.DomainTable,
 			Columns: []string{enthub.DomainColumn},
@@ -283,6 +283,7 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.domain_fk = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := hc.mutation.OrganizationIDs(); len(nodes) > 0 {

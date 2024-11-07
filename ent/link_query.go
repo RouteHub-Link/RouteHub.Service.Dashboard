@@ -10,11 +10,11 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/predicate"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // LinkQuery is the builder for querying Link entities.
@@ -108,8 +108,8 @@ func (lq *LinkQuery) FirstX(ctx context.Context) *Link {
 
 // FirstID returns the first Link ID from the query.
 // Returns a *NotFoundError when no Link ID was found.
-func (lq *LinkQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error) {
-	var ids []typeid.AnyID
+func (lq *LinkQuery) FirstID(ctx context.Context) (id mixin.ID, err error) {
+	var ids []mixin.ID
 	if ids, err = lq.Limit(1).IDs(setContextOp(ctx, lq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -121,7 +121,7 @@ func (lq *LinkQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (lq *LinkQuery) FirstIDX(ctx context.Context) typeid.AnyID {
+func (lq *LinkQuery) FirstIDX(ctx context.Context) mixin.ID {
 	id, err := lq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -159,8 +159,8 @@ func (lq *LinkQuery) OnlyX(ctx context.Context) *Link {
 // OnlyID is like Only, but returns the only Link ID in the query.
 // Returns a *NotSingularError when more than one Link ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (lq *LinkQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) {
-	var ids []typeid.AnyID
+func (lq *LinkQuery) OnlyID(ctx context.Context) (id mixin.ID, err error) {
+	var ids []mixin.ID
 	if ids, err = lq.Limit(2).IDs(setContextOp(ctx, lq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -176,7 +176,7 @@ func (lq *LinkQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (lq *LinkQuery) OnlyIDX(ctx context.Context) typeid.AnyID {
+func (lq *LinkQuery) OnlyIDX(ctx context.Context) mixin.ID {
 	id, err := lq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -204,7 +204,7 @@ func (lq *LinkQuery) AllX(ctx context.Context) []*Link {
 }
 
 // IDs executes the query and returns a list of Link IDs.
-func (lq *LinkQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) {
+func (lq *LinkQuery) IDs(ctx context.Context) (ids []mixin.ID, err error) {
 	if lq.ctx.Unique == nil && lq.path != nil {
 		lq.Unique(true)
 	}
@@ -216,7 +216,7 @@ func (lq *LinkQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (lq *LinkQuery) IDsX(ctx context.Context) []typeid.AnyID {
+func (lq *LinkQuery) IDsX(ctx context.Context) []mixin.ID {
 	ids, err := lq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -411,8 +411,8 @@ func (lq *LinkQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Link, e
 }
 
 func (lq *LinkQuery) loadHub(ctx context.Context, query *HubQuery, nodes []*Link, init func(*Link), assign func(*Link, *Hub)) error {
-	ids := make([]typeid.AnyID, 0, len(nodes))
-	nodeids := make(map[typeid.AnyID][]*Link)
+	ids := make([]mixin.ID, 0, len(nodes))
+	nodeids := make(map[mixin.ID][]*Link)
 	for i := range nodes {
 		if nodes[i].link_fk == nil {
 			continue

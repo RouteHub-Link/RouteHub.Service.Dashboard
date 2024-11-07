@@ -5,53 +5,53 @@ package entdomain
 import (
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"go.jetify.com/typeid"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id typeid.AnyID) predicate.Domain {
+func ID(id mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id typeid.AnyID) predicate.Domain {
+func IDEQ(id mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id typeid.AnyID) predicate.Domain {
+func IDNEQ(id mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...typeid.AnyID) predicate.Domain {
+func IDIn(ids ...mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...typeid.AnyID) predicate.Domain {
+func IDNotIn(ids ...mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id typeid.AnyID) predicate.Domain {
+func IDGT(id mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id typeid.AnyID) predicate.Domain {
+func IDGTE(id mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id typeid.AnyID) predicate.Domain {
+func IDLT(id mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id typeid.AnyID) predicate.Domain {
+func IDLTE(id mixin.ID) predicate.Domain {
 	return predicate.Domain(sql.FieldLTE(FieldID, id))
 }
 
@@ -213,29 +213,6 @@ func StatusIn(vs ...domain.DomainState) predicate.Domain {
 // StatusNotIn applies the NotIn predicate on the "status" field.
 func StatusNotIn(vs ...domain.DomainState) predicate.Domain {
 	return predicate.Domain(sql.FieldNotIn(FieldStatus, vs...))
-}
-
-// HasHub applies the HasEdge predicate on the "hub" edge.
-func HasHub() predicate.Domain {
-	return predicate.Domain(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, HubTable, HubColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasHubWith applies the HasEdge predicate on the "hub" edge with a given conditions (other predicates).
-func HasHubWith(preds ...predicate.Hub) predicate.Domain {
-	return predicate.Domain(func(s *sql.Selector) {
-		step := newHubStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // HasOrganization applies the HasEdge predicate on the "organization" edge.

@@ -28,6 +28,7 @@ func GetPerson(userInfo *oidc.UserInfo, client *ent.Client, ctx context.Context,
 		logger.ErrorContext(ctx, "Error checking if person exists", "error", err)
 		return nil, err
 	}
+
 	if !checkPersonExists {
 		logger.Info("Person does not exist, creating new person")
 
@@ -43,6 +44,16 @@ func GetPerson(userInfo *oidc.UserInfo, client *ent.Client, ctx context.Context,
 		}
 
 		logger.Info("Person created", "data", _person)
+	}
+
+	if _person.ID == "" {
+		__person, err := client.Person.Query().Where(person.SubjectID(userInfo.Subject)).First(ctx)
+		if err != nil {
+			logger.ErrorContext(ctx, "Error getting person", "error", err)
+			return nil, err
+		}
+
+		_person = *__person
 	}
 
 	if _person.Edges.Organization == nil {

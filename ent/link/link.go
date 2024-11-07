@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	"RouteHub.Service.Dashboard/ent/schema/enums"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"go.jetify.com/typeid"
 )
 
 const (
@@ -73,7 +73,7 @@ var (
 	// PathValidator is a validator for the "path" field. It is called by the builders before save.
 	PathValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() typeid.AnyID
+	DefaultID func() mixin.ID
 )
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.

@@ -10,10 +10,10 @@ import (
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // PersonUpdate is the builder for updating Person entities.
@@ -58,13 +58,13 @@ func (pu *PersonUpdate) SetNillableIsActive(b *bool) *PersonUpdate {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (pu *PersonUpdate) SetOrganizationID(id typeid.AnyID) *PersonUpdate {
+func (pu *PersonUpdate) SetOrganizationID(id mixin.ID) *PersonUpdate {
 	pu.mutation.SetOrganizationID(id)
 	return pu
 }
 
 // SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (pu *PersonUpdate) SetNillableOrganizationID(id *typeid.AnyID) *PersonUpdate {
+func (pu *PersonUpdate) SetNillableOrganizationID(id *mixin.ID) *PersonUpdate {
 	if id != nil {
 		pu = pu.SetOrganizationID(*id)
 	}
@@ -220,13 +220,13 @@ func (puo *PersonUpdateOne) SetNillableIsActive(b *bool) *PersonUpdateOne {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (puo *PersonUpdateOne) SetOrganizationID(id typeid.AnyID) *PersonUpdateOne {
+func (puo *PersonUpdateOne) SetOrganizationID(id mixin.ID) *PersonUpdateOne {
 	puo.mutation.SetOrganizationID(id)
 	return puo
 }
 
 // SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (puo *PersonUpdateOne) SetNillableOrganizationID(id *typeid.AnyID) *PersonUpdateOne {
+func (puo *PersonUpdateOne) SetNillableOrganizationID(id *mixin.ID) *PersonUpdateOne {
 	if id != nil {
 		puo = puo.SetOrganizationID(*id)
 	}

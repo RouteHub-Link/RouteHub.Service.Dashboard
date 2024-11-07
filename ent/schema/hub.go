@@ -61,10 +61,10 @@ func (Hub) Fields() []ent.Field {
 func (Hub) Edges() []ent.Edge {
 	return []ent.Edge{
 		// One-to-One relationship: One Hub has one Domain (required for Hub)
-		edge.To("domain", Domain.Type). // Singular "domain" as this is O2O
-						StorageKey(edge.Column("domain_fk")). // Optional: customize the FK column name
-						Unique().
-						Required(), // Hub must have a Domain
+		edge.To("domain", Domain.Type).
+			StorageKey(edge.Column("domain_fk")). // Optional: customize the FK column name
+			Unique().
+			Required(), // Hub must have a Domain
 
 		// Many-to-One relationship: A Hub belongs to one Organization
 		edge.From("organization", Organization.Type).

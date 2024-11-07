@@ -3,9 +3,9 @@
 package person
 
 import (
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"go.jetify.com/typeid"
 )
 
 const (
@@ -43,7 +43,6 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "persons"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"organization_id",
 	"organization_fk",
 }
 
@@ -68,7 +67,7 @@ var (
 	// DefaultIsActive holds the default value on creation for the "is_active" field.
 	DefaultIsActive bool
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() typeid.AnyID
+	DefaultID func() mixin.ID
 )
 
 // OrderOption defines the ordering options for the Person queries.

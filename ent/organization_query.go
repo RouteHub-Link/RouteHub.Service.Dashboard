@@ -13,11 +13,11 @@ import (
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // OrganizationQuery is the builder for querying Organization entities.
@@ -156,8 +156,8 @@ func (oq *OrganizationQuery) FirstX(ctx context.Context) *Organization {
 
 // FirstID returns the first Organization ID from the query.
 // Returns a *NotFoundError when no Organization ID was found.
-func (oq *OrganizationQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error) {
-	var ids []typeid.AnyID
+func (oq *OrganizationQuery) FirstID(ctx context.Context) (id mixin.ID, err error) {
+	var ids []mixin.ID
 	if ids, err = oq.Limit(1).IDs(setContextOp(ctx, oq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -169,7 +169,7 @@ func (oq *OrganizationQuery) FirstID(ctx context.Context) (id typeid.AnyID, err 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (oq *OrganizationQuery) FirstIDX(ctx context.Context) typeid.AnyID {
+func (oq *OrganizationQuery) FirstIDX(ctx context.Context) mixin.ID {
 	id, err := oq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -207,8 +207,8 @@ func (oq *OrganizationQuery) OnlyX(ctx context.Context) *Organization {
 // OnlyID is like Only, but returns the only Organization ID in the query.
 // Returns a *NotSingularError when more than one Organization ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (oq *OrganizationQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) {
-	var ids []typeid.AnyID
+func (oq *OrganizationQuery) OnlyID(ctx context.Context) (id mixin.ID, err error) {
+	var ids []mixin.ID
 	if ids, err = oq.Limit(2).IDs(setContextOp(ctx, oq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -224,7 +224,7 @@ func (oq *OrganizationQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err e
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (oq *OrganizationQuery) OnlyIDX(ctx context.Context) typeid.AnyID {
+func (oq *OrganizationQuery) OnlyIDX(ctx context.Context) mixin.ID {
 	id, err := oq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -252,7 +252,7 @@ func (oq *OrganizationQuery) AllX(ctx context.Context) []*Organization {
 }
 
 // IDs executes the query and returns a list of Organization IDs.
-func (oq *OrganizationQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) {
+func (oq *OrganizationQuery) IDs(ctx context.Context) (ids []mixin.ID, err error) {
 	if oq.ctx.Unique == nil && oq.path != nil {
 		oq.Unique(true)
 	}
@@ -264,7 +264,7 @@ func (oq *OrganizationQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err e
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (oq *OrganizationQuery) IDsX(ctx context.Context) []typeid.AnyID {
+func (oq *OrganizationQuery) IDsX(ctx context.Context) []mixin.ID {
 	ids, err := oq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -494,7 +494,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 
 func (oq *OrganizationQuery) loadDomains(ctx context.Context, query *DomainQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Domain)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[typeid.AnyID]*Organization)
+	nodeids := make(map[mixin.ID]*Organization)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -525,7 +525,7 @@ func (oq *OrganizationQuery) loadDomains(ctx context.Context, query *DomainQuery
 }
 func (oq *OrganizationQuery) loadHubs(ctx context.Context, query *HubQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Hub)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[typeid.AnyID]*Organization)
+	nodeids := make(map[mixin.ID]*Organization)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -556,7 +556,7 @@ func (oq *OrganizationQuery) loadHubs(ctx context.Context, query *HubQuery, node
 }
 func (oq *OrganizationQuery) loadPersons(ctx context.Context, query *PersonQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Person)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[typeid.AnyID]*Organization)
+	nodeids := make(map[mixin.ID]*Organization)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -573,13 +573,13 @@ func (oq *OrganizationQuery) loadPersons(ctx context.Context, query *PersonQuery
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.organization_id
+		fk := n.organization_fk
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "organization_id" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "organization_fk" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "organization_id" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "organization_fk" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

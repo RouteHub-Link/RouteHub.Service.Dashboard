@@ -9,10 +9,10 @@ import (
 
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/zitadel/oidc/v3/pkg/oidc"
-	"go.jetify.com/typeid"
 )
 
 // PersonCreate is the builder for creating a Person entity.
@@ -49,27 +49,27 @@ func (pc *PersonCreate) SetNillableIsActive(b *bool) *PersonCreate {
 }
 
 // SetID sets the "id" field.
-func (pc *PersonCreate) SetID(ti typeid.AnyID) *PersonCreate {
-	pc.mutation.SetID(ti)
+func (pc *PersonCreate) SetID(m mixin.ID) *PersonCreate {
+	pc.mutation.SetID(m)
 	return pc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (pc *PersonCreate) SetNillableID(ti *typeid.AnyID) *PersonCreate {
-	if ti != nil {
-		pc.SetID(*ti)
+func (pc *PersonCreate) SetNillableID(m *mixin.ID) *PersonCreate {
+	if m != nil {
+		pc.SetID(*m)
 	}
 	return pc
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (pc *PersonCreate) SetOrganizationID(id typeid.AnyID) *PersonCreate {
+func (pc *PersonCreate) SetOrganizationID(id mixin.ID) *PersonCreate {
 	pc.mutation.SetOrganizationID(id)
 	return pc
 }
 
 // SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (pc *PersonCreate) SetNillableOrganizationID(id *typeid.AnyID) *PersonCreate {
+func (pc *PersonCreate) SetNillableOrganizationID(id *mixin.ID) *PersonCreate {
 	if id != nil {
 		pc = pc.SetOrganizationID(*id)
 	}
@@ -157,10 +157,10 @@ func (pc *PersonCreate) sqlSave(ctx context.Context) (*Person, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(mixin.ID); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Person.ID type: %T", _spec.ID.Value)
 		}
 	}
 	pc.mutation.id = &_node.ID
@@ -175,7 +175,7 @@ func (pc *PersonCreate) createSpec() (*Person, *sqlgraph.CreateSpec) {
 	)
 	if id, ok := pc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := pc.mutation.SubjectID(); ok {
 		_spec.SetField(person.FieldSubjectID, field.TypeString, value)

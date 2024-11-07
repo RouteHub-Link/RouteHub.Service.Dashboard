@@ -8,14 +8,13 @@ import (
 	"fmt"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // DomainUpdate is the builder for updating Domain entities.
@@ -73,27 +72,8 @@ func (du *DomainUpdate) SetNillableStatus(ds *domain.DomainState) *DomainUpdate 
 	return du
 }
 
-// SetHubID sets the "hub" edge to the Hub entity by ID.
-func (du *DomainUpdate) SetHubID(id typeid.AnyID) *DomainUpdate {
-	du.mutation.SetHubID(id)
-	return du
-}
-
-// SetNillableHubID sets the "hub" edge to the Hub entity by ID if the given value is not nil.
-func (du *DomainUpdate) SetNillableHubID(id *typeid.AnyID) *DomainUpdate {
-	if id != nil {
-		du = du.SetHubID(*id)
-	}
-	return du
-}
-
-// SetHub sets the "hub" edge to the Hub entity.
-func (du *DomainUpdate) SetHub(h *Hub) *DomainUpdate {
-	return du.SetHubID(h.ID)
-}
-
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (du *DomainUpdate) SetOrganizationID(id typeid.AnyID) *DomainUpdate {
+func (du *DomainUpdate) SetOrganizationID(id mixin.ID) *DomainUpdate {
 	du.mutation.SetOrganizationID(id)
 	return du
 }
@@ -106,12 +86,6 @@ func (du *DomainUpdate) SetOrganization(o *Organization) *DomainUpdate {
 // Mutation returns the DomainMutation object of the builder.
 func (du *DomainUpdate) Mutation() *DomainMutation {
 	return du.mutation
-}
-
-// ClearHub clears the "hub" edge to the Hub entity.
-func (du *DomainUpdate) ClearHub() *DomainUpdate {
-	du.mutation.ClearHub()
-	return du
 }
 
 // ClearOrganization clears the "organization" edge to the Organization entity.
@@ -190,35 +164,6 @@ func (du *DomainUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.Status(); ok {
 		_spec.SetField(entdomain.FieldStatus, field.TypeEnum, value)
-	}
-	if du.mutation.HubCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   entdomain.HubTable,
-			Columns: []string{entdomain.HubColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := du.mutation.HubIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   entdomain.HubTable,
-			Columns: []string{entdomain.HubColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if du.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -311,27 +256,8 @@ func (duo *DomainUpdateOne) SetNillableStatus(ds *domain.DomainState) *DomainUpd
 	return duo
 }
 
-// SetHubID sets the "hub" edge to the Hub entity by ID.
-func (duo *DomainUpdateOne) SetHubID(id typeid.AnyID) *DomainUpdateOne {
-	duo.mutation.SetHubID(id)
-	return duo
-}
-
-// SetNillableHubID sets the "hub" edge to the Hub entity by ID if the given value is not nil.
-func (duo *DomainUpdateOne) SetNillableHubID(id *typeid.AnyID) *DomainUpdateOne {
-	if id != nil {
-		duo = duo.SetHubID(*id)
-	}
-	return duo
-}
-
-// SetHub sets the "hub" edge to the Hub entity.
-func (duo *DomainUpdateOne) SetHub(h *Hub) *DomainUpdateOne {
-	return duo.SetHubID(h.ID)
-}
-
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (duo *DomainUpdateOne) SetOrganizationID(id typeid.AnyID) *DomainUpdateOne {
+func (duo *DomainUpdateOne) SetOrganizationID(id mixin.ID) *DomainUpdateOne {
 	duo.mutation.SetOrganizationID(id)
 	return duo
 }
@@ -344,12 +270,6 @@ func (duo *DomainUpdateOne) SetOrganization(o *Organization) *DomainUpdateOne {
 // Mutation returns the DomainMutation object of the builder.
 func (duo *DomainUpdateOne) Mutation() *DomainMutation {
 	return duo.mutation
-}
-
-// ClearHub clears the "hub" edge to the Hub entity.
-func (duo *DomainUpdateOne) ClearHub() *DomainUpdateOne {
-	duo.mutation.ClearHub()
-	return duo
 }
 
 // ClearOrganization clears the "organization" edge to the Organization entity.
@@ -458,35 +378,6 @@ func (duo *DomainUpdateOne) sqlSave(ctx context.Context) (_node *Domain, err err
 	}
 	if value, ok := duo.mutation.Status(); ok {
 		_spec.SetField(entdomain.FieldStatus, field.TypeEnum, value)
-	}
-	if duo.mutation.HubCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   entdomain.HubTable,
-			Columns: []string{entdomain.HubColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := duo.mutation.HubIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   entdomain.HubTable,
-			Columns: []string{entdomain.HubColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if duo.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{

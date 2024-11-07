@@ -10,7 +10,7 @@ import (
 	"reflect"
 
 	"RouteHub.Service.Dashboard/ent/migrate"
-	"go.jetify.com/typeid"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
@@ -299,7 +299,7 @@ func (c *DomainClient) UpdateOne(d *Domain) *DomainUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *DomainClient) UpdateOneID(id typeid.AnyID) *DomainUpdateOne {
+func (c *DomainClient) UpdateOneID(id mixin.ID) *DomainUpdateOne {
 	mutation := newDomainMutation(c.config, OpUpdateOne, withDomainID(id))
 	return &DomainUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -316,7 +316,7 @@ func (c *DomainClient) DeleteOne(d *Domain) *DomainDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *DomainClient) DeleteOneID(id typeid.AnyID) *DomainDeleteOne {
+func (c *DomainClient) DeleteOneID(id mixin.ID) *DomainDeleteOne {
 	builder := c.Delete().Where(entdomain.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -333,33 +333,17 @@ func (c *DomainClient) Query() *DomainQuery {
 }
 
 // Get returns a Domain entity by its id.
-func (c *DomainClient) Get(ctx context.Context, id typeid.AnyID) (*Domain, error) {
+func (c *DomainClient) Get(ctx context.Context, id mixin.ID) (*Domain, error) {
 	return c.Query().Where(entdomain.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *DomainClient) GetX(ctx context.Context, id typeid.AnyID) *Domain {
+func (c *DomainClient) GetX(ctx context.Context, id mixin.ID) *Domain {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
 	return obj
-}
-
-// QueryHub queries the hub edge of a Domain.
-func (c *DomainClient) QueryHub(d *Domain) *HubQuery {
-	query := (&HubClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := d.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entdomain.Table, entdomain.FieldID, id),
-			sqlgraph.To(enthub.Table, enthub.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, entdomain.HubTable, entdomain.HubColumn),
-		)
-		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // QueryOrganization queries the organization edge of a Domain.
@@ -464,7 +448,7 @@ func (c *HubClient) UpdateOne(h *Hub) *HubUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *HubClient) UpdateOneID(id typeid.AnyID) *HubUpdateOne {
+func (c *HubClient) UpdateOneID(id mixin.ID) *HubUpdateOne {
 	mutation := newHubMutation(c.config, OpUpdateOne, withHubID(id))
 	return &HubUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -481,7 +465,7 @@ func (c *HubClient) DeleteOne(h *Hub) *HubDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *HubClient) DeleteOneID(id typeid.AnyID) *HubDeleteOne {
+func (c *HubClient) DeleteOneID(id mixin.ID) *HubDeleteOne {
 	builder := c.Delete().Where(enthub.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -498,12 +482,12 @@ func (c *HubClient) Query() *HubQuery {
 }
 
 // Get returns a Hub entity by its id.
-func (c *HubClient) Get(ctx context.Context, id typeid.AnyID) (*Hub, error) {
+func (c *HubClient) Get(ctx context.Context, id mixin.ID) (*Hub, error) {
 	return c.Query().Where(enthub.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *HubClient) GetX(ctx context.Context, id typeid.AnyID) *Hub {
+func (c *HubClient) GetX(ctx context.Context, id mixin.ID) *Hub {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -519,7 +503,7 @@ func (c *HubClient) QueryDomain(h *Hub) *DomainQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(enthub.Table, enthub.FieldID, id),
 			sqlgraph.To(entdomain.Table, entdomain.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, enthub.DomainTable, enthub.DomainColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, enthub.DomainTable, enthub.DomainColumn),
 		)
 		fromV = sqlgraph.Neighbors(h.driver.Dialect(), step)
 		return fromV, nil
@@ -645,7 +629,7 @@ func (c *LinkClient) UpdateOne(l *Link) *LinkUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *LinkClient) UpdateOneID(id typeid.AnyID) *LinkUpdateOne {
+func (c *LinkClient) UpdateOneID(id mixin.ID) *LinkUpdateOne {
 	mutation := newLinkMutation(c.config, OpUpdateOne, withLinkID(id))
 	return &LinkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -662,7 +646,7 @@ func (c *LinkClient) DeleteOne(l *Link) *LinkDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *LinkClient) DeleteOneID(id typeid.AnyID) *LinkDeleteOne {
+func (c *LinkClient) DeleteOneID(id mixin.ID) *LinkDeleteOne {
 	builder := c.Delete().Where(link.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -679,12 +663,12 @@ func (c *LinkClient) Query() *LinkQuery {
 }
 
 // Get returns a Link entity by its id.
-func (c *LinkClient) Get(ctx context.Context, id typeid.AnyID) (*Link, error) {
+func (c *LinkClient) Get(ctx context.Context, id mixin.ID) (*Link, error) {
 	return c.Query().Where(link.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *LinkClient) GetX(ctx context.Context, id typeid.AnyID) *Link {
+func (c *LinkClient) GetX(ctx context.Context, id mixin.ID) *Link {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -794,7 +778,7 @@ func (c *OrganizationClient) UpdateOne(o *Organization) *OrganizationUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *OrganizationClient) UpdateOneID(id typeid.AnyID) *OrganizationUpdateOne {
+func (c *OrganizationClient) UpdateOneID(id mixin.ID) *OrganizationUpdateOne {
 	mutation := newOrganizationMutation(c.config, OpUpdateOne, withOrganizationID(id))
 	return &OrganizationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -811,7 +795,7 @@ func (c *OrganizationClient) DeleteOne(o *Organization) *OrganizationDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *OrganizationClient) DeleteOneID(id typeid.AnyID) *OrganizationDeleteOne {
+func (c *OrganizationClient) DeleteOneID(id mixin.ID) *OrganizationDeleteOne {
 	builder := c.Delete().Where(organization.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -828,12 +812,12 @@ func (c *OrganizationClient) Query() *OrganizationQuery {
 }
 
 // Get returns a Organization entity by its id.
-func (c *OrganizationClient) Get(ctx context.Context, id typeid.AnyID) (*Organization, error) {
+func (c *OrganizationClient) Get(ctx context.Context, id mixin.ID) (*Organization, error) {
 	return c.Query().Where(organization.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *OrganizationClient) GetX(ctx context.Context, id typeid.AnyID) *Organization {
+func (c *OrganizationClient) GetX(ctx context.Context, id mixin.ID) *Organization {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -975,7 +959,7 @@ func (c *PersonClient) UpdateOne(pe *Person) *PersonUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PersonClient) UpdateOneID(id typeid.AnyID) *PersonUpdateOne {
+func (c *PersonClient) UpdateOneID(id mixin.ID) *PersonUpdateOne {
 	mutation := newPersonMutation(c.config, OpUpdateOne, withPersonID(id))
 	return &PersonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -992,7 +976,7 @@ func (c *PersonClient) DeleteOne(pe *Person) *PersonDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PersonClient) DeleteOneID(id typeid.AnyID) *PersonDeleteOne {
+func (c *PersonClient) DeleteOneID(id mixin.ID) *PersonDeleteOne {
 	builder := c.Delete().Where(person.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1009,12 +993,12 @@ func (c *PersonClient) Query() *PersonQuery {
 }
 
 // Get returns a Person entity by its id.
-func (c *PersonClient) Get(ctx context.Context, id typeid.AnyID) (*Person, error) {
+func (c *PersonClient) Get(ctx context.Context, id mixin.ID) (*Person, error) {
 	return c.Query().Where(person.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PersonClient) GetX(ctx context.Context, id typeid.AnyID) *Person {
+func (c *PersonClient) GetX(ctx context.Context, id mixin.ID) *Person {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

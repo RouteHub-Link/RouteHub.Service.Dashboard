@@ -8,17 +8,17 @@ import (
 	"strings"
 
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"go.jetify.com/typeid"
 )
 
 // Organization is the model entity for the Organization schema.
 type Organization struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID typeid.AnyID `json:"id,omitempty"`
+	ID mixin.ID `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Website holds the value of the "website" field.
@@ -82,10 +82,8 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case organization.FieldSocialMedias:
 			values[i] = new([]byte)
-		case organization.FieldName, organization.FieldWebsite, organization.FieldDescription, organization.FieldLocation:
+		case organization.FieldID, organization.FieldName, organization.FieldWebsite, organization.FieldDescription, organization.FieldLocation:
 			values[i] = new(sql.NullString)
-		case organization.FieldID:
-			values[i] = new(typeid.AnyID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -102,10 +100,10 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case organization.FieldID:
-			if value, ok := values[i].(*typeid.AnyID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				o.ID = *value
+			} else if value.Valid {
+				o.ID = mixin.ID(value.String)
 			}
 		case organization.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {

@@ -9,7 +9,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/schema"
-	"go.jetify.com/typeid"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -32,7 +32,7 @@ func init() {
 	// entdomainDescID is the schema descriptor for id field.
 	entdomainDescID := entdomainMixinFields0[0].Descriptor()
 	// entdomain.DefaultID holds the default value on creation for the id field.
-	entdomain.DefaultID = entdomainDescID.Default.(func() typeid.AnyID)
+	entdomain.DefaultID = entdomainDescID.Default.(func() mixin.ID)
 	enthubMixin := schema.Hub{}.Mixin()
 	enthubMixinFields0 := enthubMixin[0].Fields()
 	_ = enthubMixinFields0
@@ -53,7 +53,7 @@ func init() {
 	// enthubDescID is the schema descriptor for id field.
 	enthubDescID := enthubMixinFields0[0].Descriptor()
 	// enthub.DefaultID holds the default value on creation for the id field.
-	enthub.DefaultID = enthubDescID.Default.(func() typeid.AnyID)
+	enthub.DefaultID = enthubDescID.Default.(func() mixin.ID)
 	linkMixin := schema.Link{}.Mixin()
 	linkMixinFields0 := linkMixin[0].Fields()
 	_ = linkMixinFields0
@@ -70,7 +70,7 @@ func init() {
 	// linkDescID is the schema descriptor for id field.
 	linkDescID := linkMixinFields0[0].Descriptor()
 	// link.DefaultID holds the default value on creation for the id field.
-	link.DefaultID = linkDescID.Default.(func() typeid.AnyID)
+	link.DefaultID = linkDescID.Default.(func() mixin.ID)
 	organizationMixin := schema.Organization{}.Mixin()
 	organizationMixinFields0 := organizationMixin[0].Fields()
 	_ = organizationMixinFields0
@@ -83,7 +83,7 @@ func init() {
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationMixinFields0[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
-	organization.DefaultID = organizationDescID.Default.(func() typeid.AnyID)
+	organization.DefaultID = organizationDescID.Default.(func() mixin.ID)
 	personMixin := schema.Person{}.Mixin()
 	personMixinFields0 := personMixin[0].Fields()
 	_ = personMixinFields0
@@ -100,5 +100,5 @@ func init() {
 	// personDescID is the schema descriptor for id field.
 	personDescID := personMixinFields0[0].Descriptor()
 	// person.DefaultID holds the default value on creation for the id field.
-	person.DefaultID = personDescID.Default.(func() typeid.AnyID)
+	person.DefaultID = personDescID.Default.(func() mixin.ID)
 }

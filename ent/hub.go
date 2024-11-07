@@ -12,17 +12,17 @@ import (
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"go.jetify.com/typeid"
 )
 
 // Hub is the model entity for the Hub schema.
 type Hub struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID typeid.AnyID `json:"id,omitempty"`
+	ID mixin.ID `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Slug holds the value of the "slug" field.
@@ -38,7 +38,8 @@ type Hub struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the HubQuery when eager-loading is set.
 	Edges           HubEdges `json:"edges"`
-	organization_id *typeid.AnyID
+	domain_fk       *mixin.ID
+	organization_id *mixin.ID
 	selectValues    sql.SelectValues
 }
 
@@ -97,12 +98,12 @@ func (*Hub) scanValues(columns []string) ([]any, error) {
 			values[i] = new(enums.StatusState)
 		case enthub.FieldDefaultRedirection:
 			values[i] = new(hub.RedirectionOption)
-		case enthub.FieldName, enthub.FieldSlug, enthub.FieldTCPAddress:
+		case enthub.FieldID, enthub.FieldName, enthub.FieldSlug, enthub.FieldTCPAddress:
 			values[i] = new(sql.NullString)
-		case enthub.FieldID:
-			values[i] = new(typeid.AnyID)
-		case enthub.ForeignKeys[0]: // organization_id
-			values[i] = &sql.NullScanner{S: new(typeid.AnyID)}
+		case enthub.ForeignKeys[0]: // domain_fk
+			values[i] = new(sql.NullString)
+		case enthub.ForeignKeys[1]: // organization_id
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -119,10 +120,10 @@ func (h *Hub) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case enthub.FieldID:
-			if value, ok := values[i].(*typeid.AnyID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				h.ID = *value
+			} else if value.Valid {
+				h.ID = mixin.ID(value.String)
 			}
 		case enthub.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -163,11 +164,18 @@ func (h *Hub) assignValues(columns []string, values []any) error {
 				h.DefaultRedirection = *value
 			}
 		case enthub.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field domain_fk", values[i])
+			} else if value.Valid {
+				h.domain_fk = new(mixin.ID)
+				*h.domain_fk = mixin.ID(value.String)
+			}
+		case enthub.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
 			} else if value.Valid {
-				h.organization_id = new(typeid.AnyID)
-				*h.organization_id = *value.S.(*typeid.AnyID)
+				h.organization_id = new(mixin.ID)
+				*h.organization_id = mixin.ID(value.String)
 			}
 		default:
 			h.selectValues.Set(columns[i], values[i])

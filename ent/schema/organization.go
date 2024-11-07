@@ -15,7 +15,7 @@ type Organization struct {
 }
 
 const (
-	organizationPrefix = "organization"
+	organizationPrefix = "org"
 )
 
 func (Organization) Mixin() []ent.Mixin {
@@ -59,6 +59,6 @@ func (Organization) Edges() []ent.Edge {
 
 		// One Organization has many persons
 		edge.To("persons", Person.Type).
-			StorageKey(edge.Column("organization_id")),
+			StorageKey(edge.Column("organization_fk")),
 	}
 }

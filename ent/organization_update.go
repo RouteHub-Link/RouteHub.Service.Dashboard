@@ -12,11 +12,11 @@ import (
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // OrganizationUpdate is the builder for updating Organization entities.
@@ -127,14 +127,14 @@ func (ou *OrganizationUpdate) ClearSocialMedias() *OrganizationUpdate {
 }
 
 // AddDomainIDs adds the "domains" edge to the Domain entity by IDs.
-func (ou *OrganizationUpdate) AddDomainIDs(ids ...typeid.AnyID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddDomainIDs(ids ...mixin.ID) *OrganizationUpdate {
 	ou.mutation.AddDomainIDs(ids...)
 	return ou
 }
 
 // AddDomains adds the "domains" edges to the Domain entity.
 func (ou *OrganizationUpdate) AddDomains(d ...*Domain) *OrganizationUpdate {
-	ids := make([]typeid.AnyID, len(d))
+	ids := make([]mixin.ID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -142,14 +142,14 @@ func (ou *OrganizationUpdate) AddDomains(d ...*Domain) *OrganizationUpdate {
 }
 
 // AddHubIDs adds the "hubs" edge to the Hub entity by IDs.
-func (ou *OrganizationUpdate) AddHubIDs(ids ...typeid.AnyID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddHubIDs(ids ...mixin.ID) *OrganizationUpdate {
 	ou.mutation.AddHubIDs(ids...)
 	return ou
 }
 
 // AddHubs adds the "hubs" edges to the Hub entity.
 func (ou *OrganizationUpdate) AddHubs(h ...*Hub) *OrganizationUpdate {
-	ids := make([]typeid.AnyID, len(h))
+	ids := make([]mixin.ID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
@@ -157,14 +157,14 @@ func (ou *OrganizationUpdate) AddHubs(h ...*Hub) *OrganizationUpdate {
 }
 
 // AddPersonIDs adds the "persons" edge to the Person entity by IDs.
-func (ou *OrganizationUpdate) AddPersonIDs(ids ...typeid.AnyID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddPersonIDs(ids ...mixin.ID) *OrganizationUpdate {
 	ou.mutation.AddPersonIDs(ids...)
 	return ou
 }
 
 // AddPersons adds the "persons" edges to the Person entity.
 func (ou *OrganizationUpdate) AddPersons(p ...*Person) *OrganizationUpdate {
-	ids := make([]typeid.AnyID, len(p))
+	ids := make([]mixin.ID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -183,14 +183,14 @@ func (ou *OrganizationUpdate) ClearDomains() *OrganizationUpdate {
 }
 
 // RemoveDomainIDs removes the "domains" edge to Domain entities by IDs.
-func (ou *OrganizationUpdate) RemoveDomainIDs(ids ...typeid.AnyID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemoveDomainIDs(ids ...mixin.ID) *OrganizationUpdate {
 	ou.mutation.RemoveDomainIDs(ids...)
 	return ou
 }
 
 // RemoveDomains removes "domains" edges to Domain entities.
 func (ou *OrganizationUpdate) RemoveDomains(d ...*Domain) *OrganizationUpdate {
-	ids := make([]typeid.AnyID, len(d))
+	ids := make([]mixin.ID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -204,14 +204,14 @@ func (ou *OrganizationUpdate) ClearHubs() *OrganizationUpdate {
 }
 
 // RemoveHubIDs removes the "hubs" edge to Hub entities by IDs.
-func (ou *OrganizationUpdate) RemoveHubIDs(ids ...typeid.AnyID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemoveHubIDs(ids ...mixin.ID) *OrganizationUpdate {
 	ou.mutation.RemoveHubIDs(ids...)
 	return ou
 }
 
 // RemoveHubs removes "hubs" edges to Hub entities.
 func (ou *OrganizationUpdate) RemoveHubs(h ...*Hub) *OrganizationUpdate {
-	ids := make([]typeid.AnyID, len(h))
+	ids := make([]mixin.ID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
@@ -225,14 +225,14 @@ func (ou *OrganizationUpdate) ClearPersons() *OrganizationUpdate {
 }
 
 // RemovePersonIDs removes the "persons" edge to Person entities by IDs.
-func (ou *OrganizationUpdate) RemovePersonIDs(ids ...typeid.AnyID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemovePersonIDs(ids ...mixin.ID) *OrganizationUpdate {
 	ou.mutation.RemovePersonIDs(ids...)
 	return ou
 }
 
 // RemovePersons removes "persons" edges to Person entities.
 func (ou *OrganizationUpdate) RemovePersons(p ...*Person) *OrganizationUpdate {
-	ids := make([]typeid.AnyID, len(p))
+	ids := make([]mixin.ID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -565,14 +565,14 @@ func (ouo *OrganizationUpdateOne) ClearSocialMedias() *OrganizationUpdateOne {
 }
 
 // AddDomainIDs adds the "domains" edge to the Domain entity by IDs.
-func (ouo *OrganizationUpdateOne) AddDomainIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddDomainIDs(ids ...mixin.ID) *OrganizationUpdateOne {
 	ouo.mutation.AddDomainIDs(ids...)
 	return ouo
 }
 
 // AddDomains adds the "domains" edges to the Domain entity.
 func (ouo *OrganizationUpdateOne) AddDomains(d ...*Domain) *OrganizationUpdateOne {
-	ids := make([]typeid.AnyID, len(d))
+	ids := make([]mixin.ID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -580,14 +580,14 @@ func (ouo *OrganizationUpdateOne) AddDomains(d ...*Domain) *OrganizationUpdateOn
 }
 
 // AddHubIDs adds the "hubs" edge to the Hub entity by IDs.
-func (ouo *OrganizationUpdateOne) AddHubIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddHubIDs(ids ...mixin.ID) *OrganizationUpdateOne {
 	ouo.mutation.AddHubIDs(ids...)
 	return ouo
 }
 
 // AddHubs adds the "hubs" edges to the Hub entity.
 func (ouo *OrganizationUpdateOne) AddHubs(h ...*Hub) *OrganizationUpdateOne {
-	ids := make([]typeid.AnyID, len(h))
+	ids := make([]mixin.ID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
@@ -595,14 +595,14 @@ func (ouo *OrganizationUpdateOne) AddHubs(h ...*Hub) *OrganizationUpdateOne {
 }
 
 // AddPersonIDs adds the "persons" edge to the Person entity by IDs.
-func (ouo *OrganizationUpdateOne) AddPersonIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddPersonIDs(ids ...mixin.ID) *OrganizationUpdateOne {
 	ouo.mutation.AddPersonIDs(ids...)
 	return ouo
 }
 
 // AddPersons adds the "persons" edges to the Person entity.
 func (ouo *OrganizationUpdateOne) AddPersons(p ...*Person) *OrganizationUpdateOne {
-	ids := make([]typeid.AnyID, len(p))
+	ids := make([]mixin.ID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -621,14 +621,14 @@ func (ouo *OrganizationUpdateOne) ClearDomains() *OrganizationUpdateOne {
 }
 
 // RemoveDomainIDs removes the "domains" edge to Domain entities by IDs.
-func (ouo *OrganizationUpdateOne) RemoveDomainIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemoveDomainIDs(ids ...mixin.ID) *OrganizationUpdateOne {
 	ouo.mutation.RemoveDomainIDs(ids...)
 	return ouo
 }
 
 // RemoveDomains removes "domains" edges to Domain entities.
 func (ouo *OrganizationUpdateOne) RemoveDomains(d ...*Domain) *OrganizationUpdateOne {
-	ids := make([]typeid.AnyID, len(d))
+	ids := make([]mixin.ID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -642,14 +642,14 @@ func (ouo *OrganizationUpdateOne) ClearHubs() *OrganizationUpdateOne {
 }
 
 // RemoveHubIDs removes the "hubs" edge to Hub entities by IDs.
-func (ouo *OrganizationUpdateOne) RemoveHubIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemoveHubIDs(ids ...mixin.ID) *OrganizationUpdateOne {
 	ouo.mutation.RemoveHubIDs(ids...)
 	return ouo
 }
 
 // RemoveHubs removes "hubs" edges to Hub entities.
 func (ouo *OrganizationUpdateOne) RemoveHubs(h ...*Hub) *OrganizationUpdateOne {
-	ids := make([]typeid.AnyID, len(h))
+	ids := make([]mixin.ID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
@@ -663,14 +663,14 @@ func (ouo *OrganizationUpdateOne) ClearPersons() *OrganizationUpdateOne {
 }
 
 // RemovePersonIDs removes the "persons" edge to Person entities by IDs.
-func (ouo *OrganizationUpdateOne) RemovePersonIDs(ids ...typeid.AnyID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemovePersonIDs(ids ...mixin.ID) *OrganizationUpdateOne {
 	ouo.mutation.RemovePersonIDs(ids...)
 	return ouo
 }
 
 // RemovePersons removes "persons" edges to Person entities.
 func (ouo *OrganizationUpdateOne) RemovePersons(p ...*Person) *OrganizationUpdateOne {
-	ids := make([]typeid.AnyID, len(p))
+	ids := make([]mixin.ID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}

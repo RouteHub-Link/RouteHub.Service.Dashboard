@@ -3,9 +3,9 @@
 package organization
 
 import (
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"go.jetify.com/typeid"
 )
 
 const (
@@ -51,7 +51,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "person" package.
 	PersonsInverseTable = "persons"
 	// PersonsColumn is the table column denoting the persons relation/edge.
-	PersonsColumn = "organization_id"
+	PersonsColumn = "organization_fk"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -78,7 +78,7 @@ var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() typeid.AnyID
+	DefaultID func() mixin.ID
 )
 
 // OrderOption defines the ordering options for the Organization queries.

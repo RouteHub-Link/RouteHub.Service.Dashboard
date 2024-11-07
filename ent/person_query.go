@@ -10,11 +10,11 @@ import (
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // PersonQuery is the builder for querying Person entities.
@@ -108,8 +108,8 @@ func (pq *PersonQuery) FirstX(ctx context.Context) *Person {
 
 // FirstID returns the first Person ID from the query.
 // Returns a *NotFoundError when no Person ID was found.
-func (pq *PersonQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error) {
-	var ids []typeid.AnyID
+func (pq *PersonQuery) FirstID(ctx context.Context) (id mixin.ID, err error) {
+	var ids []mixin.ID
 	if ids, err = pq.Limit(1).IDs(setContextOp(ctx, pq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -121,7 +121,7 @@ func (pq *PersonQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error)
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (pq *PersonQuery) FirstIDX(ctx context.Context) typeid.AnyID {
+func (pq *PersonQuery) FirstIDX(ctx context.Context) mixin.ID {
 	id, err := pq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -159,8 +159,8 @@ func (pq *PersonQuery) OnlyX(ctx context.Context) *Person {
 // OnlyID is like Only, but returns the only Person ID in the query.
 // Returns a *NotSingularError when more than one Person ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (pq *PersonQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) {
-	var ids []typeid.AnyID
+func (pq *PersonQuery) OnlyID(ctx context.Context) (id mixin.ID, err error) {
+	var ids []mixin.ID
 	if ids, err = pq.Limit(2).IDs(setContextOp(ctx, pq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -176,7 +176,7 @@ func (pq *PersonQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (pq *PersonQuery) OnlyIDX(ctx context.Context) typeid.AnyID {
+func (pq *PersonQuery) OnlyIDX(ctx context.Context) mixin.ID {
 	id, err := pq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -204,7 +204,7 @@ func (pq *PersonQuery) AllX(ctx context.Context) []*Person {
 }
 
 // IDs executes the query and returns a list of Person IDs.
-func (pq *PersonQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) {
+func (pq *PersonQuery) IDs(ctx context.Context) (ids []mixin.ID, err error) {
 	if pq.ctx.Unique == nil && pq.path != nil {
 		pq.Unique(true)
 	}
@@ -216,7 +216,7 @@ func (pq *PersonQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) 
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (pq *PersonQuery) IDsX(ctx context.Context) []typeid.AnyID {
+func (pq *PersonQuery) IDsX(ctx context.Context) []mixin.ID {
 	ids, err := pq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -411,8 +411,8 @@ func (pq *PersonQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Perso
 }
 
 func (pq *PersonQuery) loadOrganization(ctx context.Context, query *OrganizationQuery, nodes []*Person, init func(*Person), assign func(*Person, *Organization)) error {
-	ids := make([]typeid.AnyID, 0, len(nodes))
-	nodeids := make(map[typeid.AnyID][]*Person)
+	ids := make([]mixin.ID, 0, len(nodes))
+	nodeids := make(map[mixin.ID][]*Person)
 	for i := range nodes {
 		if nodes[i].organization_fk == nil {
 			continue

@@ -14,11 +14,11 @@ import (
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // HubUpdate is the builder for updating Hub entities.
@@ -125,7 +125,7 @@ func (hu *HubUpdate) SetNillableDefaultRedirection(ho *hub.RedirectionOption) *H
 }
 
 // SetDomainID sets the "domain" edge to the Domain entity by ID.
-func (hu *HubUpdate) SetDomainID(id typeid.AnyID) *HubUpdate {
+func (hu *HubUpdate) SetDomainID(id mixin.ID) *HubUpdate {
 	hu.mutation.SetDomainID(id)
 	return hu
 }
@@ -136,7 +136,7 @@ func (hu *HubUpdate) SetDomain(d *Domain) *HubUpdate {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (hu *HubUpdate) SetOrganizationID(id typeid.AnyID) *HubUpdate {
+func (hu *HubUpdate) SetOrganizationID(id mixin.ID) *HubUpdate {
 	hu.mutation.SetOrganizationID(id)
 	return hu
 }
@@ -147,14 +147,14 @@ func (hu *HubUpdate) SetOrganization(o *Organization) *HubUpdate {
 }
 
 // AddLinkIDs adds the "links" edge to the Link entity by IDs.
-func (hu *HubUpdate) AddLinkIDs(ids ...typeid.AnyID) *HubUpdate {
+func (hu *HubUpdate) AddLinkIDs(ids ...mixin.ID) *HubUpdate {
 	hu.mutation.AddLinkIDs(ids...)
 	return hu
 }
 
 // AddLinks adds the "links" edges to the Link entity.
 func (hu *HubUpdate) AddLinks(l ...*Link) *HubUpdate {
-	ids := make([]typeid.AnyID, len(l))
+	ids := make([]mixin.ID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -185,14 +185,14 @@ func (hu *HubUpdate) ClearLinks() *HubUpdate {
 }
 
 // RemoveLinkIDs removes the "links" edge to Link entities by IDs.
-func (hu *HubUpdate) RemoveLinkIDs(ids ...typeid.AnyID) *HubUpdate {
+func (hu *HubUpdate) RemoveLinkIDs(ids ...mixin.ID) *HubUpdate {
 	hu.mutation.RemoveLinkIDs(ids...)
 	return hu
 }
 
 // RemoveLinks removes "links" edges to Link entities.
 func (hu *HubUpdate) RemoveLinks(l ...*Link) *HubUpdate {
-	ids := make([]typeid.AnyID, len(l))
+	ids := make([]mixin.ID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -297,7 +297,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if hu.mutation.DomainCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   enthub.DomainTable,
 			Columns: []string{enthub.DomainColumn},
@@ -310,7 +310,7 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := hu.mutation.DomainIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   enthub.DomainTable,
 			Columns: []string{enthub.DomainColumn},
@@ -509,7 +509,7 @@ func (huo *HubUpdateOne) SetNillableDefaultRedirection(ho *hub.RedirectionOption
 }
 
 // SetDomainID sets the "domain" edge to the Domain entity by ID.
-func (huo *HubUpdateOne) SetDomainID(id typeid.AnyID) *HubUpdateOne {
+func (huo *HubUpdateOne) SetDomainID(id mixin.ID) *HubUpdateOne {
 	huo.mutation.SetDomainID(id)
 	return huo
 }
@@ -520,7 +520,7 @@ func (huo *HubUpdateOne) SetDomain(d *Domain) *HubUpdateOne {
 }
 
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (huo *HubUpdateOne) SetOrganizationID(id typeid.AnyID) *HubUpdateOne {
+func (huo *HubUpdateOne) SetOrganizationID(id mixin.ID) *HubUpdateOne {
 	huo.mutation.SetOrganizationID(id)
 	return huo
 }
@@ -531,14 +531,14 @@ func (huo *HubUpdateOne) SetOrganization(o *Organization) *HubUpdateOne {
 }
 
 // AddLinkIDs adds the "links" edge to the Link entity by IDs.
-func (huo *HubUpdateOne) AddLinkIDs(ids ...typeid.AnyID) *HubUpdateOne {
+func (huo *HubUpdateOne) AddLinkIDs(ids ...mixin.ID) *HubUpdateOne {
 	huo.mutation.AddLinkIDs(ids...)
 	return huo
 }
 
 // AddLinks adds the "links" edges to the Link entity.
 func (huo *HubUpdateOne) AddLinks(l ...*Link) *HubUpdateOne {
-	ids := make([]typeid.AnyID, len(l))
+	ids := make([]mixin.ID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -569,14 +569,14 @@ func (huo *HubUpdateOne) ClearLinks() *HubUpdateOne {
 }
 
 // RemoveLinkIDs removes the "links" edge to Link entities by IDs.
-func (huo *HubUpdateOne) RemoveLinkIDs(ids ...typeid.AnyID) *HubUpdateOne {
+func (huo *HubUpdateOne) RemoveLinkIDs(ids ...mixin.ID) *HubUpdateOne {
 	huo.mutation.RemoveLinkIDs(ids...)
 	return huo
 }
 
 // RemoveLinks removes "links" edges to Link entities.
 func (huo *HubUpdateOne) RemoveLinks(l ...*Link) *HubUpdateOne {
-	ids := make([]typeid.AnyID, len(l))
+	ids := make([]mixin.ID, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -711,7 +711,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 	}
 	if huo.mutation.DomainCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   enthub.DomainTable,
 			Columns: []string{enthub.DomainColumn},
@@ -724,7 +724,7 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 	}
 	if nodes := huo.mutation.DomainIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   enthub.DomainTable,
 			Columns: []string{enthub.DomainColumn},

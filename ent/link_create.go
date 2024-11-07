@@ -10,10 +10,10 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // LinkCreate is the builder for creating a Link entity.
@@ -56,21 +56,21 @@ func (lc *LinkCreate) SetStatus(es enums.StatusState) *LinkCreate {
 }
 
 // SetID sets the "id" field.
-func (lc *LinkCreate) SetID(ti typeid.AnyID) *LinkCreate {
-	lc.mutation.SetID(ti)
+func (lc *LinkCreate) SetID(m mixin.ID) *LinkCreate {
+	lc.mutation.SetID(m)
 	return lc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableID(ti *typeid.AnyID) *LinkCreate {
-	if ti != nil {
-		lc.SetID(*ti)
+func (lc *LinkCreate) SetNillableID(m *mixin.ID) *LinkCreate {
+	if m != nil {
+		lc.SetID(*m)
 	}
 	return lc
 }
 
 // SetHubID sets the "hub" edge to the Hub entity by ID.
-func (lc *LinkCreate) SetHubID(id typeid.AnyID) *LinkCreate {
+func (lc *LinkCreate) SetHubID(id mixin.ID) *LinkCreate {
 	lc.mutation.SetHubID(id)
 	return lc
 }
@@ -165,10 +165,10 @@ func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(mixin.ID); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Link.ID type: %T", _spec.ID.Value)
 		}
 	}
 	lc.mutation.id = &_node.ID
@@ -183,7 +183,7 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 	)
 	if id, ok := lc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := lc.mutation.Target(); ok {
 		_spec.SetField(link.FieldTarget, field.TypeString, value)

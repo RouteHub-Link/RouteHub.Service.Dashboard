@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"go.jetify.com/typeid"
 )
 
 const (
@@ -22,19 +22,10 @@ const (
 	FieldURL = "url"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// EdgeHub holds the string denoting the hub edge name in mutations.
-	EdgeHub = "hub"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
 	EdgeOrganization = "organization"
 	// Table holds the table name of the domain in the database.
 	Table = "domains"
-	// HubTable is the table that holds the hub relation/edge.
-	HubTable = "domains"
-	// HubInverseTable is the table name for the Hub entity.
-	// It exists in this package in order to avoid circular dependency with the "enthub" package.
-	HubInverseTable = "hubs"
-	// HubColumn is the table column denoting the hub relation/edge.
-	HubColumn = "domain_fk"
 	// OrganizationTable is the table that holds the organization relation/edge.
 	OrganizationTable = "domains"
 	// OrganizationInverseTable is the table name for the Organization entity.
@@ -55,7 +46,6 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "domains"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"domain_fk",
 	"organization_id",
 }
 
@@ -80,7 +70,7 @@ var (
 	// URLValidator is a validator for the "url" field. It is called by the builders before save.
 	URLValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() typeid.AnyID
+	DefaultID func() mixin.ID
 )
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
@@ -116,25 +106,11 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
-// ByHubField orders the results by hub field.
-func ByHubField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newHubStep(), sql.OrderByField(field, opts...))
-	}
-}
-
 // ByOrganizationField orders the results by organization field.
 func ByOrganizationField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newOrganizationStep(), sql.OrderByField(field, opts...))
 	}
-}
-func newHubStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(HubInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, HubTable, HubColumn),
-	)
 }
 func newOrganizationStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

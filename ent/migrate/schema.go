@@ -14,7 +14,6 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "url", Type: field.TypeString, Unique: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PASSIVE", "DNS_STATUS_PENDING", "DNS_STATUS_VERIFIED", "DNS_STATUS_FAILED", "ACTIVE"}, Default: "PASSIVE"},
-		{Name: "domain_fk", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "organization_id", Type: field.TypeString},
 	}
 	// DomainsTable holds the schema information for the "domains" table.
@@ -24,14 +23,8 @@ var (
 		PrimaryKey: []*schema.Column{DomainsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "domains_hubs_domain",
-				Columns:    []*schema.Column{DomainsColumns[4]},
-				RefColumns: []*schema.Column{HubsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
 				Symbol:     "domains_organizations_domains",
-				Columns:    []*schema.Column{DomainsColumns[5]},
+				Columns:    []*schema.Column{DomainsColumns[4]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -46,6 +39,7 @@ var (
 		{Name: "tcp_address", Type: field.TypeString},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"STATUS_INACTIVE", "STATUS_ACTIVE"}, Default: "STATUS_INACTIVE"},
 		{Name: "default_redirection", Type: field.TypeEnum, Enums: []string{"TIMED", "NOT_AUTO_REDIRECT", "DIRECT_HTTP_REDIRECT", "CONFIRM_REDIRECT", "CUSTOM"}, Default: "TIMED"},
+		{Name: "domain_fk", Type: field.TypeString},
 		{Name: "organization_id", Type: field.TypeString},
 	}
 	// HubsTable holds the schema information for the "hubs" table.
@@ -55,8 +49,14 @@ var (
 		PrimaryKey: []*schema.Column{HubsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "hubs_organizations_hubs",
+				Symbol:     "hubs_domains_domain",
 				Columns:    []*schema.Column{HubsColumns[7]},
+				RefColumns: []*schema.Column{DomainsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "hubs_organizations_hubs",
+				Columns:    []*schema.Column{HubsColumns[8]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -106,7 +106,6 @@ var (
 		{Name: "subject_id", Type: field.TypeString, Unique: true},
 		{Name: "user_info", Type: field.TypeJSON},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
-		{Name: "organization_id", Type: field.TypeString, Nullable: true},
 		{Name: "organization_fk", Type: field.TypeString, Nullable: true},
 	}
 	// PersonsTable holds the schema information for the "persons" table.
@@ -123,7 +122,7 @@ var (
 			},
 			{
 				Symbol:     "persons_organizations_organization",
-				Columns:    []*schema.Column{PersonsColumns[5]},
+				Columns:    []*schema.Column{PersonsColumns[4]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -147,9 +146,9 @@ var (
 )
 
 func init() {
-	DomainsTable.ForeignKeys[0].RefTable = HubsTable
-	DomainsTable.ForeignKeys[1].RefTable = OrganizationsTable
-	HubsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	DomainsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	HubsTable.ForeignKeys[0].RefTable = DomainsTable
+	HubsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	LinksTable.ForeignKeys[0].RefTable = HubsTable
 	PersonsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PersonsTable.ForeignKeys[1].RefTable = OrganizationsTable

@@ -6,53 +6,53 @@ import (
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"go.jetify.com/typeid"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id typeid.AnyID) predicate.Hub {
+func ID(id mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id typeid.AnyID) predicate.Hub {
+func IDEQ(id mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id typeid.AnyID) predicate.Hub {
+func IDNEQ(id mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...typeid.AnyID) predicate.Hub {
+func IDIn(ids ...mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...typeid.AnyID) predicate.Hub {
+func IDNotIn(ids ...mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id typeid.AnyID) predicate.Hub {
+func IDGT(id mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id typeid.AnyID) predicate.Hub {
+func IDGTE(id mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id typeid.AnyID) predicate.Hub {
+func IDLT(id mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id typeid.AnyID) predicate.Hub {
+func IDLTE(id mixin.ID) predicate.Hub {
 	return predicate.Hub(sql.FieldLTE(FieldID, id))
 }
 
@@ -321,7 +321,7 @@ func HasDomain() predicate.Hub {
 	return predicate.Hub(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, DomainTable, DomainColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, DomainTable, DomainColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

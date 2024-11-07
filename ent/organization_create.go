@@ -11,10 +11,10 @@ import (
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // OrganizationCreate is the builder for creating a Organization entity.
@@ -87,28 +87,28 @@ func (oc *OrganizationCreate) SetNillableSocialMedias(tm *types.SocialMedias) *O
 }
 
 // SetID sets the "id" field.
-func (oc *OrganizationCreate) SetID(ti typeid.AnyID) *OrganizationCreate {
-	oc.mutation.SetID(ti)
+func (oc *OrganizationCreate) SetID(m mixin.ID) *OrganizationCreate {
+	oc.mutation.SetID(m)
 	return oc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableID(ti *typeid.AnyID) *OrganizationCreate {
-	if ti != nil {
-		oc.SetID(*ti)
+func (oc *OrganizationCreate) SetNillableID(m *mixin.ID) *OrganizationCreate {
+	if m != nil {
+		oc.SetID(*m)
 	}
 	return oc
 }
 
 // AddDomainIDs adds the "domains" edge to the Domain entity by IDs.
-func (oc *OrganizationCreate) AddDomainIDs(ids ...typeid.AnyID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddDomainIDs(ids ...mixin.ID) *OrganizationCreate {
 	oc.mutation.AddDomainIDs(ids...)
 	return oc
 }
 
 // AddDomains adds the "domains" edges to the Domain entity.
 func (oc *OrganizationCreate) AddDomains(d ...*Domain) *OrganizationCreate {
-	ids := make([]typeid.AnyID, len(d))
+	ids := make([]mixin.ID, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
 	}
@@ -116,14 +116,14 @@ func (oc *OrganizationCreate) AddDomains(d ...*Domain) *OrganizationCreate {
 }
 
 // AddHubIDs adds the "hubs" edge to the Hub entity by IDs.
-func (oc *OrganizationCreate) AddHubIDs(ids ...typeid.AnyID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddHubIDs(ids ...mixin.ID) *OrganizationCreate {
 	oc.mutation.AddHubIDs(ids...)
 	return oc
 }
 
 // AddHubs adds the "hubs" edges to the Hub entity.
 func (oc *OrganizationCreate) AddHubs(h ...*Hub) *OrganizationCreate {
-	ids := make([]typeid.AnyID, len(h))
+	ids := make([]mixin.ID, len(h))
 	for i := range h {
 		ids[i] = h[i].ID
 	}
@@ -131,14 +131,14 @@ func (oc *OrganizationCreate) AddHubs(h ...*Hub) *OrganizationCreate {
 }
 
 // AddPersonIDs adds the "persons" edge to the Person entity by IDs.
-func (oc *OrganizationCreate) AddPersonIDs(ids ...typeid.AnyID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddPersonIDs(ids ...mixin.ID) *OrganizationCreate {
 	oc.mutation.AddPersonIDs(ids...)
 	return oc
 }
 
 // AddPersons adds the "persons" edges to the Person entity.
 func (oc *OrganizationCreate) AddPersons(p ...*Person) *OrganizationCreate {
-	ids := make([]typeid.AnyID, len(p))
+	ids := make([]mixin.ID, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -211,10 +211,10 @@ func (oc *OrganizationCreate) sqlSave(ctx context.Context) (*Organization, error
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*typeid.AnyID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(mixin.ID); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Organization.ID type: %T", _spec.ID.Value)
 		}
 	}
 	oc.mutation.id = &_node.ID
@@ -229,7 +229,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	)
 	if id, ok := oc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := oc.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)

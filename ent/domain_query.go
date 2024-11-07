@@ -8,14 +8,13 @@ import (
 	"math"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/predicate"
+	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"go.jetify.com/typeid"
 )
 
 // DomainQuery is the builder for querying Domain entities.
@@ -25,7 +24,6 @@ type DomainQuery struct {
 	order            []entdomain.OrderOption
 	inters           []Interceptor
 	predicates       []predicate.Domain
-	withHub          *HubQuery
 	withOrganization *OrganizationQuery
 	withFKs          bool
 	// intermediate query (i.e. traversal path).
@@ -62,28 +60,6 @@ func (dq *DomainQuery) Unique(unique bool) *DomainQuery {
 func (dq *DomainQuery) Order(o ...entdomain.OrderOption) *DomainQuery {
 	dq.order = append(dq.order, o...)
 	return dq
-}
-
-// QueryHub chains the current query on the "hub" edge.
-func (dq *DomainQuery) QueryHub() *HubQuery {
-	query := (&HubClient{config: dq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := dq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := dq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entdomain.Table, entdomain.FieldID, selector),
-			sqlgraph.To(enthub.Table, enthub.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, entdomain.HubTable, entdomain.HubColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // QueryOrganization chains the current query on the "organization" edge.
@@ -132,8 +108,8 @@ func (dq *DomainQuery) FirstX(ctx context.Context) *Domain {
 
 // FirstID returns the first Domain ID from the query.
 // Returns a *NotFoundError when no Domain ID was found.
-func (dq *DomainQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error) {
-	var ids []typeid.AnyID
+func (dq *DomainQuery) FirstID(ctx context.Context) (id mixin.ID, err error) {
+	var ids []mixin.ID
 	if ids, err = dq.Limit(1).IDs(setContextOp(ctx, dq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -145,7 +121,7 @@ func (dq *DomainQuery) FirstID(ctx context.Context) (id typeid.AnyID, err error)
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (dq *DomainQuery) FirstIDX(ctx context.Context) typeid.AnyID {
+func (dq *DomainQuery) FirstIDX(ctx context.Context) mixin.ID {
 	id, err := dq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -183,8 +159,8 @@ func (dq *DomainQuery) OnlyX(ctx context.Context) *Domain {
 // OnlyID is like Only, but returns the only Domain ID in the query.
 // Returns a *NotSingularError when more than one Domain ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (dq *DomainQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) {
-	var ids []typeid.AnyID
+func (dq *DomainQuery) OnlyID(ctx context.Context) (id mixin.ID, err error) {
+	var ids []mixin.ID
 	if ids, err = dq.Limit(2).IDs(setContextOp(ctx, dq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -200,7 +176,7 @@ func (dq *DomainQuery) OnlyID(ctx context.Context) (id typeid.AnyID, err error) 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (dq *DomainQuery) OnlyIDX(ctx context.Context) typeid.AnyID {
+func (dq *DomainQuery) OnlyIDX(ctx context.Context) mixin.ID {
 	id, err := dq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -228,7 +204,7 @@ func (dq *DomainQuery) AllX(ctx context.Context) []*Domain {
 }
 
 // IDs executes the query and returns a list of Domain IDs.
-func (dq *DomainQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) {
+func (dq *DomainQuery) IDs(ctx context.Context) (ids []mixin.ID, err error) {
 	if dq.ctx.Unique == nil && dq.path != nil {
 		dq.Unique(true)
 	}
@@ -240,7 +216,7 @@ func (dq *DomainQuery) IDs(ctx context.Context) (ids []typeid.AnyID, err error) 
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (dq *DomainQuery) IDsX(ctx context.Context) []typeid.AnyID {
+func (dq *DomainQuery) IDsX(ctx context.Context) []mixin.ID {
 	ids, err := dq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -300,23 +276,11 @@ func (dq *DomainQuery) Clone() *DomainQuery {
 		order:            append([]entdomain.OrderOption{}, dq.order...),
 		inters:           append([]Interceptor{}, dq.inters...),
 		predicates:       append([]predicate.Domain{}, dq.predicates...),
-		withHub:          dq.withHub.Clone(),
 		withOrganization: dq.withOrganization.Clone(),
 		// clone intermediate query.
 		sql:  dq.sql.Clone(),
 		path: dq.path,
 	}
-}
-
-// WithHub tells the query-builder to eager-load the nodes that are connected to
-// the "hub" edge. The optional arguments are used to configure the query builder of the edge.
-func (dq *DomainQuery) WithHub(opts ...func(*HubQuery)) *DomainQuery {
-	query := (&HubClient{config: dq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	dq.withHub = query
-	return dq
 }
 
 // WithOrganization tells the query-builder to eager-load the nodes that are connected to
@@ -409,12 +373,11 @@ func (dq *DomainQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Domai
 		nodes       = []*Domain{}
 		withFKs     = dq.withFKs
 		_spec       = dq.querySpec()
-		loadedTypes = [2]bool{
-			dq.withHub != nil,
+		loadedTypes = [1]bool{
 			dq.withOrganization != nil,
 		}
 	)
-	if dq.withHub != nil || dq.withOrganization != nil {
+	if dq.withOrganization != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -438,12 +401,6 @@ func (dq *DomainQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Domai
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := dq.withHub; query != nil {
-		if err := dq.loadHub(ctx, query, nodes, nil,
-			func(n *Domain, e *Hub) { n.Edges.Hub = e }); err != nil {
-			return nil, err
-		}
-	}
 	if query := dq.withOrganization; query != nil {
 		if err := dq.loadOrganization(ctx, query, nodes, nil,
 			func(n *Domain, e *Organization) { n.Edges.Organization = e }); err != nil {
@@ -453,41 +410,9 @@ func (dq *DomainQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Domai
 	return nodes, nil
 }
 
-func (dq *DomainQuery) loadHub(ctx context.Context, query *HubQuery, nodes []*Domain, init func(*Domain), assign func(*Domain, *Hub)) error {
-	ids := make([]typeid.AnyID, 0, len(nodes))
-	nodeids := make(map[typeid.AnyID][]*Domain)
-	for i := range nodes {
-		if nodes[i].domain_fk == nil {
-			continue
-		}
-		fk := *nodes[i].domain_fk
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(enthub.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "domain_fk" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
 func (dq *DomainQuery) loadOrganization(ctx context.Context, query *OrganizationQuery, nodes []*Domain, init func(*Domain), assign func(*Domain, *Organization)) error {
-	ids := make([]typeid.AnyID, 0, len(nodes))
-	nodeids := make(map[typeid.AnyID][]*Domain)
+	ids := make([]mixin.ID, 0, len(nodes))
+	nodeids := make(map[mixin.ID][]*Domain)
 	for i := range nodes {
 		if nodes[i].organization_id == nil {
 			continue

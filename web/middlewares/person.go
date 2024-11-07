@@ -33,7 +33,7 @@ func PersonMiddleware(authorizer *extensions.Authorizer, logger *slog.Logger, cl
 				return next(cc)
 			}
 
-			logger.Info("User is authenticated")
+			logger.InfoContext(c.Request().Context(), "User is authenticated and has Person Context is nil")
 
 			if err == nil {
 				userInfo = data.GetUserInfo()
