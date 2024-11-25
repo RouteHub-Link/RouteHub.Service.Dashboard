@@ -22,6 +22,7 @@ type Config struct {
 	OAuth    *OAuthConfig
 	OTEL     *OTELConfig
 	Database *DatabaseConfig
+	CacheDB  *CacheDatabaseConfig
 }
 
 func (c *Config) String() string {
@@ -75,11 +76,13 @@ func Configure(opts ...ConfigurationOptionFunc) error {
 		oauthConfig := &OAuthConfig{}
 		otelConfig := &OTELConfig{}
 		databaseConfig := &DatabaseConfig{}
+		cacheConfig := &CacheDatabaseConfig{}
 
 		serverConfig.Parse(config)
 		oauthConfig.Parse(config)
 		otelConfig.Parse(config)
 		databaseConfig.Parse(config)
+		cacheConfig.Parse(config)
 
 		logger.Debug("Configuration loaded", slog.Any("config", config))
 	})

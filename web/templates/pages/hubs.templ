@@ -2,10 +2,12 @@ package pages
 
 import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
 import hubComponents "RouteHub.Service.Dashboard/web/templates/pages/components/hub"
+import "github.com/zitadel/oidc/v3/pkg/oidc"
 
-templ Hubs() {
+templ Hubs(userInfo *oidc.UserInfo) {
 	@layouts.Main(layouts.PageDescription{
 		MainContent:       hubPage(),
+    UserInfo:          userInfo,
 	})
 }
 

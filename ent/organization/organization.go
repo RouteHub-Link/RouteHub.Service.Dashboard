@@ -45,13 +45,11 @@ const (
 	HubsInverseTable = "hubs"
 	// HubsColumn is the table column denoting the hubs relation/edge.
 	HubsColumn = "organization_id"
-	// PersonsTable is the table that holds the persons relation/edge.
-	PersonsTable = "persons"
+	// PersonsTable is the table that holds the persons relation/edge. The primary key declared below.
+	PersonsTable = "organization_persons"
 	// PersonsInverseTable is the table name for the Person entity.
 	// It exists in this package in order to avoid circular dependency with the "person" package.
 	PersonsInverseTable = "persons"
-	// PersonsColumn is the table column denoting the persons relation/edge.
-	PersonsColumn = "organization_fk"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -63,6 +61,12 @@ var Columns = []string{
 	FieldLocation,
 	FieldSocialMedias,
 }
+
+var (
+	// PersonsPrimaryKey and PersonsColumn2 are the table columns denoting the
+	// primary key for the persons relation (M2M).
+	PersonsPrimaryKey = []string{"organization_id", "person_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -168,6 +172,6 @@ func newPersonsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PersonsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, PersonsTable, PersonsColumn),
+		sqlgraph.Edge(sqlgraph.M2M, false, PersonsTable, PersonsPrimaryKey...),
 	)
 }

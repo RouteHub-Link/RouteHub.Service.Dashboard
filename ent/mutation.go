@@ -2854,18 +2854,19 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 // PersonMutation represents an operation that mutates the Person nodes in the graph.
 type PersonMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *mixin.ID
-	subject_id          *string
-	user_info           *oidc.UserInfo
-	is_active           *bool
-	clearedFields       map[string]struct{}
-	organization        *mixin.ID
-	clearedorganization bool
-	done                bool
-	oldValue            func(context.Context) (*Person, error)
-	predicates          []predicate.Person
+	op                   Op
+	typ                  string
+	id                   *mixin.ID
+	subject_id           *string
+	user_info            *oidc.UserInfo
+	is_active            *bool
+	clearedFields        map[string]struct{}
+	organizations        map[mixin.ID]struct{}
+	removedorganizations map[mixin.ID]struct{}
+	clearedorganizations bool
+	done                 bool
+	oldValue             func(context.Context) (*Person, error)
+	predicates           []predicate.Person
 }
 
 var _ ent.Mutation = (*PersonMutation)(nil)
@@ -3080,43 +3081,58 @@ func (m *PersonMutation) ResetIsActive() {
 	m.is_active = nil
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by id.
-func (m *PersonMutation) SetOrganizationID(id mixin.ID) {
-	m.organization = &id
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by ids.
+func (m *PersonMutation) AddOrganizationIDs(ids ...mixin.ID) {
+	if m.organizations == nil {
+		m.organizations = make(map[mixin.ID]struct{})
+	}
+	for i := range ids {
+		m.organizations[ids[i]] = struct{}{}
+	}
 }
 
-// ClearOrganization clears the "organization" edge to the Organization entity.
-func (m *PersonMutation) ClearOrganization() {
-	m.clearedorganization = true
+// ClearOrganizations clears the "organizations" edge to the Organization entity.
+func (m *PersonMutation) ClearOrganizations() {
+	m.clearedorganizations = true
 }
 
-// OrganizationCleared reports if the "organization" edge to the Organization entity was cleared.
-func (m *PersonMutation) OrganizationCleared() bool {
-	return m.clearedorganization
+// OrganizationsCleared reports if the "organizations" edge to the Organization entity was cleared.
+func (m *PersonMutation) OrganizationsCleared() bool {
+	return m.clearedorganizations
 }
 
-// OrganizationID returns the "organization" edge ID in the mutation.
-func (m *PersonMutation) OrganizationID() (id mixin.ID, exists bool) {
-	if m.organization != nil {
-		return *m.organization, true
+// RemoveOrganizationIDs removes the "organizations" edge to the Organization entity by IDs.
+func (m *PersonMutation) RemoveOrganizationIDs(ids ...mixin.ID) {
+	if m.removedorganizations == nil {
+		m.removedorganizations = make(map[mixin.ID]struct{})
+	}
+	for i := range ids {
+		delete(m.organizations, ids[i])
+		m.removedorganizations[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOrganizations returns the removed IDs of the "organizations" edge to the Organization entity.
+func (m *PersonMutation) RemovedOrganizationsIDs() (ids []mixin.ID) {
+	for id := range m.removedorganizations {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// OrganizationIDs returns the "organization" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// OrganizationID instead. It exists only for internal usage by the builders.
-func (m *PersonMutation) OrganizationIDs() (ids []mixin.ID) {
-	if id := m.organization; id != nil {
-		ids = append(ids, *id)
+// OrganizationsIDs returns the "organizations" edge IDs in the mutation.
+func (m *PersonMutation) OrganizationsIDs() (ids []mixin.ID) {
+	for id := range m.organizations {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetOrganization resets all changes to the "organization" edge.
-func (m *PersonMutation) ResetOrganization() {
-	m.organization = nil
-	m.clearedorganization = false
+// ResetOrganizations resets all changes to the "organizations" edge.
+func (m *PersonMutation) ResetOrganizations() {
+	m.organizations = nil
+	m.clearedorganizations = false
+	m.removedorganizations = nil
 }
 
 // Where appends a list predicates to the PersonMutation builder.
@@ -3287,8 +3303,8 @@ func (m *PersonMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PersonMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.organization != nil {
-		edges = append(edges, person.EdgeOrganization)
+	if m.organizations != nil {
+		edges = append(edges, person.EdgeOrganizations)
 	}
 	return edges
 }
@@ -3297,10 +3313,12 @@ func (m *PersonMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *PersonMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case person.EdgeOrganization:
-		if id := m.organization; id != nil {
-			return []ent.Value{*id}
+	case person.EdgeOrganizations:
+		ids := make([]ent.Value, 0, len(m.organizations))
+		for id := range m.organizations {
+			ids = append(ids, id)
 		}
+		return ids
 	}
 	return nil
 }
@@ -3308,20 +3326,31 @@ func (m *PersonMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PersonMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
+	if m.removedorganizations != nil {
+		edges = append(edges, person.EdgeOrganizations)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *PersonMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case person.EdgeOrganizations:
+		ids := make([]ent.Value, 0, len(m.removedorganizations))
+		for id := range m.removedorganizations {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PersonMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedorganization {
-		edges = append(edges, person.EdgeOrganization)
+	if m.clearedorganizations {
+		edges = append(edges, person.EdgeOrganizations)
 	}
 	return edges
 }
@@ -3330,8 +3359,8 @@ func (m *PersonMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *PersonMutation) EdgeCleared(name string) bool {
 	switch name {
-	case person.EdgeOrganization:
-		return m.clearedorganization
+	case person.EdgeOrganizations:
+		return m.clearedorganizations
 	}
 	return false
 }
@@ -3340,9 +3369,6 @@ func (m *PersonMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *PersonMutation) ClearEdge(name string) error {
 	switch name {
-	case person.EdgeOrganization:
-		m.ClearOrganization()
-		return nil
 	}
 	return fmt.Errorf("unknown Person unique edge %s", name)
 }
@@ -3351,8 +3377,8 @@ func (m *PersonMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *PersonMutation) ResetEdge(name string) error {
 	switch name {
-	case person.EdgeOrganization:
-		m.ResetOrganization()
+	case person.EdgeOrganizations:
+		m.ResetOrganizations()
 		return nil
 	}
 	return fmt.Errorf("unknown Person edge %s", name)

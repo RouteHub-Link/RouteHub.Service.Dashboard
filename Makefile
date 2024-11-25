@@ -2,7 +2,7 @@ lint:
 	revive -config ./linter/revive.toml -formatter friendly ./...
 
 watch:
-	templ generate --watch --proxy="http://localhost:8080" --cmd="make run"
+	templ generate --watch --proxy="http://localhost:8082" --cmd="make run"
 
 tailwind-init:
 	npx tailwindcss init
@@ -31,8 +31,3 @@ ent-describe:
 ent-generate:
 	@echo "Generating ent..."
 	@cd ent && go generate .
-
-postgres:
-	@echo "Running postgres container on port 5433..."
-	@docker run --name rh-postgres -e POSTGRES_PASSWORD=postgres -p 5433:5432 -d postgres
-	@echo "Done."

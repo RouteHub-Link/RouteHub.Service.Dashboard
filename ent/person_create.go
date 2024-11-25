@@ -62,23 +62,19 @@ func (pc *PersonCreate) SetNillableID(m *mixin.ID) *PersonCreate {
 	return pc
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (pc *PersonCreate) SetOrganizationID(id mixin.ID) *PersonCreate {
-	pc.mutation.SetOrganizationID(id)
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (pc *PersonCreate) AddOrganizationIDs(ids ...mixin.ID) *PersonCreate {
+	pc.mutation.AddOrganizationIDs(ids...)
 	return pc
 }
 
-// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (pc *PersonCreate) SetNillableOrganizationID(id *mixin.ID) *PersonCreate {
-	if id != nil {
-		pc = pc.SetOrganizationID(*id)
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (pc *PersonCreate) AddOrganizations(o ...*Organization) *PersonCreate {
+	ids := make([]mixin.ID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
 	}
-	return pc
-}
-
-// SetOrganization sets the "organization" edge to the Organization entity.
-func (pc *PersonCreate) SetOrganization(o *Organization) *PersonCreate {
-	return pc.SetOrganizationID(o.ID)
+	return pc.AddOrganizationIDs(ids...)
 }
 
 // Mutation returns the PersonMutation object of the builder.
@@ -189,12 +185,12 @@ func (pc *PersonCreate) createSpec() (*Person, *sqlgraph.CreateSpec) {
 		_spec.SetField(person.FieldIsActive, field.TypeBool, value)
 		_node.IsActive = value
 	}
-	if nodes := pc.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := pc.mutation.OrganizationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   person.OrganizationTable,
-			Columns: []string{person.OrganizationColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   person.OrganizationsTable,
+			Columns: person.OrganizationsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -203,7 +199,6 @@ func (pc *PersonCreate) createSpec() (*Person, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.organization_fk = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

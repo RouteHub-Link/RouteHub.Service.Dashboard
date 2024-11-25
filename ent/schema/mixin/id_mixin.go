@@ -2,7 +2,10 @@ package mixin
 
 import (
 	"errors"
+	"io"
+	"strconv"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
@@ -26,7 +29,8 @@ func (idm IDMixin) Fields() []ent.Field {
 			DefaultFunc(func() ID {
 				tid, _ := typeid.WithPrefix(idm.Prefix)
 				return ID(tid.String())
-			}),
+			}).
+			Annotations(entgql.Type("ID")),
 	}
 }
 
@@ -74,4 +78,12 @@ func (id *ID) Scan(src interface{}) error {
 
 func (id ID) Value() (interface{}, error) {
 	return string(id), nil
+}
+
+func (id *ID) UnmarshalGQL(v interface{}) error {
+	return id.Scan(v)
+}
+
+func (id ID) MarshalGQL(w io.Writer) {
+	_, _ = io.WriteString(w, strconv.Quote(string(id)))
 }

@@ -53,6 +53,7 @@ func (Link) Edges() []ent.Edge {
 		edge.From("hub", Hub.Type).
 			Ref("links"). // This points back to the 'links' edge in Hub
 			Unique().     // One link belongs to one Hub
-			Required(),   // A Hub is required for a link
+			Required().   // A Hub is required for a link
+			Annotations(entgql.RelayConnection()),
 	}
 }

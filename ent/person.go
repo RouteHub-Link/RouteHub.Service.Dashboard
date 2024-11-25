@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"strings"
 
-	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent"
@@ -28,29 +27,26 @@ type Person struct {
 	IsActive bool `json:"is_active,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PersonQuery when eager-loading is set.
-	Edges           PersonEdges `json:"edges"`
-	organization_fk *mixin.ID
-	selectValues    sql.SelectValues
+	Edges        PersonEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // PersonEdges holds the relations/edges for other nodes in the graph.
 type PersonEdges struct {
-	// Organization holds the value of the organization edge.
-	Organization *Organization `json:"organization,omitempty"`
+	// Organizations holds the value of the organizations edge.
+	Organizations []*Organization `json:"organizations,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// OrganizationOrErr returns the Organization value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PersonEdges) OrganizationOrErr() (*Organization, error) {
-	if e.Organization != nil {
-		return e.Organization, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: organization.Label}
+// OrganizationsOrErr returns the Organizations value or an error if the edge
+// was not loaded in eager-loading.
+func (e PersonEdges) OrganizationsOrErr() ([]*Organization, error) {
+	if e.loadedTypes[0] {
+		return e.Organizations, nil
 	}
-	return nil, &NotLoadedError{edge: "organization"}
+	return nil, &NotLoadedError{edge: "organizations"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -63,8 +59,6 @@ func (*Person) scanValues(columns []string) ([]any, error) {
 		case person.FieldIsActive:
 			values[i] = new(sql.NullBool)
 		case person.FieldID, person.FieldSubjectID:
-			values[i] = new(sql.NullString)
-		case person.ForeignKeys[0]: // organization_fk
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -107,13 +101,6 @@ func (pe *Person) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pe.IsActive = value.Bool
 			}
-		case person.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_fk", values[i])
-			} else if value.Valid {
-				pe.organization_fk = new(mixin.ID)
-				*pe.organization_fk = mixin.ID(value.String)
-			}
 		default:
 			pe.selectValues.Set(columns[i], values[i])
 		}
@@ -127,9 +114,9 @@ func (pe *Person) Value(name string) (ent.Value, error) {
 	return pe.selectValues.Get(name)
 }
 
-// QueryOrganization queries the "organization" edge of the Person entity.
-func (pe *Person) QueryOrganization() *OrganizationQuery {
-	return NewPersonClient(pe.config).QueryOrganization(pe)
+// QueryOrganizations queries the "organizations" edge of the Person entity.
+func (pe *Person) QueryOrganizations() *OrganizationQuery {
+	return NewPersonClient(pe.config).QueryOrganizations(pe)
 }
 
 // Update returns a builder for updating this Person.

@@ -1,7 +1,6 @@
 package layouts
 
-templ Main(pd PageDescription) {
-
+templ ProblemLayout(content templ.Component) {
 <!DOCTYPE html>
 <html lang="en" class="dark">
 
@@ -11,37 +10,19 @@ templ Main(pd PageDescription) {
 
   <link rel="stylesheet" href="/static/css/output.css" />
   <title>RouteHUB</title>
-
-  if pd.AdditionalHead != nil {
-  @pd.GetAdditionalHead()
-  }
-
 </head>
 
 <body class="bg-gray-50 dark:bg-neutral-900">
 
-  @Header(pd.UserInfo)
-
-  <div class="-mt-px">
-    @Breadcrumb()
-  </div>
-
-  @HubSidebar()
-  @Sidebar()
-
   <div class="w-full lg:ps-64">
     <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div class="md:container md:mx-auto">
-        @pd.MainContent
+        @content
       </div>
     </div>
   </div>
 
   <script src="/static/dist/preline/preline.js" type="module"></script>
-
-  if pd.AdditionalFooter != nil {
-  @pd.GetAdditionalFooter()
-  }
 </body>
 
 </html>

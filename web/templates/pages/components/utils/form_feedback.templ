@@ -1,0 +1,87 @@
+package utils
+
+templ FormFeedback(messageType string, title *string, message *string) {
+<div class="space-y-5">
+    switch messageType {
+    case "success" :
+    <div class="bg-teal-50 dark:bg-teal-800/30 border-teal-500  border-t-2 rounded-lg p-4" role="alert" tabindex="-1">
+        @content(messageType ,title, message)
+    </div>
+    case "error" :
+    <div class="bg-red-50 border-s-4 border-red-500 p-4 dark:bg-red-800/30" role="alert" tabindex="-1">
+        @content(messageType,title, message)
+    </div>
+    case "warning" :
+    <div class="bg-yellow-50 border-s-4 border-yellow-500 p-4 dark:bg-yellow-800/30" role="alert" tabindex="-1">
+        @content(messageType,title, message)
+    </div>
+    default:
+    <span> "Message type cannot be found type is :" + {messageType}</span>
+    }
+</div>
+}
+
+templ content(messageType string,title *string, message *string) {
+<div class="flex">
+    <div class="shrink-0">
+        switch messageType {
+        case "success" :
+        <successIcon />
+        case "error" :
+        <errorIcon />
+        case "warning" :
+        <warningIcon />
+        default:
+        <span> "Message type cannot be found type is :" + {messageType}</span>
+        }
+
+    </div>
+    <div class="ms-3">
+        <h3 class="text-gray-800 font-semibold dark:text-white">
+            if title != nil {
+            { *title }
+            } else {
+            Success!
+            }
+        </h3>
+        <p class="text-sm text-gray-700 dark:text-neutral-400">
+            if message != nil {
+             @templ.Raw(*message)
+            } else {
+            You have successfully updated your email preferences.
+            }
+        </p>
+    </div>
+</div>
+}
+
+templ successIcon() {
+<span
+    class="inline-flex justify-center items-center size-8 rounded-full border-4 border-teal-100 bg-teal-200 text-teal-800 dark:border-teal-900 dark:bg-teal-800 dark:text-teal-400">
+    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+        <path d="m9 12 2 2 4-4"></path>
+    </svg>
+</span>
+}
+
+templ errorIcon() {
+<span
+    class="inline-flex justify-center items-center size-8 rounded-full border-4 border-red-100 bg-red-200 text-red-800 dark:border-red-900 dark:bg-red-800 dark:text-red-400">
+    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18"></path>
+        <path d="m6 6 12 12"></path>
+    </svg>
+</span>
+}
+
+templ warningIcon() {
+<svg class="shrink-0 size-4 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+    <path d="M12 9v4"></path>
+    <path d="M12 17h.01"></path>
+</svg>
+}

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -42,10 +43,12 @@ func (Person) Fields() []ent.Field {
 // Edges of the Person.
 func (Person) Edges() []ent.Edge {
 	return []ent.Edge{
-		// One Person has one Organization.
-		edge.To("organization", Organization.Type).
-			StorageKey(edge.Column("organization_fk")).
-			Unique(),
+		// Many-to-many: One Person can belong to many Organizations
+		edge.From("organizations", Organization.Type).
+			Ref("persons").
+			Annotations(
+				entgql.RelayConnection(),
+			),
 	}
 }
 

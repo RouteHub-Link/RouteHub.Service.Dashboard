@@ -52,6 +52,7 @@ func (Domain) Edges() []ent.Edge {
 		edge.From("organization", Organization.Type).
 			Ref("domains"). // Refers to the domains edge in Organization
 			Unique().
-			Required(), // Domain must belong to an Organization
+			Required().
+			Annotations(entgql.RelayConnection()), // Domain must belong to an Organization
 	}
 }

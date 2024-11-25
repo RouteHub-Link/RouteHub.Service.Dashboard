@@ -865,7 +865,7 @@ func (c *OrganizationClient) QueryPersons(o *Organization) *PersonQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, id),
 			sqlgraph.To(person.Table, person.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, organization.PersonsTable, organization.PersonsColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.PersonsTable, organization.PersonsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
@@ -1006,15 +1006,15 @@ func (c *PersonClient) GetX(ctx context.Context, id mixin.ID) *Person {
 	return obj
 }
 
-// QueryOrganization queries the organization edge of a Person.
-func (c *PersonClient) QueryOrganization(pe *Person) *OrganizationQuery {
+// QueryOrganizations queries the organizations edge of a Person.
+func (c *PersonClient) QueryOrganizations(pe *Person) *OrganizationQuery {
 	query := (&OrganizationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := pe.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(person.Table, person.FieldID, id),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, person.OrganizationTable, person.OrganizationColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, person.OrganizationsTable, person.OrganizationsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(pe.driver.Dialect(), step)
 		return fromV, nil

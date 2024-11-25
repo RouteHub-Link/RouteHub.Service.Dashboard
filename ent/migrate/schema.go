@@ -106,32 +106,42 @@ var (
 		{Name: "subject_id", Type: field.TypeString, Unique: true},
 		{Name: "user_info", Type: field.TypeJSON},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
-		{Name: "organization_fk", Type: field.TypeString, Nullable: true},
 	}
 	// PersonsTable holds the schema information for the "persons" table.
 	PersonsTable = &schema.Table{
 		Name:       "persons",
 		Columns:    PersonsColumns,
 		PrimaryKey: []*schema.Column{PersonsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "persons_organizations_persons",
-				Columns:    []*schema.Column{PersonsColumns[4]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "persons_organizations_organization",
-				Columns:    []*schema.Column{PersonsColumns[4]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "person_subject_id",
 				Unique:  true,
 				Columns: []*schema.Column{PersonsColumns[1]},
+			},
+		},
+	}
+	// OrganizationPersonsColumns holds the columns for the "organization_persons" table.
+	OrganizationPersonsColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "person_id", Type: field.TypeString},
+	}
+	// OrganizationPersonsTable holds the schema information for the "organization_persons" table.
+	OrganizationPersonsTable = &schema.Table{
+		Name:       "organization_persons",
+		Columns:    OrganizationPersonsColumns,
+		PrimaryKey: []*schema.Column{OrganizationPersonsColumns[0], OrganizationPersonsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_persons_organization_id",
+				Columns:    []*schema.Column{OrganizationPersonsColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_persons_person_id",
+				Columns:    []*schema.Column{OrganizationPersonsColumns[1]},
+				RefColumns: []*schema.Column{PersonsColumns[0]},
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -142,6 +152,7 @@ var (
 		LinksTable,
 		OrganizationsTable,
 		PersonsTable,
+		OrganizationPersonsTable,
 	}
 )
 
@@ -150,6 +161,6 @@ func init() {
 	HubsTable.ForeignKeys[0].RefTable = DomainsTable
 	HubsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	LinksTable.ForeignKeys[0].RefTable = HubsTable
-	PersonsTable.ForeignKeys[0].RefTable = OrganizationsTable
-	PersonsTable.ForeignKeys[1].RefTable = OrganizationsTable
+	OrganizationPersonsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationPersonsTable.ForeignKeys[1].RefTable = PersonsTable
 }

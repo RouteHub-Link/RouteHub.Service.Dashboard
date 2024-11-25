@@ -51,14 +51,16 @@ func (Organization) Edges() []ent.Edge {
 	return []ent.Edge{
 		// One Organization has many Domains
 		edge.To("domains", Domain.Type).
+			Annotations(entgql.RelayConnection()).
 			StorageKey(edge.Column("organization_id")),
 
 		// One Organization has many Hubs
 		edge.To("hubs", Hub.Type).
+			Annotations(entgql.RelayConnection()).
 			StorageKey(edge.Column("organization_id")),
 
-		// One Organization has many persons
+		// Many-to-many: One Organization has many Persons via the OrganizationPerson join table
 		edge.To("persons", Person.Type).
-			StorageKey(edge.Column("organization_fk")),
+			Annotations(entgql.RelayConnection()),
 	}
 }

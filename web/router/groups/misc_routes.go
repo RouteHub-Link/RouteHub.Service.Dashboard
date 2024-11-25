@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
 
+	"RouteHub.Service.Dashboard/web/extensions"
+	"RouteHub.Service.Dashboard/web/templates/pages/misc"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,6 +19,21 @@ func MapMiscRoutes(e *echo.Echo) {
 	e.GET("/log", echo.WrapHandler(http.HandlerFunc(HandleLog)))
 	e.GET("/data", echo.WrapHandler(http.HandlerFunc(HandleData)))
 
+	e.GET("/404", handle404)
+
+}
+
+func handle404(c echo.Context) error {
+	referer := c.QueryParam("referer")
+
+	var referestr *string
+	if referer != "" {
+		if referer != c.Request().Host+c.Request().URL.Path {
+			referestr = &referer
+		}
+	}
+
+	return extensions.Render(c, http.StatusNotFound, misc.NotFound(referestr))
 }
 
 func customHTTPErrorHandler(err error, c echo.Context) {
@@ -38,21 +54,12 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 		} else if errorCode == http.StatusNotFound {
 			// make redirect url to referer path if available
 			referer := c.Request().Referer()
+			url := "/404"
 			if referer != "" {
-
-				// Check referer domain is same as current domain and wrote only path
-				if referer != c.Request().Host+c.Request().URL.Path {
-
-					data["redirectURL"] = referer
-					data["redirectTitle"] = "Go Back"
-					log.Printf("\n referer : %v", referer)
-				}
+				url = fmt.Sprintf("%s?referer=%s", url, referer)
 			}
-
-			data["code"] = "404"
-			data["title"] = "Oops! Page not found."
-			data["message"] = "We can't find the page you're looking for."
-
+			c.Redirect(http.StatusPermanentRedirect, url)
+			return
 			//middlewares.ViewHandler(c, "error", "main", data)
 		} else if errorCode == http.StatusUnauthorized {
 			data["code"] = "401"

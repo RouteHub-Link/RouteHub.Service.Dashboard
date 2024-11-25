@@ -49,11 +49,11 @@ func TestSaveOrganizationFromUserOIDC(t *testing.T) {
 
 	_person = *client.Person.Query().
 		Where(person.SubjectID(userInfo.Subject)).
-		WithOrganization().
+		WithOrganizations().
 		OnlyX(ctx)
 
-	if _person.Edges.Organization != nil {
-		t.Logf("Person already has organization: %v", _person.Edges.Organization)
+	if _person.Edges.Organizations != nil && len(_person.Edges.Organizations) > 0 {
+		t.Logf("Person already has organization: %v", _person.Edges.Organizations)
 		return
 	}
 
@@ -61,13 +61,13 @@ func TestSaveOrganizationFromUserOIDC(t *testing.T) {
 		SetName("MY ORGANIZATION").
 		SaveX(ctx)
 
-	_person.Update().SetOrganization(organization).SaveX(ctx)
+	_person.Update().AddOrganizations(organization).SaveX(ctx)
 
 	t.Logf("Organization created: %v", organization)
 
 	personWithOrganization := client.Person.Query().
 		Where(person.SubjectID(userInfo.Subject)).
-		WithOrganization().
+		WithOrganizations().
 		OnlyX(ctx)
 
 	t.Logf("Person with organization: %v", personWithOrganization)

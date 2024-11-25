@@ -2,7 +2,7 @@ Domain:
 	+--------+--------------------+--------+----------+----------+---------+---------------+-----------+-------------------------+------------+---------+
 	| Field  |        Type        | Unique | Optional | Nillable | Default | UpdateDefault | Immutable |        StructTag        | Validators | Comment |
 	+--------+--------------------+--------+----------+----------+---------+---------------+-----------+-------------------------+------------+---------+
-	| id     | typeid.AnyID       | false  | false    | false    | true    | false         | false     | json:"id,omitempty"     |          0 |         |
+	| id     | mixin.ID           | false  | false    | false    | true    | false         | false     | json:"id,omitempty"     |          0 |         |
 	| name   | string             | false  | false    | false    | false   | false         | false     | json:"name,omitempty"   |          1 |         |
 	| url    | string             | true   | false    | false    | false   | false         | false     | json:"url,omitempty"    |          1 |         |
 	| status | domain.DomainState | false  | false    | false    | false   | false         | false     | json:"status,omitempty" |          0 |         |
@@ -10,7 +10,6 @@ Domain:
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
 	|     Edge     |     Type     | Inverse | BackRef | Relation | Unique | Optional | Comment |
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
-	| hub          | Hub          | true    | domain  | O2O      | true   | true     |         |
 	| organization | Organization | true    | domains | M2O      | true   | false    |         |
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
 	
@@ -18,7 +17,7 @@ Hub:
 	+---------------------+-----------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------------+------------+---------+
 	|        Field        |         Type          | Unique | Optional | Nillable | Default | UpdateDefault | Immutable |              StructTag               | Validators | Comment |
 	+---------------------+-----------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------------+------------+---------+
-	| id                  | typeid.AnyID          | false  | false    | false    | true    | false         | false     | json:"id,omitempty"                  |          0 |         |
+	| id                  | mixin.ID              | false  | false    | false    | true    | false         | false     | json:"id,omitempty"                  |          0 |         |
 	| name                | string                | false  | false    | false    | false   | false         | false     | json:"name,omitempty"                |          1 |         |
 	| slug                | string                | false  | false    | false    | false   | false         | false     | json:"slug,omitempty"                |          1 |         |
 	| hub_details         | types.HubDetails      | false  | true     | false    | false   | false         | false     | json:"hub_details,omitempty"         |          0 |         |
@@ -29,7 +28,7 @@ Hub:
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
 	|     Edge     |     Type     | Inverse | BackRef | Relation | Unique | Optional | Comment |
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
-	| domain       | Domain       | false   |         | O2O      | true   | false    |         |
+	| domain       | Domain       | false   |         | M2O      | true   | false    |         |
 	| organization | Organization | true    | hubs    | M2O      | true   | false    |         |
 	| links        | Link         | false   |         | O2M      | false  | true     |         |
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
@@ -38,7 +37,7 @@ Link:
 	+--------------+-------------------+--------+----------+----------+---------+---------------+-----------+-------------------------------+------------+---------+
 	|    Field     |       Type        | Unique | Optional | Nillable | Default | UpdateDefault | Immutable |           StructTag           | Validators | Comment |
 	+--------------+-------------------+--------+----------+----------+---------+---------------+-----------+-------------------------------+------------+---------+
-	| id           | typeid.AnyID      | false  | false    | false    | true    | false         | false     | json:"id,omitempty"           |          0 |         |
+	| id           | mixin.ID          | false  | false    | false    | true    | false         | false     | json:"id,omitempty"           |          0 |         |
 	| target       | string            | false  | false    | false    | false   | false         | false     | json:"target,omitempty"       |          1 |         |
 	| path         | string            | true   | false    | false    | false   | false         | false     | json:"path,omitempty"         |          1 |         |
 	| link_content | types.LinkContent | false  | true     | false    | false   | false         | false     | json:"link_content,omitempty" |          0 |         |
@@ -54,7 +53,7 @@ Organization:
 	+---------------+--------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------+------------+---------+
 	|     Field     |        Type        | Unique | Optional | Nillable | Default | UpdateDefault | Immutable |           StructTag            | Validators | Comment |
 	+---------------+--------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------+------------+---------+
-	| id            | typeid.AnyID       | false  | false    | false    | true    | false         | false     | json:"id,omitempty"            |          0 |         |
+	| id            | mixin.ID           | false  | false    | false    | true    | false         | false     | json:"id,omitempty"            |          0 |         |
 	| name          | string             | false  | false    | false    | false   | false         | false     | json:"name,omitempty"          |          1 |         |
 	| website       | string             | false  | true     | false    | false   | false         | false     | json:"website,omitempty"       |          0 |         |
 	| description   | string             | false  | true     | false    | false   | false         | false     | json:"description,omitempty"   |          0 |         |
@@ -66,21 +65,21 @@ Organization:
 	+---------+--------+---------+---------+----------+--------+----------+---------+
 	| domains | Domain | false   |         | O2M      | false  | true     |         |
 	| hubs    | Hub    | false   |         | O2M      | false  | true     |         |
-	| persons | Person | false   |         | O2M      | false  | true     |         |
+	| persons | Person | false   |         | M2M      | false  | true     |         |
 	+---------+--------+---------+---------+----------+--------+----------+---------+
 	
 Person:
 	+------------+---------------+--------+----------+----------+---------+---------------+-----------+-----------------------------+------------+---------+
 	|   Field    |     Type      | Unique | Optional | Nillable | Default | UpdateDefault | Immutable |          StructTag          | Validators | Comment |
 	+------------+---------------+--------+----------+----------+---------+---------------+-----------+-----------------------------+------------+---------+
-	| id         | typeid.AnyID  | false  | false    | false    | true    | false         | false     | json:"id,omitempty"         |          0 |         |
+	| id         | mixin.ID      | false  | false    | false    | true    | false         | false     | json:"id,omitempty"         |          0 |         |
 	| subject_id | string        | true   | false    | false    | false   | false         | false     | json:"subject_id,omitempty" |          1 |         |
 	| user_info  | oidc.UserInfo | false  | false    | false    | false   | false         | true      | json:"user_info,omitempty"  |          0 |         |
 	| is_active  | bool          | false  | false    | false    | true    | false         | false     | json:"is_active,omitempty"  |          0 |         |
 	+------------+---------------+--------+----------+----------+---------+---------------+-----------+-----------------------------+------------+---------+
-	+--------------+--------------+---------+---------+----------+--------+----------+---------+
-	|     Edge     |     Type     | Inverse | BackRef | Relation | Unique | Optional | Comment |
-	+--------------+--------------+---------+---------+----------+--------+----------+---------+
-	| organization | Organization | false   |         | M2O      | true   | true     |         |
-	+--------------+--------------+---------+---------+----------+--------+----------+---------+
+	+---------------+--------------+---------+---------+----------+--------+----------+---------+
+	|     Edge      |     Type     | Inverse | BackRef | Relation | Unique | Optional | Comment |
+	+---------------+--------------+---------+---------+----------+--------+----------+---------+
+	| organizations | Organization | true    | persons | M2M      | false  | true     |         |
+	+---------------+--------------+---------+---------+----------+--------+----------+---------+
 	

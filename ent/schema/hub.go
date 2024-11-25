@@ -74,6 +74,7 @@ func (Hub) Edges() []ent.Edge {
 
 		// One Hub has many Links
 		edge.To("links", Link.Type).
-			StorageKey(edge.Column("link_fk")), // Customize the foreign key if needed
+			StorageKey(edge.Column("link_fk")).
+			Annotations(entgql.RelayConnection()), // Customize the foreign key if needed
 	}
 }

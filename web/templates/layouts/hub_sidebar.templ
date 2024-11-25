@@ -1,6 +1,8 @@
 package layouts
 
-templ HubSidebar() {
+import "RouteHub.Service.Dashboard/ent"
+
+templ HubSidebar(hub ent.Hub) {
 <div id="hs-application-sidebar-hub"
     class="hs-overlay [--auto-close:lg] hs-overlay-open:translate-x-0 -translate-x-full transition-all duration-300 transform w-[260px] h-full hidden fixed inset-y-0 start-0 z-[60] bg-white border-e border-gray-200 lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 dark:bg-neutral-800 dark:border-neutral-700"
     role="dialog" tabindex="-1" aria-label="Sidebar">
@@ -9,7 +11,7 @@ templ HubSidebar() {
             <a class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-none focus:opacity-80 dark:text-neutral-200 dark:hover:text-neutral-300"
                 href="#" aria-label="RouteHUB">
                 RouteHUB
-                <small class="text-xs"><br />My routehub</small>
+                <small class="text-xs"><br />{hub.Name}</small>
             </a>
         </div>
 

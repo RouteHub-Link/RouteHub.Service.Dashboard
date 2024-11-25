@@ -17,11 +17,11 @@ func ConfigureRoutes(e *echo.Echo, config *configuration.Config, logger *slog.Lo
 	e.Static("/static/dist/preline", "./node_modules/preline/dist")
 
 	e.Pre(middleware.RemoveTrailingSlash())
+	groups.MapMiscRoutes(e)
 
 	webHandlers := handlers.NewWebHandlers(logger, authorizer, ent)
 
 	groups.ConfigurePageRoutes(e, webHandlers)
-	groups.MapMiscRoutes(e)
 
-	groups.ConfigureAuthRoutes(e, config.OAuth, authorizer, ent)
+	groups.ConfigureAuthRoutes(e, config.OAuth, authorizer)
 }

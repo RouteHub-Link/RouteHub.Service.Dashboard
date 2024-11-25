@@ -80,6 +80,11 @@ func NewApplication(config *configuration.Config, logger *slog.Logger) (*Applica
 			return
 		}
 
+		if _, err := features.NewCacheService(config.CacheDB, logger); err != nil {
+			logger.Error("Failed to configure cache", "error", err)
+			return
+		}
+
 		app.configureMiddleware()
 
 		application = app

@@ -57,23 +57,19 @@ func (pu *PersonUpdate) SetNillableIsActive(b *bool) *PersonUpdate {
 	return pu
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (pu *PersonUpdate) SetOrganizationID(id mixin.ID) *PersonUpdate {
-	pu.mutation.SetOrganizationID(id)
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (pu *PersonUpdate) AddOrganizationIDs(ids ...mixin.ID) *PersonUpdate {
+	pu.mutation.AddOrganizationIDs(ids...)
 	return pu
 }
 
-// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (pu *PersonUpdate) SetNillableOrganizationID(id *mixin.ID) *PersonUpdate {
-	if id != nil {
-		pu = pu.SetOrganizationID(*id)
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (pu *PersonUpdate) AddOrganizations(o ...*Organization) *PersonUpdate {
+	ids := make([]mixin.ID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
 	}
-	return pu
-}
-
-// SetOrganization sets the "organization" edge to the Organization entity.
-func (pu *PersonUpdate) SetOrganization(o *Organization) *PersonUpdate {
-	return pu.SetOrganizationID(o.ID)
+	return pu.AddOrganizationIDs(ids...)
 }
 
 // Mutation returns the PersonMutation object of the builder.
@@ -81,10 +77,25 @@ func (pu *PersonUpdate) Mutation() *PersonMutation {
 	return pu.mutation
 }
 
-// ClearOrganization clears the "organization" edge to the Organization entity.
-func (pu *PersonUpdate) ClearOrganization() *PersonUpdate {
-	pu.mutation.ClearOrganization()
+// ClearOrganizations clears all "organizations" edges to the Organization entity.
+func (pu *PersonUpdate) ClearOrganizations() *PersonUpdate {
+	pu.mutation.ClearOrganizations()
 	return pu
+}
+
+// RemoveOrganizationIDs removes the "organizations" edge to Organization entities by IDs.
+func (pu *PersonUpdate) RemoveOrganizationIDs(ids ...mixin.ID) *PersonUpdate {
+	pu.mutation.RemoveOrganizationIDs(ids...)
+	return pu
+}
+
+// RemoveOrganizations removes "organizations" edges to Organization entities.
+func (pu *PersonUpdate) RemoveOrganizations(o ...*Organization) *PersonUpdate {
+	ids := make([]mixin.ID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return pu.RemoveOrganizationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -142,12 +153,12 @@ func (pu *PersonUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.IsActive(); ok {
 		_spec.SetField(person.FieldIsActive, field.TypeBool, value)
 	}
-	if pu.mutation.OrganizationCleared() {
+	if pu.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   person.OrganizationTable,
-			Columns: []string{person.OrganizationColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   person.OrganizationsTable,
+			Columns: person.OrganizationsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -155,12 +166,28 @@ func (pu *PersonUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pu.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := pu.mutation.RemovedOrganizationsIDs(); len(nodes) > 0 && !pu.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   person.OrganizationTable,
-			Columns: []string{person.OrganizationColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   person.OrganizationsTable,
+			Columns: person.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   person.OrganizationsTable,
+			Columns: person.OrganizationsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -219,23 +246,19 @@ func (puo *PersonUpdateOne) SetNillableIsActive(b *bool) *PersonUpdateOne {
 	return puo
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (puo *PersonUpdateOne) SetOrganizationID(id mixin.ID) *PersonUpdateOne {
-	puo.mutation.SetOrganizationID(id)
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (puo *PersonUpdateOne) AddOrganizationIDs(ids ...mixin.ID) *PersonUpdateOne {
+	puo.mutation.AddOrganizationIDs(ids...)
 	return puo
 }
 
-// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (puo *PersonUpdateOne) SetNillableOrganizationID(id *mixin.ID) *PersonUpdateOne {
-	if id != nil {
-		puo = puo.SetOrganizationID(*id)
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (puo *PersonUpdateOne) AddOrganizations(o ...*Organization) *PersonUpdateOne {
+	ids := make([]mixin.ID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
 	}
-	return puo
-}
-
-// SetOrganization sets the "organization" edge to the Organization entity.
-func (puo *PersonUpdateOne) SetOrganization(o *Organization) *PersonUpdateOne {
-	return puo.SetOrganizationID(o.ID)
+	return puo.AddOrganizationIDs(ids...)
 }
 
 // Mutation returns the PersonMutation object of the builder.
@@ -243,10 +266,25 @@ func (puo *PersonUpdateOne) Mutation() *PersonMutation {
 	return puo.mutation
 }
 
-// ClearOrganization clears the "organization" edge to the Organization entity.
-func (puo *PersonUpdateOne) ClearOrganization() *PersonUpdateOne {
-	puo.mutation.ClearOrganization()
+// ClearOrganizations clears all "organizations" edges to the Organization entity.
+func (puo *PersonUpdateOne) ClearOrganizations() *PersonUpdateOne {
+	puo.mutation.ClearOrganizations()
 	return puo
+}
+
+// RemoveOrganizationIDs removes the "organizations" edge to Organization entities by IDs.
+func (puo *PersonUpdateOne) RemoveOrganizationIDs(ids ...mixin.ID) *PersonUpdateOne {
+	puo.mutation.RemoveOrganizationIDs(ids...)
+	return puo
+}
+
+// RemoveOrganizations removes "organizations" edges to Organization entities.
+func (puo *PersonUpdateOne) RemoveOrganizations(o ...*Organization) *PersonUpdateOne {
+	ids := make([]mixin.ID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return puo.RemoveOrganizationIDs(ids...)
 }
 
 // Where appends a list predicates to the PersonUpdate builder.
@@ -334,12 +372,12 @@ func (puo *PersonUpdateOne) sqlSave(ctx context.Context) (_node *Person, err err
 	if value, ok := puo.mutation.IsActive(); ok {
 		_spec.SetField(person.FieldIsActive, field.TypeBool, value)
 	}
-	if puo.mutation.OrganizationCleared() {
+	if puo.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   person.OrganizationTable,
-			Columns: []string{person.OrganizationColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   person.OrganizationsTable,
+			Columns: person.OrganizationsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -347,12 +385,28 @@ func (puo *PersonUpdateOne) sqlSave(ctx context.Context) (_node *Person, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := puo.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := puo.mutation.RemovedOrganizationsIDs(); len(nodes) > 0 && !puo.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   person.OrganizationTable,
-			Columns: []string{person.OrganizationColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   person.OrganizationsTable,
+			Columns: person.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   person.OrganizationsTable,
+			Columns: person.OrganizationsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
