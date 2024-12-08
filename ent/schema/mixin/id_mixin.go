@@ -87,3 +87,7 @@ func (id *ID) UnmarshalGQL(v interface{}) error {
 func (id ID) MarshalGQL(w io.Writer) {
 	_, _ = io.WriteString(w, strconv.Quote(string(id)))
 }
+
+func (id ID) String() string {
+	return string(id)
+}

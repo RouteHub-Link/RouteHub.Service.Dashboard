@@ -18,6 +18,7 @@ templ FormFeedback(messageType string, title *string, message *string) {
     default:
     <span> "Message type cannot be found type is :" + {messageType}</span>
     }
+    <hr class="border-blue-500">
 </div>
 }
 
@@ -41,7 +42,16 @@ templ content(messageType string,title *string, message *string) {
             if title != nil {
             { *title }
             } else {
-            Success!
+              switch messageType {
+                case "success" :
+                Success!
+                case "error" :
+                There was an error.
+                case "warning" :
+                Warning!
+                default:
+                <span> "Message type cannot be found type is :" + {messageType}</span>
+                }
             }
         </h3>
         <p class="text-sm text-gray-700 dark:text-neutral-400">

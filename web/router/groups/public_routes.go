@@ -14,14 +14,22 @@ func ConfigurePageRoutes(e *echo.Echo, handlers *handlers.WebHandlers) {
 	group.Use(middlewares.PersonMiddleware(handlers.PageHandlers.Authorizer, handlers.PageHandlers.Logger, handlers.PageHandlers.Ent))
 
 	group.GET("", pageHandlers.HomeHandler)
-	group.GET("hubs", pageHandlers.HubsHandler)
 	group.GET("accounts", pageHandlers.AccountsHandler)
 
 	configureDomainRoutes(group, pageHandlers)
+	configureHubRoutes(group, pageHandlers)
 }
 
 func configureDomainRoutes(group *echo.Group, pageHandler *page.PageHandler) {
 	group.GET("domains", pageHandler.DomainsHandler)
 	group.GET("domains/create", pageHandler.CreateDomainGet)
 	group.POST("domains/create", pageHandler.CreateDomainPost)
+}
+
+func configureHubRoutes(group *echo.Group, pageHandler *page.PageHandler) {
+	group.GET("hubs", pageHandler.HubsHandler)
+	group.GET("hubs/attach", pageHandler.AttachHubGet)
+	group.POST("hubs/attach", pageHandler.AttachHubPost)
+
+	group.GET("hub/:slug", pageHandler.HubHandler)
 }

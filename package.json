@@ -4,6 +4,7 @@
     "@preline/collapse": "^2.5.0",
     "@preline/dropdown": "^2.5.0",
     "@preline/theme-switch": "^2.5.0",
+    "@preline/tooltip": "^2.5.0",
     "preline": "^2.5.1"
   },
   "devDependencies": {

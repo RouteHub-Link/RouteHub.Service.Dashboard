@@ -3,20 +3,21 @@ package pages
 import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
 import hubComponents "RouteHub.Service.Dashboard/web/templates/pages/components/hub"
 import "github.com/zitadel/oidc/v3/pkg/oidc"
+import "RouteHub.Service.Dashboard/ent"
 
-templ Hubs(userInfo *oidc.UserInfo) {
+templ Hubs(userInfo *oidc.UserInfo,hubs []*ent.Hub) {
 	@layouts.Main(layouts.PageDescription{
-		MainContent:       hubPage(),
+		MainContent:       hubsPage(hubs),
     UserInfo:          userInfo,
 	})
 }
 
-templ hubPage() {
+templ hubsPage(hubs []*ent.Hub) {
+@hubComponents.HubCards(hubs)
+}
 
-@hubComponents.HubCards()
-
-
-<!-- Table Section -->
+templ hubsTable() {
+  <!-- Table Section -->
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
   <!-- Card -->
   <div class="flex flex-col">
