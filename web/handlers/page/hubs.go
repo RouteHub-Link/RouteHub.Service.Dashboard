@@ -17,6 +17,7 @@ import (
 	"RouteHub.Service.Dashboard/web/templates/pages/components/hub"
 	"RouteHub.Service.Dashboard/web/templates/pages/components/utils"
 	. "github.com/ahmetb/go-linq/v3"
+	"github.com/charmbracelet/hotdiva2000"
 
 	"github.com/labstack/echo/v4"
 )
@@ -64,6 +65,8 @@ func (ph PageHandler) AttachHubGet(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, domain.CreateDomain(feedback, false))
 	}
 
+	humanizedSlug := hotdiva2000.Generate()
+
 	domains, err := ph.Ent.Organization.QueryDomains(organization).All(c.Request().Context())
 	if err != nil || len(domains) == 0 {
 		msg := "Error fetching organization domains \nPlease add at least one domain"
@@ -71,7 +74,7 @@ func (ph PageHandler) AttachHubGet(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, domain.CreateDomain(feedback, false))
 	}
 
-	return extensions.Render(c, http.StatusOK, hub.AttachHub(domains, nil, true))
+	return extensions.Render(c, http.StatusOK, hub.AttachHub(humanizedSlug, domains, nil, true))
 }
 
 func (ph PageHandler) AttachHubPost(c echo.Context) error {
@@ -87,7 +90,7 @@ func (ph PageHandler) AttachHubPost(c echo.Context) error {
 	if err != nil {
 		msg := strings.Join([]string{"Error fetching user organization", err.Error()}, " ")
 		feedback := utils.FormFeedback("error", &title, &msg)
-		return extensions.Render(c, http.StatusOK, hub.AttachHub(nil, feedback, true))
+		return extensions.Render(c, http.StatusOK, hub.AttachHub(slug, nil, feedback, true))
 	}
 
 	domains, err := ph.Ent.Organization.QueryDomains(organization).All(c.Request().Context())
@@ -96,7 +99,7 @@ func (ph PageHandler) AttachHubPost(c echo.Context) error {
 	if err != nil {
 		msg := strings.Join([]string{"Error connecting to hub", err.Error()}, " ")
 		feedback := utils.FormFeedback("error", &title, &msg)
-		return extensions.Render(c, http.StatusOK, hub.AttachHub(domains, feedback, true))
+		return extensions.Render(c, http.StatusOK, hub.AttachHub(slug, domains, feedback, true))
 	}
 
 	ph.Logger.Info("MQTT Connection", "data", mqc.ClientID)
@@ -108,7 +111,7 @@ func (ph PageHandler) AttachHubPost(c echo.Context) error {
 	if domain == nil {
 		msg := "Domain not found"
 		feedback := utils.FormFeedback("error", &title, &msg)
-		return extensions.Render(c, http.StatusOK, hub.AttachHub(domains, feedback, true))
+		return extensions.Render(c, http.StatusOK, hub.AttachHub(slug, domains, feedback, true))
 	}
 
 	createdHub, err := ph.Ent.Hub.Create().
@@ -124,7 +127,7 @@ func (ph PageHandler) AttachHubPost(c echo.Context) error {
 	if err != nil {
 		msg := strings.Join([]string{"Error creating hub", err.Error()}, " ")
 		feedback := utils.FormFeedback("error", &title, &msg)
-		return extensions.Render(c, http.StatusOK, hub.AttachHub(domains, feedback, true))
+		return extensions.Render(c, http.StatusOK, hub.AttachHub(slug, domains, feedback, true))
 	}
 
 	//c.Response().Header().Set("HX-Redirect", "/hubs")
@@ -132,7 +135,7 @@ func (ph PageHandler) AttachHubPost(c echo.Context) error {
 	feedback := utils.FormFeedback("success", &title, &message)
 
 	ph.Logger.Info("Hub created", "hub", createdHub)
-	return extensions.Render(c, http.StatusOK, hub.AttachHub(domains, feedback, false))
+	return extensions.Render(c, http.StatusOK, hub.AttachHub(slug, domains, feedback, false))
 
 }
 
