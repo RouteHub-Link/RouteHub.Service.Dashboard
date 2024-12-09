@@ -1,10 +1,11 @@
 package page
 
 import (
-	"errors"
 	"log/slog"
+	"net/http"
 
 	"RouteHub.Service.Dashboard/ent"
+	entHub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/web/extensions"
 	"github.com/labstack/echo/v4"
@@ -51,16 +52,15 @@ func (ph PageHandler) GetUserWithOrganization(c echo.Context) (*oidc.UserInfo, *
 	organizationsIDs, err := ph.Ent.Person.Query().
 		Where(person.SubjectID(userInfo.Subject)).
 		WithOrganizations().
-		QueryOrganizations().IDs(c.Request().Context())
+		QueryOrganizations().
+		IDs(c.Request().Context())
 
 	if err != nil {
 		return nil, nil, err
 	} else if len(organizationsIDs) == 0 {
-		message := "You must be a member of an organization to create a domain."
-		return nil, nil, errors.New(message)
+		return nil, nil, echo.NewHTTPError(http.StatusBadRequest, "You must be a member of an organization to create a domain.")
 	} else if len(organizationsIDs) > 1 {
-		message := "You are a member of multiple organizations. Please select one to create a domain."
-		return nil, nil, errors.New(message)
+		return nil, nil, echo.NewHTTPError(http.StatusBadRequest, "You are a member of multiple organizations. Please select one to create a domain.")
 	}
 
 	organization, err := ph.Ent.Organization.Get(c.Request().Context(), organizationsIDs[0])
@@ -69,4 +69,24 @@ func (ph PageHandler) GetUserWithOrganization(c echo.Context) (*oidc.UserInfo, *
 	}
 
 	return userInfo, organization, nil
+}
+
+func (ph PageHandler) GetHubFromSlug(c echo.Context, query *ent.HubQuery) (*ent.Hub, error) {
+	hubSlug := c.Param("slug")
+	if hubSlug == "" || len(hubSlug) < 2 || len(hubSlug) > 100 {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid hub slug")
+	}
+
+	if query == nil {
+		query = ph.Ent.Hub.Query()
+	}
+
+	query.Where(entHub.Slug(hubSlug))
+
+	hub, err := query.WithDomain().Only(c.Request().Context())
+	if err != nil {
+		return nil, err
+	}
+
+	return hub, nil
 }

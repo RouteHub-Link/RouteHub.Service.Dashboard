@@ -3,6 +3,8 @@
 package organization
 
 import (
+	"time"
+
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
@@ -72,6 +74,11 @@ func Description(v string) predicate.Organization {
 // Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
 func Location(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldLocation, v))
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -372,6 +379,46 @@ func SocialMediasIsNil() predicate.Organization {
 // SocialMediasNotNil applies the NotNil predicate on the "social_medias" field.
 func SocialMediasNotNil() predicate.Organization {
 	return predicate.Organization(sql.FieldNotNull(FieldSocialMedias))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldLTE(FieldCreatedAt, v))
 }
 
 // HasDomains applies the HasEdge predicate on the "domains" edge.

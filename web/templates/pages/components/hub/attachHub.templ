@@ -3,11 +3,11 @@ import "RouteHub.Service.Dashboard/ent"
 
 templ AttachHub(domains []*ent.Domain, messageTemplate templ.Component, renderForm bool) {
 if messageTemplate != nil {
-@messageTemplate
+    @messageTemplate
 }
 
 if renderForm {
-@form(domains)
+    @form(domains)
 }
 }
 

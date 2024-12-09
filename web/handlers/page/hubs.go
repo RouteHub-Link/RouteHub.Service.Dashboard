@@ -67,7 +67,7 @@ func (ph PageHandler) AttachHubGet(c echo.Context) error {
 
 	domains, err := ph.Ent.Organization.QueryDomains(organization).All(c.Request().Context())
 	if err != nil || len(domains) == 0 {
-		msg := strings.Join([]string{"Error fetching organization domains", err.Error(), "\nPlease add at least one domain"}, " ")
+		msg := "Error fetching organization domains \nPlease add at least one domain"
 		feedback := utils.FormFeedback("error", nil, &msg)
 		return extensions.Render(c, http.StatusOK, domain.CreateDomain(feedback, false))
 	}
@@ -138,21 +138,12 @@ func (ph PageHandler) AttachHubPost(c echo.Context) error {
 }
 
 func (ph PageHandler) HubHandler(c echo.Context) error {
-	hubSlug := c.Param("slug")
-	if hubSlug == "" || len(hubSlug) < 2 || len(hubSlug) > 100 {
-		return c.Redirect(http.StatusFound, "/hubs")
-	}
-
 	user, err := ph.GetUserInfo(c)
 	if err != nil {
 		return c.Redirect(http.StatusForbidden, "/")
 	}
 
-	hub, err := ph.Ent.Hub.Query().
-		Where(entHub.Slug(hubSlug)).
-		WithOrganization().
-		WithDomain().
-		Only(c.Request().Context())
+	hub, err := ph.GetHubFromSlug(c, ph.Ent.Hub.Query().WithDomain().WithOrganization())
 
 	if err != nil {
 		ph.Logger.Error("Error fetching hub", "error", err)

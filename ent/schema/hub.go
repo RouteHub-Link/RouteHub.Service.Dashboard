@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	enums_hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -54,6 +56,9 @@ func (Hub) Fields() []ent.Field {
 				entsql.Default(enums_hub.Timed.String()),
 				entgql.Type("RedirectionOption"),
 			),
+
+		field.Time("created_at").
+			Default(time.Now),
 	}
 }
 

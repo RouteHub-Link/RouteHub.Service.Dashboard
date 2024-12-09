@@ -32,4 +32,5 @@ func configureHubRoutes(group *echo.Group, pageHandler *page.PageHandler) {
 	group.POST("hubs/attach", pageHandler.AttachHubPost)
 
 	group.GET("hub/:slug", pageHandler.HubHandler)
+	group.GET("hub/:slug/links", pageHandler.HubLinksHandler)
 }

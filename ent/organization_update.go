@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
@@ -123,6 +124,20 @@ func (ou *OrganizationUpdate) SetNillableSocialMedias(tm *types.SocialMedias) *O
 // ClearSocialMedias clears the value of the "social_medias" field.
 func (ou *OrganizationUpdate) ClearSocialMedias() *OrganizationUpdate {
 	ou.mutation.ClearSocialMedias()
+	return ou
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (ou *OrganizationUpdate) SetCreatedAt(t time.Time) *OrganizationUpdate {
+	ou.mutation.SetCreatedAt(t)
+	return ou
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableCreatedAt(t *time.Time) *OrganizationUpdate {
+	if t != nil {
+		ou.SetCreatedAt(*t)
+	}
 	return ou
 }
 
@@ -314,6 +329,9 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ou.mutation.SocialMediasCleared() {
 		_spec.ClearField(organization.FieldSocialMedias, field.TypeJSON)
+	}
+	if value, ok := ou.mutation.CreatedAt(); ok {
+		_spec.SetField(organization.FieldCreatedAt, field.TypeTime, value)
 	}
 	if ou.mutation.DomainsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -564,6 +582,20 @@ func (ouo *OrganizationUpdateOne) ClearSocialMedias() *OrganizationUpdateOne {
 	return ouo
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (ouo *OrganizationUpdateOne) SetCreatedAt(t time.Time) *OrganizationUpdateOne {
+	ouo.mutation.SetCreatedAt(t)
+	return ouo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableCreatedAt(t *time.Time) *OrganizationUpdateOne {
+	if t != nil {
+		ouo.SetCreatedAt(*t)
+	}
+	return ouo
+}
+
 // AddDomainIDs adds the "domains" edge to the Domain entity by IDs.
 func (ouo *OrganizationUpdateOne) AddDomainIDs(ids ...mixin.ID) *OrganizationUpdateOne {
 	ouo.mutation.AddDomainIDs(ids...)
@@ -782,6 +814,9 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if ouo.mutation.SocialMediasCleared() {
 		_spec.ClearField(organization.FieldSocialMedias, field.TypeJSON)
+	}
+	if value, ok := ouo.mutation.CreatedAt(); ok {
+		_spec.SetField(organization.FieldCreatedAt, field.TypeTime, value)
 	}
 	if ouo.mutation.DomainsCleared() {
 		edge := &sqlgraph.EdgeSpec{

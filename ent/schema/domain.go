@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	enums_domain "RouteHub.Service.Dashboard/ent/schema/enums/domain"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/contrib/entgql"
@@ -42,6 +44,9 @@ func (Domain) Fields() []ent.Field {
 				entsql.Default(enums_domain.Passive.String()),
 				entgql.Type("DomainState"),
 			),
+
+		field.Time("created_at").
+			Default(time.Now),
 	}
 }
 

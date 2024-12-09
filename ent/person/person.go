@@ -3,6 +3,8 @@
 package person
 
 import (
+	"time"
+
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -19,6 +21,8 @@ const (
 	FieldUserInfo = "user_info"
 	// FieldIsActive holds the string denoting the is_active field in the database.
 	FieldIsActive = "is_active"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"
 	// Table holds the table name of the person in the database.
@@ -36,6 +40,7 @@ var Columns = []string{
 	FieldSubjectID,
 	FieldUserInfo,
 	FieldIsActive,
+	FieldCreatedAt,
 }
 
 var (
@@ -59,6 +64,8 @@ var (
 	SubjectIDValidator func(string) error
 	// DefaultIsActive holds the default value on creation for the "is_active" field.
 	DefaultIsActive bool
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() mixin.ID
 )
@@ -79,6 +86,11 @@ func BySubjectID(opts ...sql.OrderTermOption) OrderOption {
 // ByIsActive orders the results by the is_active field.
 func ByIsActive(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsActive, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
 // ByOrganizationsCount orders the results by organizations count.

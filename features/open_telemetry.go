@@ -66,7 +66,6 @@ func (c *OpenTelemetryConfig) SetHeaders(headers string) {
 }
 
 // Options
-
 type OpenTelemetryOption func(*OpenTelemetryConfig)
 
 func WithServiceName(serviceName string) OpenTelemetryOption {

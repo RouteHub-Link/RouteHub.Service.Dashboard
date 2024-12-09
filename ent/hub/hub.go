@@ -4,6 +4,7 @@ package enthub
 
 import (
 	"fmt"
+	"time"
 
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
@@ -29,6 +30,8 @@ const (
 	FieldStatus = "status"
 	// FieldDefaultRedirection holds the string denoting the default_redirection field in the database.
 	FieldDefaultRedirection = "default_redirection"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// EdgeDomain holds the string denoting the domain edge name in mutations.
 	EdgeDomain = "domain"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
@@ -69,6 +72,7 @@ var Columns = []string{
 	FieldTCPAddress,
 	FieldStatus,
 	FieldDefaultRedirection,
+	FieldCreatedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "hubs"
@@ -100,6 +104,8 @@ var (
 	SlugValidator func(string) error
 	// TCPAddressValidator is a validator for the "tcp_address" field. It is called by the builders before save.
 	TCPAddressValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() mixin.ID
 )
@@ -155,6 +161,11 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByDefaultRedirection orders the results by the default_redirection field.
 func ByDefaultRedirection(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDefaultRedirection, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
 // ByDomainField orders the results by domain field.

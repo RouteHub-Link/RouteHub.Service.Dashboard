@@ -4,6 +4,7 @@ package entdomain
 
 import (
 	"fmt"
+	"time"
 
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -22,6 +23,8 @@ const (
 	FieldURL = "url"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
 	EdgeOrganization = "organization"
 	// Table holds the table name of the domain in the database.
@@ -41,6 +44,7 @@ var Columns = []string{
 	FieldName,
 	FieldURL,
 	FieldStatus,
+	FieldCreatedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "domains"
@@ -69,6 +73,8 @@ var (
 	NameValidator func(string) error
 	// URLValidator is a validator for the "url" field. It is called by the builders before save.
 	URLValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() mixin.ID
 )
@@ -104,6 +110,11 @@ func ByURL(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
 // ByOrganizationField orders the results by organization field.

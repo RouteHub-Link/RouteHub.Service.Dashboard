@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
@@ -93,6 +94,34 @@ func (lu *LinkUpdate) SetNillableStatus(es *enums.StatusState) *LinkUpdate {
 	return lu
 }
 
+// SetRedirectionChoice sets the "redirection_choice" field.
+func (lu *LinkUpdate) SetRedirectionChoice(ec enums.RedirectionChoice) *LinkUpdate {
+	lu.mutation.SetRedirectionChoice(ec)
+	return lu
+}
+
+// SetNillableRedirectionChoice sets the "redirection_choice" field if the given value is not nil.
+func (lu *LinkUpdate) SetNillableRedirectionChoice(ec *enums.RedirectionChoice) *LinkUpdate {
+	if ec != nil {
+		lu.SetRedirectionChoice(*ec)
+	}
+	return lu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (lu *LinkUpdate) SetCreatedAt(t time.Time) *LinkUpdate {
+	lu.mutation.SetCreatedAt(t)
+	return lu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (lu *LinkUpdate) SetNillableCreatedAt(t *time.Time) *LinkUpdate {
+	if t != nil {
+		lu.SetCreatedAt(*t)
+	}
+	return lu
+}
+
 // SetHubID sets the "hub" edge to the Hub entity by ID.
 func (lu *LinkUpdate) SetHubID(id mixin.ID) *LinkUpdate {
 	lu.mutation.SetHubID(id)
@@ -159,6 +188,11 @@ func (lu *LinkUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Link.status": %w`, err)}
 		}
 	}
+	if v, ok := lu.mutation.RedirectionChoice(); ok {
+		if err := link.RedirectionChoiceValidator(v); err != nil {
+			return &ValidationError{Name: "redirection_choice", err: fmt.Errorf(`ent: validator failed for field "Link.redirection_choice": %w`, err)}
+		}
+	}
 	if lu.mutation.HubCleared() && len(lu.mutation.HubIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Link.hub"`)
 	}
@@ -191,6 +225,12 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := lu.mutation.Status(); ok {
 		_spec.SetField(link.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := lu.mutation.RedirectionChoice(); ok {
+		_spec.SetField(link.FieldRedirectionChoice, field.TypeEnum, value)
+	}
+	if value, ok := lu.mutation.CreatedAt(); ok {
+		_spec.SetField(link.FieldCreatedAt, field.TypeTime, value)
 	}
 	if lu.mutation.HubCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -303,6 +343,34 @@ func (luo *LinkUpdateOne) SetNillableStatus(es *enums.StatusState) *LinkUpdateOn
 	return luo
 }
 
+// SetRedirectionChoice sets the "redirection_choice" field.
+func (luo *LinkUpdateOne) SetRedirectionChoice(ec enums.RedirectionChoice) *LinkUpdateOne {
+	luo.mutation.SetRedirectionChoice(ec)
+	return luo
+}
+
+// SetNillableRedirectionChoice sets the "redirection_choice" field if the given value is not nil.
+func (luo *LinkUpdateOne) SetNillableRedirectionChoice(ec *enums.RedirectionChoice) *LinkUpdateOne {
+	if ec != nil {
+		luo.SetRedirectionChoice(*ec)
+	}
+	return luo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (luo *LinkUpdateOne) SetCreatedAt(t time.Time) *LinkUpdateOne {
+	luo.mutation.SetCreatedAt(t)
+	return luo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (luo *LinkUpdateOne) SetNillableCreatedAt(t *time.Time) *LinkUpdateOne {
+	if t != nil {
+		luo.SetCreatedAt(*t)
+	}
+	return luo
+}
+
 // SetHubID sets the "hub" edge to the Hub entity by ID.
 func (luo *LinkUpdateOne) SetHubID(id mixin.ID) *LinkUpdateOne {
 	luo.mutation.SetHubID(id)
@@ -382,6 +450,11 @@ func (luo *LinkUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Link.status": %w`, err)}
 		}
 	}
+	if v, ok := luo.mutation.RedirectionChoice(); ok {
+		if err := link.RedirectionChoiceValidator(v); err != nil {
+			return &ValidationError{Name: "redirection_choice", err: fmt.Errorf(`ent: validator failed for field "Link.redirection_choice": %w`, err)}
+		}
+	}
 	if luo.mutation.HubCleared() && len(luo.mutation.HubIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Link.hub"`)
 	}
@@ -431,6 +504,12 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) 
 	}
 	if value, ok := luo.mutation.Status(); ok {
 		_spec.SetField(link.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := luo.mutation.RedirectionChoice(); ok {
+		_spec.SetField(link.FieldRedirectionChoice, field.TypeEnum, value)
+	}
+	if value, ok := luo.mutation.CreatedAt(); ok {
+		_spec.SetField(link.FieldCreatedAt, field.TypeTime, value)
 	}
 	if luo.mutation.HubCleared() {
 		edge := &sqlgraph.EdgeSpec{

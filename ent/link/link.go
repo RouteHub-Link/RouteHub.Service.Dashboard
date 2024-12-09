@@ -4,6 +4,7 @@ package link
 
 import (
 	"fmt"
+	"time"
 
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -24,6 +25,10 @@ const (
 	FieldLinkContent = "link_content"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldRedirectionChoice holds the string denoting the redirection_choice field in the database.
+	FieldRedirectionChoice = "redirection_choice"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// EdgeHub holds the string denoting the hub edge name in mutations.
 	EdgeHub = "hub"
 	// Table holds the table name of the link in the database.
@@ -44,6 +49,8 @@ var Columns = []string{
 	FieldPath,
 	FieldLinkContent,
 	FieldStatus,
+	FieldRedirectionChoice,
+	FieldCreatedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "links"
@@ -72,6 +79,8 @@ var (
 	TargetValidator func(string) error
 	// PathValidator is a validator for the "path" field. It is called by the builders before save.
 	PathValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() mixin.ID
 )
@@ -83,6 +92,16 @@ func StatusValidator(s enums.StatusState) error {
 		return nil
 	default:
 		return fmt.Errorf("link: invalid enum value for status field: %q", s)
+	}
+}
+
+// RedirectionChoiceValidator is a validator for the "redirection_choice" field enum values. It is called by the builders before save.
+func RedirectionChoiceValidator(rc enums.RedirectionChoice) error {
+	switch rc.String() {
+	case "TIMED", "NOT_AUTO", "DIRECT_HTTP", "CONFIRM", "CUSTOM":
+		return nil
+	default:
+		return fmt.Errorf("link: invalid enum value for redirection_choice field: %q", rc)
 	}
 }
 
@@ -107,6 +126,16 @@ func ByPath(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByRedirectionChoice orders the results by the redirection_choice field.
+func ByRedirectionChoice(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRedirectionChoice, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
 // ByHubField orders the results by hub field.

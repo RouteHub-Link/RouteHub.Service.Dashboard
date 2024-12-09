@@ -3,6 +3,8 @@
 package organization
 
 import (
+	"time"
+
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -23,6 +25,8 @@ const (
 	FieldLocation = "location"
 	// FieldSocialMedias holds the string denoting the social_medias field in the database.
 	FieldSocialMedias = "social_medias"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// EdgeDomains holds the string denoting the domains edge name in mutations.
 	EdgeDomains = "domains"
 	// EdgeHubs holds the string denoting the hubs edge name in mutations.
@@ -60,6 +64,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldLocation,
 	FieldSocialMedias,
+	FieldCreatedAt,
 }
 
 var (
@@ -81,6 +86,8 @@ func ValidColumn(column string) bool {
 var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() mixin.ID
 )
@@ -111,6 +118,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByLocation orders the results by the location field.
 func ByLocation(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLocation, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
 // ByDomainsCount orders the results by domains count.

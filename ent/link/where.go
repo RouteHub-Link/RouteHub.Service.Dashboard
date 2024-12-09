@@ -3,6 +3,8 @@
 package link
 
 import (
+	"time"
+
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -63,6 +65,11 @@ func Target(v string) predicate.Link {
 // Path applies equality check predicate on the "path" field. It's identical to PathEQ.
 func Path(v string) predicate.Link {
 	return predicate.Link(sql.FieldEQ(FieldPath, v))
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Link {
+	return predicate.Link(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // TargetEQ applies the EQ predicate on the "target" field.
@@ -223,6 +230,66 @@ func StatusIn(vs ...enums.StatusState) predicate.Link {
 // StatusNotIn applies the NotIn predicate on the "status" field.
 func StatusNotIn(vs ...enums.StatusState) predicate.Link {
 	return predicate.Link(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// RedirectionChoiceEQ applies the EQ predicate on the "redirection_choice" field.
+func RedirectionChoiceEQ(v enums.RedirectionChoice) predicate.Link {
+	return predicate.Link(sql.FieldEQ(FieldRedirectionChoice, v))
+}
+
+// RedirectionChoiceNEQ applies the NEQ predicate on the "redirection_choice" field.
+func RedirectionChoiceNEQ(v enums.RedirectionChoice) predicate.Link {
+	return predicate.Link(sql.FieldNEQ(FieldRedirectionChoice, v))
+}
+
+// RedirectionChoiceIn applies the In predicate on the "redirection_choice" field.
+func RedirectionChoiceIn(vs ...enums.RedirectionChoice) predicate.Link {
+	return predicate.Link(sql.FieldIn(FieldRedirectionChoice, vs...))
+}
+
+// RedirectionChoiceNotIn applies the NotIn predicate on the "redirection_choice" field.
+func RedirectionChoiceNotIn(vs ...enums.RedirectionChoice) predicate.Link {
+	return predicate.Link(sql.FieldNotIn(FieldRedirectionChoice, vs...))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Link {
+	return predicate.Link(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Link {
+	return predicate.Link(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Link {
+	return predicate.Link(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Link {
+	return predicate.Link(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Link {
+	return predicate.Link(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Link {
+	return predicate.Link(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Link {
+	return predicate.Link(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Link {
+	return predicate.Link(sql.FieldLTE(FieldCreatedAt, v))
 }
 
 // HasHub applies the HasEdge predicate on the "hub" edge.

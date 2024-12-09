@@ -14,6 +14,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "url", Type: field.TypeString, Unique: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PASSIVE", "DNS_STATUS_PENDING", "DNS_STATUS_VERIFIED", "DNS_STATUS_FAILED", "ACTIVE"}, Default: "PASSIVE"},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "organization_id", Type: field.TypeString},
 	}
 	// DomainsTable holds the schema information for the "domains" table.
@@ -24,7 +25,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "domains_organizations_domains",
-				Columns:    []*schema.Column{DomainsColumns[4]},
+				Columns:    []*schema.Column{DomainsColumns[5]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -39,6 +40,7 @@ var (
 		{Name: "tcp_address", Type: field.TypeString},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"STATUS_INACTIVE", "STATUS_ACTIVE"}, Default: "STATUS_INACTIVE"},
 		{Name: "default_redirection", Type: field.TypeEnum, Enums: []string{"TIMED", "NOT_AUTO_REDIRECT", "DIRECT_HTTP_REDIRECT", "CONFIRM_REDIRECT", "CUSTOM"}, Default: "TIMED"},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "domain_fk", Type: field.TypeString},
 		{Name: "organization_id", Type: field.TypeString},
 	}
@@ -50,13 +52,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "hubs_domains_domain",
-				Columns:    []*schema.Column{HubsColumns[7]},
+				Columns:    []*schema.Column{HubsColumns[8]},
 				RefColumns: []*schema.Column{DomainsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "hubs_organizations_hubs",
-				Columns:    []*schema.Column{HubsColumns[8]},
+				Columns:    []*schema.Column{HubsColumns[9]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -69,6 +71,8 @@ var (
 		{Name: "path", Type: field.TypeString, Unique: true},
 		{Name: "link_content", Type: field.TypeJSON, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"STATUS_INACTIVE", "STATUS_ACTIVE"}},
+		{Name: "redirection_choice", Type: field.TypeEnum, Enums: []string{"TIMED", "NOT_AUTO", "DIRECT_HTTP", "CONFIRM", "CUSTOM"}},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "link_fk", Type: field.TypeString},
 	}
 	// LinksTable holds the schema information for the "links" table.
@@ -79,7 +83,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "links_hubs_links",
-				Columns:    []*schema.Column{LinksColumns[5]},
+				Columns:    []*schema.Column{LinksColumns[7]},
 				RefColumns: []*schema.Column{HubsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -93,6 +97,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "location", Type: field.TypeString, Nullable: true},
 		{Name: "social_medias", Type: field.TypeJSON, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
 	OrganizationsTable = &schema.Table{
@@ -106,6 +111,7 @@ var (
 		{Name: "subject_id", Type: field.TypeString, Unique: true},
 		{Name: "user_info", Type: field.TypeJSON},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "created_at", Type: field.TypeTime},
 	}
 	// PersonsTable holds the schema information for the "persons" table.
 	PersonsTable = &schema.Table{

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
@@ -53,6 +54,20 @@ func (pu *PersonUpdate) SetIsActive(b bool) *PersonUpdate {
 func (pu *PersonUpdate) SetNillableIsActive(b *bool) *PersonUpdate {
 	if b != nil {
 		pu.SetIsActive(*b)
+	}
+	return pu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (pu *PersonUpdate) SetCreatedAt(t time.Time) *PersonUpdate {
+	pu.mutation.SetCreatedAt(t)
+	return pu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pu *PersonUpdate) SetNillableCreatedAt(t *time.Time) *PersonUpdate {
+	if t != nil {
+		pu.SetCreatedAt(*t)
 	}
 	return pu
 }
@@ -153,6 +168,9 @@ func (pu *PersonUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.IsActive(); ok {
 		_spec.SetField(person.FieldIsActive, field.TypeBool, value)
 	}
+	if value, ok := pu.mutation.CreatedAt(); ok {
+		_spec.SetField(person.FieldCreatedAt, field.TypeTime, value)
+	}
 	if pu.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -242,6 +260,20 @@ func (puo *PersonUpdateOne) SetIsActive(b bool) *PersonUpdateOne {
 func (puo *PersonUpdateOne) SetNillableIsActive(b *bool) *PersonUpdateOne {
 	if b != nil {
 		puo.SetIsActive(*b)
+	}
+	return puo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (puo *PersonUpdateOne) SetCreatedAt(t time.Time) *PersonUpdateOne {
+	puo.mutation.SetCreatedAt(t)
+	return puo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (puo *PersonUpdateOne) SetNillableCreatedAt(t *time.Time) *PersonUpdateOne {
+	if t != nil {
+		puo.SetCreatedAt(*t)
 	}
 	return puo
 }
@@ -371,6 +403,9 @@ func (puo *PersonUpdateOne) sqlSave(ctx context.Context) (_node *Person, err err
 	}
 	if value, ok := puo.mutation.IsActive(); ok {
 		_spec.SetField(person.FieldIsActive, field.TypeBool, value)
+	}
+	if value, ok := puo.mutation.CreatedAt(); ok {
+		_spec.SetField(person.FieldCreatedAt, field.TypeTime, value)
 	}
 	if puo.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{

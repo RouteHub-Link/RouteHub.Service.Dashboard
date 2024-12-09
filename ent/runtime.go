@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"time"
+
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
@@ -29,6 +31,10 @@ func init() {
 	entdomainDescURL := entdomainFields[1].Descriptor()
 	// entdomain.URLValidator is a validator for the "url" field. It is called by the builders before save.
 	entdomain.URLValidator = entdomainDescURL.Validators[0].(func(string) error)
+	// entdomainDescCreatedAt is the schema descriptor for created_at field.
+	entdomainDescCreatedAt := entdomainFields[3].Descriptor()
+	// entdomain.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entdomain.DefaultCreatedAt = entdomainDescCreatedAt.Default.(func() time.Time)
 	// entdomainDescID is the schema descriptor for id field.
 	entdomainDescID := entdomainMixinFields0[0].Descriptor()
 	// entdomain.DefaultID holds the default value on creation for the id field.
@@ -50,6 +56,10 @@ func init() {
 	enthubDescTCPAddress := enthubFields[3].Descriptor()
 	// enthub.TCPAddressValidator is a validator for the "tcp_address" field. It is called by the builders before save.
 	enthub.TCPAddressValidator = enthubDescTCPAddress.Validators[0].(func(string) error)
+	// enthubDescCreatedAt is the schema descriptor for created_at field.
+	enthubDescCreatedAt := enthubFields[6].Descriptor()
+	// enthub.DefaultCreatedAt holds the default value on creation for the created_at field.
+	enthub.DefaultCreatedAt = enthubDescCreatedAt.Default.(func() time.Time)
 	// enthubDescID is the schema descriptor for id field.
 	enthubDescID := enthubMixinFields0[0].Descriptor()
 	// enthub.DefaultID holds the default value on creation for the id field.
@@ -67,6 +77,10 @@ func init() {
 	linkDescPath := linkFields[1].Descriptor()
 	// link.PathValidator is a validator for the "path" field. It is called by the builders before save.
 	link.PathValidator = linkDescPath.Validators[0].(func(string) error)
+	// linkDescCreatedAt is the schema descriptor for created_at field.
+	linkDescCreatedAt := linkFields[5].Descriptor()
+	// link.DefaultCreatedAt holds the default value on creation for the created_at field.
+	link.DefaultCreatedAt = linkDescCreatedAt.Default.(func() time.Time)
 	// linkDescID is the schema descriptor for id field.
 	linkDescID := linkMixinFields0[0].Descriptor()
 	// link.DefaultID holds the default value on creation for the id field.
@@ -80,6 +94,10 @@ func init() {
 	organizationDescName := organizationFields[0].Descriptor()
 	// organization.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	organization.NameValidator = organizationDescName.Validators[0].(func(string) error)
+	// organizationDescCreatedAt is the schema descriptor for created_at field.
+	organizationDescCreatedAt := organizationFields[5].Descriptor()
+	// organization.DefaultCreatedAt holds the default value on creation for the created_at field.
+	organization.DefaultCreatedAt = organizationDescCreatedAt.Default.(func() time.Time)
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationMixinFields0[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
@@ -97,6 +115,10 @@ func init() {
 	personDescIsActive := personFields[2].Descriptor()
 	// person.DefaultIsActive holds the default value on creation for the is_active field.
 	person.DefaultIsActive = personDescIsActive.Default.(bool)
+	// personDescCreatedAt is the schema descriptor for created_at field.
+	personDescCreatedAt := personFields[3].Descriptor()
+	// person.DefaultCreatedAt holds the default value on creation for the created_at field.
+	person.DefaultCreatedAt = personDescCreatedAt.Default.(func() time.Time)
 	// personDescID is the schema descriptor for id field.
 	personDescID := personMixinFields0[0].Descriptor()
 	// person.DefaultID holds the default value on creation for the id field.

@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
@@ -44,6 +46,15 @@ func (Link) Fields() []ent.Field {
 			Annotations(
 				entgql.Type("StatusState"),
 			),
+
+		field.Enum("redirection_choice").
+			GoType(enums.RedirectionChoice(0)).
+			Annotations(
+				entgql.Type("RedirectionChoice"),
+			),
+
+		field.Time("created_at").
+			Default(time.Now),
 	}
 }
 

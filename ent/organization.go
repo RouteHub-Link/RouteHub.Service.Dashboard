@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -29,6 +30,8 @@ type Organization struct {
 	Location string `json:"location,omitempty"`
 	// SocialMedias holds the value of the "social_medias" field.
 	SocialMedias types.SocialMedias `json:"social_medias,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationQuery when eager-loading is set.
 	Edges        OrganizationEdges `json:"edges"`
@@ -84,6 +87,8 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case organization.FieldID, organization.FieldName, organization.FieldWebsite, organization.FieldDescription, organization.FieldLocation:
 			values[i] = new(sql.NullString)
+		case organization.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -136,6 +141,12 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 				if err := json.Unmarshal(*value, &o.SocialMedias); err != nil {
 					return fmt.Errorf("unmarshal field social_medias: %w", err)
 				}
+			}
+		case organization.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				o.CreatedAt = value.Time
 			}
 		default:
 			o.selectValues.Set(columns[i], values[i])
@@ -202,6 +213,9 @@ func (o *Organization) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("social_medias=")
 	builder.WriteString(fmt.Sprintf("%v", o.SocialMedias))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(o.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

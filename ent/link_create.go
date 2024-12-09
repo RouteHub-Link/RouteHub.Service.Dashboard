@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
@@ -52,6 +53,26 @@ func (lc *LinkCreate) SetNillableLinkContent(tc *types.LinkContent) *LinkCreate 
 // SetStatus sets the "status" field.
 func (lc *LinkCreate) SetStatus(es enums.StatusState) *LinkCreate {
 	lc.mutation.SetStatus(es)
+	return lc
+}
+
+// SetRedirectionChoice sets the "redirection_choice" field.
+func (lc *LinkCreate) SetRedirectionChoice(ec enums.RedirectionChoice) *LinkCreate {
+	lc.mutation.SetRedirectionChoice(ec)
+	return lc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (lc *LinkCreate) SetCreatedAt(t time.Time) *LinkCreate {
+	lc.mutation.SetCreatedAt(t)
+	return lc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (lc *LinkCreate) SetNillableCreatedAt(t *time.Time) *LinkCreate {
+	if t != nil {
+		lc.SetCreatedAt(*t)
+	}
 	return lc
 }
 
@@ -115,6 +136,10 @@ func (lc *LinkCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (lc *LinkCreate) defaults() {
+	if _, ok := lc.mutation.CreatedAt(); !ok {
+		v := link.DefaultCreatedAt()
+		lc.mutation.SetCreatedAt(v)
+	}
 	if _, ok := lc.mutation.ID(); !ok {
 		v := link.DefaultID()
 		lc.mutation.SetID(v)
@@ -146,6 +171,17 @@ func (lc *LinkCreate) check() error {
 		if err := link.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Link.status": %w`, err)}
 		}
+	}
+	if _, ok := lc.mutation.RedirectionChoice(); !ok {
+		return &ValidationError{Name: "redirection_choice", err: errors.New(`ent: missing required field "Link.redirection_choice"`)}
+	}
+	if v, ok := lc.mutation.RedirectionChoice(); ok {
+		if err := link.RedirectionChoiceValidator(v); err != nil {
+			return &ValidationError{Name: "redirection_choice", err: fmt.Errorf(`ent: validator failed for field "Link.redirection_choice": %w`, err)}
+		}
+	}
+	if _, ok := lc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Link.created_at"`)}
 	}
 	if len(lc.mutation.HubIDs()) == 0 {
 		return &ValidationError{Name: "hub", err: errors.New(`ent: missing required edge "Link.hub"`)}
@@ -200,6 +236,14 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 	if value, ok := lc.mutation.Status(); ok {
 		_spec.SetField(link.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := lc.mutation.RedirectionChoice(); ok {
+		_spec.SetField(link.FieldRedirectionChoice, field.TypeEnum, value)
+		_node.RedirectionChoice = value
+	}
+	if value, ok := lc.mutation.CreatedAt(); ok {
+		_spec.SetField(link.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
 	}
 	if nodes := lc.mutation.HubIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

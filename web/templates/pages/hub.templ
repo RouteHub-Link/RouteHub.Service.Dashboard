@@ -3,16 +3,17 @@ package pages
 import "RouteHub.Service.Dashboard/ent"
 import "github.com/zitadel/oidc/v3/pkg/oidc"
 import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
+import "fmt"
 
-templ Hub(userInfo *oidc.UserInfo,hubItem *ent.Hub) {
+templ Hub(userInfo *oidc.UserInfo,hub *ent.Hub) {
 @layouts.Main(layouts.PageDescription{
-MainContent: hubPage(hubItem),
+MainContent: hubPage(hub),
 UserInfo: userInfo,
-Hub: hubItem,
+Hub: hub,
 })
 }
 
-templ hubPage(hubItem *ent.Hub) {
+templ hubPage(hub *ent.Hub) {
 <div class="container mx-auto">
 		<div
 			class="max-h-full overflow-hidden flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-neutral-900 dark:border-neutral-800 dark:shadow-neutral-700/70">
@@ -24,9 +25,10 @@ templ hubPage(hubItem *ent.Hub) {
 
 			<div class="p-4 overflow-y-auto">
 				<div class="sm:divide-y divide-gray-200 dark:divide-neutral-700">
-					<div class="py-3 sm:py-6">
+
+						<div class="py-3 sm:py-6">
 						<h4 class="mb-2 text-xs font-semibold uppercase text-gray-600 dark:text-neutral-400">
-							Base
+							Actions
 						</h4>
 
 						<!-- Grid -->
@@ -34,6 +36,94 @@ templ hubPage(hubItem *ent.Hub) {
 							<!-- Card -->
 							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
 								href="../docs/frameworks-vuejs.html">
+								<div class="flex gap-x-6">
+									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
+									<svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-800 dark:text-neutral-200"  height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m226-559 78 33q14-28 29-54t33-52l-56-11-84 84Zm142 83 114 113q42-16 90-49t90-75q70-70 109.5-155.5T806-800q-72-5-158 34.5T492-656q-42 42-75 90t-49 90Zm178-65q-23-23-23-56.5t23-56.5q23-23 57-23t57 23q23 23 23 56.5T660-541q-23 23-57 23t-57-23Zm19 321 84-84-11-56q-26 18-52 32.5T532-299l33 79Zm313-653q19 121-23.5 235.5T708-419l20 99q4 20-2 39t-20 33L538-80l-84-197-171-171-197-84 167-168q14-14 33.5-20t39.5-2l99 20q104-104 218-147t235-24ZM157-321q35-35 85.5-35.5T328-322q35 35 34.5 85.5T327-151q-25 25-83.5 43T82-76q14-103 32-161.5t43-83.5Zm57 56q-10 10-20 36.5T180-175q27-4 53.5-13.5T270-208q12-12 13-29t-11-29q-12-12-29-11.5T214-265Z"/></svg>
+									</div>
+
+									<div class="grow">
+										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
+											New Link
+										</h3>
+										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
+											Create new link immediately.
+										</p>
+									</div>
+								</div>
+							</a>
+							<!-- End Card -->
+
+							<!-- Card -->
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+								href="../docs/frameworks-vuejs.html">
+								<div class="flex gap-x-6">
+									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
+										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
+											fill="currentColor" viewBox="0 0 16 16">
+											<path
+												d="M13 6.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm-.5 2.5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1h5z">
+											</path>
+											<path
+												d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM2 1a1 1 0 0 0-1 1v1h14V2a1 1 0 0 0-1-1H2zM1 4v10a1 1 0 0 0 1 1h2V4H1zm4 0v11h9a1 1 0 0 0 1-1V4H5z">
+											</path>
+										</svg>
+									</div>
+
+									<div class="grow">
+										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
+											New Page
+										</h3>
+										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
+											Create new page in the hub.
+										</p>
+									</div>
+								</div>
+							</a>
+							<!-- End Card -->
+
+							<!-- Card -->
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+								href="../docs/frameworks-vuejs.html">
+								<div class="flex gap-x-6">
+									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
+										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
+											fill="currentColor" viewBox="0 0 16 16">
+											<path
+												d="M2.5 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm2-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm1 .5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z">
+											</path>
+											<path
+												d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm12 1a1 1 0 0 1 1 1v2H1V3a1 1 0 0 1 1-1h12zM1 13V6h4v8H2a1 1 0 0 1-1-1zm5 1V6h9v7a1 1 0 0 1-1 1H6z">
+											</path>
+										</svg>
+									</div>
+
+									<div class="grow">
+										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
+											Edit Link <span
+												class="ms-1 inline bg-blue-50 border border-blue-300 text-blue-600 text-[.6125rem] leading-4 uppercase rounded-full py-0.5 px-2 dark:bg-blue-900/70 dark:border-blue-700 dark:text-blue-500">New</span>
+										</h3>
+										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
+											Select a link to edit.
+										</p>
+									</div>
+								</div>
+							</a>
+							<!-- End Card -->
+						</div>
+						<!-- End Grid -->
+					
+					</div>
+
+					<div class="py-3 sm:py-6">
+						<h4 class="mb-2 text-xs font-semibold uppercase text-gray-600 dark:text-neutral-400">
+							Monitoring
+						</h4>
+
+						<!-- Grid -->
+						<div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+							<!-- Card -->
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+								href={templ.URL(fmt.Sprintf("/hub/%v/links",hub.Slug))}>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -187,10 +277,10 @@ templ hubPage(hubItem *ent.Hub) {
 
 									<div class="grow">
 										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
-											Project Settings
+											HUB Settings
 										</h3>
 										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
-											Default redirection opetions and many more settings.
+											Default redirection options and many more settings.
 										</p>
 									</div>
 								</div>
@@ -256,7 +346,7 @@ templ hubPage(hubItem *ent.Hub) {
 
 							<!-- Card -->
 							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+								href="https://github.com/RouteHub-Link/RouteHub.Service.Dashboard/releases" target="_blank">
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -269,10 +359,10 @@ templ hubPage(hubItem *ent.Hub) {
 
 									<div class="grow">
 										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
-											Popover
+											Last Releases
 										</h3>
 										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
-											A framework for building web user interfaces.
+											See the last changes in the github.
 										</p>
 									</div>
 								</div>

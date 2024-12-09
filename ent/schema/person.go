@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
@@ -37,6 +39,9 @@ func (Person) Fields() []ent.Field {
 
 		field.Bool("is_active").
 			Default(true),
+
+		field.Time("created_at").
+			Default(time.Now),
 	}
 }
 

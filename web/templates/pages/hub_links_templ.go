@@ -10,10 +10,11 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "RouteHub.Service.Dashboard/ent"
 import "github.com/zitadel/oidc/v3/pkg/oidc"
+import "RouteHub.Service.Dashboard/web/templates/pages/components/utils"
 import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
-import "fmt"
+import linkComponents "RouteHub.Service.Dashboard/web/templates/pages/components/link"
 
-func Hub(userInfo *oidc.UserInfo, hub *ent.Hub) templ.Component {
+func HubLinks(userInfo *oidc.UserInfo, hubItem *ent.Hub, links []*ent.Link) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,9 +36,9 @@ func Hub(userInfo *oidc.UserInfo, hub *ent.Hub) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = layouts.Main(layouts.PageDescription{
-			MainContent: hubPage(hub),
+			MainContent: hubLinksPage(links),
 			UserInfo:    userInfo,
-			Hub:         hub,
+			Hub:         hubItem,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -46,7 +47,7 @@ func Hub(userInfo *oidc.UserInfo, hub *ent.Hub) templ.Component {
 	})
 }
 
-func hubPage(hub *ent.Hub) templ.Component {
+func hubLinksPage(links []*ent.Link) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -71,10 +72,16 @@ func hubPage(hub *ent.Hub) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.SafeURL = templ.URL(fmt.Sprintf("/hub/%v/links", hub.Slug))
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if len(links) == 0 {
+			templ_7745c5c3_Err = utils.TableEmpty("Link's", "Start by creating a new link").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = linkComponents.LinksTable(links).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
 		if templ_7745c5c3_Err != nil {

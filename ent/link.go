@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	enthub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
@@ -29,6 +30,10 @@ type Link struct {
 	LinkContent types.LinkContent `json:"link_content,omitempty"`
 	// Status holds the value of the "status" field.
 	Status enums.StatusState `json:"status,omitempty"`
+	// RedirectionChoice holds the value of the "redirection_choice" field.
+	RedirectionChoice enums.RedirectionChoice `json:"redirection_choice,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the LinkQuery when eager-loading is set.
 	Edges        LinkEdges `json:"edges"`
@@ -63,10 +68,14 @@ func (*Link) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case link.FieldLinkContent:
 			values[i] = new([]byte)
+		case link.FieldRedirectionChoice:
+			values[i] = new(enums.RedirectionChoice)
 		case link.FieldStatus:
 			values[i] = new(enums.StatusState)
 		case link.FieldID, link.FieldTarget, link.FieldPath:
 			values[i] = new(sql.NullString)
+		case link.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		case link.ForeignKeys[0]: // link_fk
 			values[i] = new(sql.NullString)
 		default:
@@ -115,6 +124,18 @@ func (l *Link) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value != nil {
 				l.Status = *value
+			}
+		case link.FieldRedirectionChoice:
+			if value, ok := values[i].(*enums.RedirectionChoice); !ok {
+				return fmt.Errorf("unexpected type %T for field redirection_choice", values[i])
+			} else if value != nil {
+				l.RedirectionChoice = *value
+			}
+		case link.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				l.CreatedAt = value.Time
 			}
 		case link.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -175,6 +196,12 @@ func (l *Link) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", l.Status))
+	builder.WriteString(", ")
+	builder.WriteString("redirection_choice=")
+	builder.WriteString(fmt.Sprintf("%v", l.RedirectionChoice))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(l.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

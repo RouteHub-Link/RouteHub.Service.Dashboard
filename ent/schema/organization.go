@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/contrib/entgql"
@@ -42,6 +44,9 @@ func (Organization) Fields() []ent.Field {
 		field.JSON("social_medias", types.SocialMedias{}).
 			Optional().
 			Annotations(entgql.Type("SocialMedias")),
+
+		field.Time("created_at").
+			Default(time.Now),
 	}
 
 }

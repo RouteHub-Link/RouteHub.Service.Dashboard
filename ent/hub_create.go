@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
@@ -67,6 +68,20 @@ func (hc *HubCreate) SetStatus(es enums.StatusState) *HubCreate {
 // SetDefaultRedirection sets the "default_redirection" field.
 func (hc *HubCreate) SetDefaultRedirection(ho hub.RedirectionOption) *HubCreate {
 	hc.mutation.SetDefaultRedirection(ho)
+	return hc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (hc *HubCreate) SetCreatedAt(t time.Time) *HubCreate {
+	hc.mutation.SetCreatedAt(t)
+	return hc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (hc *HubCreate) SetNillableCreatedAt(t *time.Time) *HubCreate {
+	if t != nil {
+		hc.SetCreatedAt(*t)
+	}
 	return hc
 }
 
@@ -156,6 +171,10 @@ func (hc *HubCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (hc *HubCreate) defaults() {
+	if _, ok := hc.mutation.CreatedAt(); !ok {
+		v := enthub.DefaultCreatedAt()
+		hc.mutation.SetCreatedAt(v)
+	}
 	if _, ok := hc.mutation.ID(); !ok {
 		v := enthub.DefaultID()
 		hc.mutation.SetID(v)
@@ -203,6 +222,9 @@ func (hc *HubCreate) check() error {
 		if err := enthub.DefaultRedirectionValidator(v); err != nil {
 			return &ValidationError{Name: "default_redirection", err: fmt.Errorf(`ent: validator failed for field "Hub.default_redirection": %w`, err)}
 		}
+	}
+	if _, ok := hc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Hub.created_at"`)}
 	}
 	if len(hc.mutation.DomainIDs()) == 0 {
 		return &ValidationError{Name: "domain", err: errors.New(`ent: missing required edge "Hub.domain"`)}
@@ -268,6 +290,10 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 	if value, ok := hc.mutation.DefaultRedirection(); ok {
 		_spec.SetField(enthub.FieldDefaultRedirection, field.TypeEnum, value)
 		_node.DefaultRedirection = value
+	}
+	if value, ok := hc.mutation.CreatedAt(); ok {
+		_spec.SetField(enthub.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
 	}
 	if nodes := hc.mutation.DomainIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

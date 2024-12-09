@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	"RouteHub.Service.Dashboard/ent/organization"
@@ -37,6 +38,20 @@ func (dc *DomainCreate) SetURL(s string) *DomainCreate {
 // SetStatus sets the "status" field.
 func (dc *DomainCreate) SetStatus(ds domain.DomainState) *DomainCreate {
 	dc.mutation.SetStatus(ds)
+	return dc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (dc *DomainCreate) SetCreatedAt(t time.Time) *DomainCreate {
+	dc.mutation.SetCreatedAt(t)
+	return dc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (dc *DomainCreate) SetNillableCreatedAt(t *time.Time) *DomainCreate {
+	if t != nil {
+		dc.SetCreatedAt(*t)
+	}
 	return dc
 }
 
@@ -100,6 +115,10 @@ func (dc *DomainCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (dc *DomainCreate) defaults() {
+	if _, ok := dc.mutation.CreatedAt(); !ok {
+		v := entdomain.DefaultCreatedAt()
+		dc.mutation.SetCreatedAt(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := entdomain.DefaultID()
 		dc.mutation.SetID(v)
@@ -131,6 +150,9 @@ func (dc *DomainCreate) check() error {
 		if err := entdomain.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Domain.status": %w`, err)}
 		}
+	}
+	if _, ok := dc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Domain.created_at"`)}
 	}
 	if len(dc.mutation.OrganizationIDs()) == 0 {
 		return &ValidationError{Name: "organization", err: errors.New(`ent: missing required edge "Domain.organization"`)}
@@ -181,6 +203,10 @@ func (dc *DomainCreate) createSpec() (*Domain, *sqlgraph.CreateSpec) {
 	if value, ok := dc.mutation.Status(); ok {
 		_spec.SetField(entdomain.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := dc.mutation.CreatedAt(); ok {
+		_spec.SetField(entdomain.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
 	}
 	if nodes := dc.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

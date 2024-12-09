@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
@@ -82,6 +83,20 @@ func (oc *OrganizationCreate) SetSocialMedias(tm types.SocialMedias) *Organizati
 func (oc *OrganizationCreate) SetNillableSocialMedias(tm *types.SocialMedias) *OrganizationCreate {
 	if tm != nil {
 		oc.SetSocialMedias(*tm)
+	}
+	return oc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (oc *OrganizationCreate) SetCreatedAt(t time.Time) *OrganizationCreate {
+	oc.mutation.SetCreatedAt(t)
+	return oc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableCreatedAt(t *time.Time) *OrganizationCreate {
+	if t != nil {
+		oc.SetCreatedAt(*t)
 	}
 	return oc
 }
@@ -180,6 +195,10 @@ func (oc *OrganizationCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oc *OrganizationCreate) defaults() {
+	if _, ok := oc.mutation.CreatedAt(); !ok {
+		v := organization.DefaultCreatedAt()
+		oc.mutation.SetCreatedAt(v)
+	}
 	if _, ok := oc.mutation.ID(); !ok {
 		v := organization.DefaultID()
 		oc.mutation.SetID(v)
@@ -195,6 +214,9 @@ func (oc *OrganizationCreate) check() error {
 		if err := organization.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Organization.name": %w`, err)}
 		}
+	}
+	if _, ok := oc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Organization.created_at"`)}
 	}
 	return nil
 }
@@ -250,6 +272,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := oc.mutation.SocialMedias(); ok {
 		_spec.SetField(organization.FieldSocialMedias, field.TypeJSON, value)
 		_node.SocialMedias = value
+	}
+	if value, ok := oc.mutation.CreatedAt(); ok {
+		_spec.SetField(organization.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
 	}
 	if nodes := oc.mutation.DomainsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

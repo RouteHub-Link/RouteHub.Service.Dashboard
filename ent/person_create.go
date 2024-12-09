@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
@@ -44,6 +45,20 @@ func (pc *PersonCreate) SetIsActive(b bool) *PersonCreate {
 func (pc *PersonCreate) SetNillableIsActive(b *bool) *PersonCreate {
 	if b != nil {
 		pc.SetIsActive(*b)
+	}
+	return pc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (pc *PersonCreate) SetCreatedAt(t time.Time) *PersonCreate {
+	pc.mutation.SetCreatedAt(t)
+	return pc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pc *PersonCreate) SetNillableCreatedAt(t *time.Time) *PersonCreate {
+	if t != nil {
+		pc.SetCreatedAt(*t)
 	}
 	return pc
 }
@@ -116,6 +131,10 @@ func (pc *PersonCreate) defaults() {
 		v := person.DefaultIsActive
 		pc.mutation.SetIsActive(v)
 	}
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		v := person.DefaultCreatedAt()
+		pc.mutation.SetCreatedAt(v)
+	}
 	if _, ok := pc.mutation.ID(); !ok {
 		v := person.DefaultID()
 		pc.mutation.SetID(v)
@@ -137,6 +156,9 @@ func (pc *PersonCreate) check() error {
 	}
 	if _, ok := pc.mutation.IsActive(); !ok {
 		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "Person.is_active"`)}
+	}
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Person.created_at"`)}
 	}
 	return nil
 }
@@ -184,6 +206,10 @@ func (pc *PersonCreate) createSpec() (*Person, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.IsActive(); ok {
 		_spec.SetField(person.FieldIsActive, field.TypeBool, value)
 		_node.IsActive = value
+	}
+	if value, ok := pc.mutation.CreatedAt(); ok {
+		_spec.SetField(person.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
 	}
 	if nodes := pc.mutation.OrganizationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

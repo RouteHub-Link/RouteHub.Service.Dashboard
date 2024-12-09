@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
@@ -35,6 +36,8 @@ type Hub struct {
 	Status enums.StatusState `json:"status,omitempty"`
 	// DefaultRedirection holds the value of the "default_redirection" field.
 	DefaultRedirection hub.RedirectionOption `json:"default_redirection,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the HubQuery when eager-loading is set.
 	Edges           HubEdges `json:"edges"`
@@ -100,6 +103,8 @@ func (*Hub) scanValues(columns []string) ([]any, error) {
 			values[i] = new(hub.RedirectionOption)
 		case enthub.FieldID, enthub.FieldName, enthub.FieldSlug, enthub.FieldTCPAddress:
 			values[i] = new(sql.NullString)
+		case enthub.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		case enthub.ForeignKeys[0]: // domain_fk
 			values[i] = new(sql.NullString)
 		case enthub.ForeignKeys[1]: // organization_id
@@ -162,6 +167,12 @@ func (h *Hub) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field default_redirection", values[i])
 			} else if value != nil {
 				h.DefaultRedirection = *value
+			}
+		case enthub.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				h.CreatedAt = value.Time
 			}
 		case enthub.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -245,6 +256,9 @@ func (h *Hub) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("default_redirection=")
 	builder.WriteString(fmt.Sprintf("%v", h.DefaultRedirection))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(h.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

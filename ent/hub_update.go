@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	enthub "RouteHub.Service.Dashboard/ent/hub"
@@ -120,6 +121,20 @@ func (hu *HubUpdate) SetDefaultRedirection(ho hub.RedirectionOption) *HubUpdate 
 func (hu *HubUpdate) SetNillableDefaultRedirection(ho *hub.RedirectionOption) *HubUpdate {
 	if ho != nil {
 		hu.SetDefaultRedirection(*ho)
+	}
+	return hu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (hu *HubUpdate) SetCreatedAt(t time.Time) *HubUpdate {
+	hu.mutation.SetCreatedAt(t)
+	return hu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (hu *HubUpdate) SetNillableCreatedAt(t *time.Time) *HubUpdate {
+	if t != nil {
+		hu.SetCreatedAt(*t)
 	}
 	return hu
 }
@@ -294,6 +309,9 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := hu.mutation.DefaultRedirection(); ok {
 		_spec.SetField(enthub.FieldDefaultRedirection, field.TypeEnum, value)
+	}
+	if value, ok := hu.mutation.CreatedAt(); ok {
+		_spec.SetField(enthub.FieldCreatedAt, field.TypeTime, value)
 	}
 	if hu.mutation.DomainCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -508,6 +526,20 @@ func (huo *HubUpdateOne) SetNillableDefaultRedirection(ho *hub.RedirectionOption
 	return huo
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (huo *HubUpdateOne) SetCreatedAt(t time.Time) *HubUpdateOne {
+	huo.mutation.SetCreatedAt(t)
+	return huo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (huo *HubUpdateOne) SetNillableCreatedAt(t *time.Time) *HubUpdateOne {
+	if t != nil {
+		huo.SetCreatedAt(*t)
+	}
+	return huo
+}
+
 // SetDomainID sets the "domain" edge to the Domain entity by ID.
 func (huo *HubUpdateOne) SetDomainID(id mixin.ID) *HubUpdateOne {
 	huo.mutation.SetDomainID(id)
@@ -708,6 +740,9 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 	}
 	if value, ok := huo.mutation.DefaultRedirection(); ok {
 		_spec.SetField(enthub.FieldDefaultRedirection, field.TypeEnum, value)
+	}
+	if value, ok := huo.mutation.CreatedAt(); ok {
+		_spec.SetField(enthub.FieldCreatedAt, field.TypeTime, value)
 	}
 	if huo.mutation.DomainCleared() {
 		edge := &sqlgraph.EdgeSpec{

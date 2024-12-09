@@ -8,6 +8,7 @@ require (
 	github.com/99designs/gqlgen v0.17.48
 	github.com/RouteHub-Link/DomainUtils v0.0.6
 	github.com/a-h/templ v0.2.778
+	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/eclipse/paho.mqtt.golang v1.5.0
 	github.com/google/uuid v1.6.0
@@ -36,7 +37,6 @@ require (
 	github.com/PuerkitoBio/goquery v1.9.2 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
-	github.com/ahmetb/go-linq/v3 v3.2.0 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.3.1 // indirect
@@ -46,6 +46,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/dmarkham/enumer v1.5.10 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -68,6 +69,7 @@ require (
 	github.com/miekg/dns v1.1.59 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/muhlemmer/gu v0.3.1 // indirect
+	github.com/pascaldekloe/name v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/samber/lo v1.38.1 // indirect

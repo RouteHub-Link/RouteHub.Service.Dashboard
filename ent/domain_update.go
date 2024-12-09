@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	"RouteHub.Service.Dashboard/ent/organization"
@@ -68,6 +69,20 @@ func (du *DomainUpdate) SetStatus(ds domain.DomainState) *DomainUpdate {
 func (du *DomainUpdate) SetNillableStatus(ds *domain.DomainState) *DomainUpdate {
 	if ds != nil {
 		du.SetStatus(*ds)
+	}
+	return du
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (du *DomainUpdate) SetCreatedAt(t time.Time) *DomainUpdate {
+	du.mutation.SetCreatedAt(t)
+	return du
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (du *DomainUpdate) SetNillableCreatedAt(t *time.Time) *DomainUpdate {
+	if t != nil {
+		du.SetCreatedAt(*t)
 	}
 	return du
 }
@@ -165,6 +180,9 @@ func (du *DomainUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := du.mutation.Status(); ok {
 		_spec.SetField(entdomain.FieldStatus, field.TypeEnum, value)
 	}
+	if value, ok := du.mutation.CreatedAt(); ok {
+		_spec.SetField(entdomain.FieldCreatedAt, field.TypeTime, value)
+	}
 	if du.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -252,6 +270,20 @@ func (duo *DomainUpdateOne) SetStatus(ds domain.DomainState) *DomainUpdateOne {
 func (duo *DomainUpdateOne) SetNillableStatus(ds *domain.DomainState) *DomainUpdateOne {
 	if ds != nil {
 		duo.SetStatus(*ds)
+	}
+	return duo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (duo *DomainUpdateOne) SetCreatedAt(t time.Time) *DomainUpdateOne {
+	duo.mutation.SetCreatedAt(t)
+	return duo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (duo *DomainUpdateOne) SetNillableCreatedAt(t *time.Time) *DomainUpdateOne {
+	if t != nil {
+		duo.SetCreatedAt(*t)
 	}
 	return duo
 }
@@ -378,6 +410,9 @@ func (duo *DomainUpdateOne) sqlSave(ctx context.Context) (_node *Domain, err err
 	}
 	if value, ok := duo.mutation.Status(); ok {
 		_spec.SetField(entdomain.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.CreatedAt(); ok {
+		_spec.SetField(entdomain.FieldCreatedAt, field.TypeTime, value)
 	}
 	if duo.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{

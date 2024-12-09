@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -25,6 +26,8 @@ type Person struct {
 	UserInfo oidc.UserInfo `json:"user_info,omitempty"`
 	// IsActive holds the value of the "is_active" field.
 	IsActive bool `json:"is_active,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PersonQuery when eager-loading is set.
 	Edges        PersonEdges `json:"edges"`
@@ -60,6 +63,8 @@ func (*Person) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case person.FieldID, person.FieldSubjectID:
 			values[i] = new(sql.NullString)
+		case person.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -100,6 +105,12 @@ func (pe *Person) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field is_active", values[i])
 			} else if value.Valid {
 				pe.IsActive = value.Bool
+			}
+		case person.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				pe.CreatedAt = value.Time
 			}
 		default:
 			pe.selectValues.Set(columns[i], values[i])
@@ -150,6 +161,9 @@ func (pe *Person) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_active=")
 	builder.WriteString(fmt.Sprintf("%v", pe.IsActive))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(pe.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

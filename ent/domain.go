@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
 	"RouteHub.Service.Dashboard/ent/organization"
@@ -25,6 +26,8 @@ type Domain struct {
 	URL string `json:"url,omitempty"`
 	// Status holds the value of the "status" field.
 	Status domain.DomainState `json:"status,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DomainQuery when eager-loading is set.
 	Edges           DomainEdges `json:"edges"`
@@ -61,6 +64,8 @@ func (*Domain) scanValues(columns []string) ([]any, error) {
 			values[i] = new(domain.DomainState)
 		case entdomain.FieldID, entdomain.FieldName, entdomain.FieldURL:
 			values[i] = new(sql.NullString)
+		case entdomain.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		case entdomain.ForeignKeys[0]: // organization_id
 			values[i] = new(sql.NullString)
 		default:
@@ -101,6 +106,12 @@ func (d *Domain) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value != nil {
 				d.Status = *value
+			}
+		case entdomain.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				d.CreatedAt = value.Time
 			}
 		case entdomain.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -158,6 +169,9 @@ func (d *Domain) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", d.Status))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(d.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
