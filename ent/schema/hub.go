@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	enums_hub "RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/contrib/entgql"
@@ -51,10 +50,10 @@ func (Hub) Fields() []ent.Field {
 			),
 
 		field.Enum("default_redirection").
-			GoType(enums_hub.RedirectionOption(0)).
+			GoType(enums.RedirectionChoice(0)).
 			Annotations(
-				entsql.Default(enums_hub.Timed.String()),
-				entgql.Type("RedirectionOption"),
+				entsql.Default(enums.RedirectionChoiceTimed.String()),
+				entgql.Type("RedirectionChoice"),
 			),
 
 		field.Time("created_at").

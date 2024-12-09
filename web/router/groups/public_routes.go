@@ -22,8 +22,8 @@ func ConfigurePageRoutes(e *echo.Echo, handlers *handlers.WebHandlers) {
 
 func configureDomainRoutes(group *echo.Group, pageHandler *page.PageHandler) {
 	group.GET("domains", pageHandler.DomainsHandler)
-	group.GET("domains/create", pageHandler.CreateDomainGet)
-	group.POST("domains/create", pageHandler.CreateDomainPost)
+	group.GET("domains/create", pageHandler.DomainCreateGet)
+	group.POST("domains/create", pageHandler.DomainCreatePost)
 }
 
 func configureHubRoutes(group *echo.Group, pageHandler *page.PageHandler) {
@@ -33,4 +33,6 @@ func configureHubRoutes(group *echo.Group, pageHandler *page.PageHandler) {
 
 	group.GET("hub/:slug", pageHandler.HubHandler)
 	group.GET("hub/:slug/links", pageHandler.HubLinksHandler)
+	group.GET("hub/:slug/links/create", pageHandler.HubLinksCreateHandler)
+	group.POST("hub/:slug/links/create", pageHandler.HubLinkCreatePostHandler)
 }

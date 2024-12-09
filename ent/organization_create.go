@@ -9,7 +9,7 @@ import (
 	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -301,7 +301,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.HubsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

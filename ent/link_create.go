@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -253,7 +253,7 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
@@ -240,7 +240,7 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -253,7 +253,7 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -519,7 +519,7 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) 
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -532,7 +532,7 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) 
 			Columns: []string{link.HubColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

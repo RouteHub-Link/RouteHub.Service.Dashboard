@@ -5,12 +5,11 @@ package ent
 import (
 	"context"
 
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-
-	enthub "RouteHub.Service.Dashboard/ent/hub"
 )
 
 // HubDelete is the builder for deleting a Hub entity.
@@ -41,7 +40,7 @@ func (hd *HubDelete) ExecX(ctx context.Context) int {
 }
 
 func (hd *HubDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(enthub.Table, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString))
+	_spec := sqlgraph.NewDeleteSpec(hub.Table, sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString))
 	if ps := hd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -75,7 +74,7 @@ func (hdo *HubDeleteOne) Exec(ctx context.Context) error {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{enthub.Label}
+		return &NotFoundError{hub.Label}
 	default:
 		return nil
 	}

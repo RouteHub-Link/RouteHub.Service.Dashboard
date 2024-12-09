@@ -13,7 +13,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
@@ -398,13 +398,13 @@ func NewHubClient(c config) *HubClient {
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `enthub.Hooks(f(g(h())))`.
+// A call to `Use(f, g, h)` equals to `hub.Hooks(f(g(h())))`.
 func (c *HubClient) Use(hooks ...Hook) {
 	c.hooks.Hub = append(c.hooks.Hub, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `enthub.Intercept(f(g(h())))`.
+// A call to `Intercept(f, g, h)` equals to `hub.Intercept(f(g(h())))`.
 func (c *HubClient) Intercept(interceptors ...Interceptor) {
 	c.inters.Hub = append(c.inters.Hub, interceptors...)
 }
@@ -466,7 +466,7 @@ func (c *HubClient) DeleteOne(h *Hub) *HubDeleteOne {
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *HubClient) DeleteOneID(id mixin.ID) *HubDeleteOne {
-	builder := c.Delete().Where(enthub.ID(id))
+	builder := c.Delete().Where(hub.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
 	return &HubDeleteOne{builder}
@@ -483,7 +483,7 @@ func (c *HubClient) Query() *HubQuery {
 
 // Get returns a Hub entity by its id.
 func (c *HubClient) Get(ctx context.Context, id mixin.ID) (*Hub, error) {
-	return c.Query().Where(enthub.ID(id)).Only(ctx)
+	return c.Query().Where(hub.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
@@ -501,9 +501,9 @@ func (c *HubClient) QueryDomain(h *Hub) *DomainQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := h.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(enthub.Table, enthub.FieldID, id),
+			sqlgraph.From(hub.Table, hub.FieldID, id),
 			sqlgraph.To(entdomain.Table, entdomain.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, enthub.DomainTable, enthub.DomainColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, hub.DomainTable, hub.DomainColumn),
 		)
 		fromV = sqlgraph.Neighbors(h.driver.Dialect(), step)
 		return fromV, nil
@@ -517,9 +517,9 @@ func (c *HubClient) QueryOrganization(h *Hub) *OrganizationQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := h.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(enthub.Table, enthub.FieldID, id),
+			sqlgraph.From(hub.Table, hub.FieldID, id),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, enthub.OrganizationTable, enthub.OrganizationColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, hub.OrganizationTable, hub.OrganizationColumn),
 		)
 		fromV = sqlgraph.Neighbors(h.driver.Dialect(), step)
 		return fromV, nil
@@ -533,9 +533,9 @@ func (c *HubClient) QueryLinks(h *Hub) *LinkQuery {
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := h.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(enthub.Table, enthub.FieldID, id),
+			sqlgraph.From(hub.Table, hub.FieldID, id),
 			sqlgraph.To(link.Table, link.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, enthub.LinksTable, enthub.LinksColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, hub.LinksTable, hub.LinksColumn),
 		)
 		fromV = sqlgraph.Neighbors(h.driver.Dialect(), step)
 		return fromV, nil
@@ -683,7 +683,7 @@ func (c *LinkClient) QueryHub(l *Link) *HubQuery {
 		id := l.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(link.Table, link.FieldID, id),
-			sqlgraph.To(enthub.Table, enthub.FieldID),
+			sqlgraph.To(hub.Table, hub.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, link.HubTable, link.HubColumn),
 		)
 		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
@@ -848,7 +848,7 @@ func (c *OrganizationClient) QueryHubs(o *Organization) *HubQuery {
 		id := o.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, id),
-			sqlgraph.To(enthub.Table, enthub.FieldID),
+			sqlgraph.To(hub.Table, hub.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.HubsTable, organization.HubsColumn),
 		)
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)

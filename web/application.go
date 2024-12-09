@@ -16,6 +16,7 @@ import (
 	"RouteHub.Service.Dashboard/web/extensions"
 	"RouteHub.Service.Dashboard/web/middlewares"
 	"RouteHub.Service.Dashboard/web/router"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	slogecho "github.com/samber/slog-echo"
@@ -51,6 +52,7 @@ func NewApplication(config *configuration.Config, logger *slog.Logger) (*Applica
 	onceApplication.Do(func() {
 		// Initialize Echo
 		e := echo.New()
+		e.Validator = &extensions.CustomValidator{Validator: validator.New()}
 		e.Server.Addr = strings.Join([]string{config.Server.Host, config.Server.Port}, ":")
 		logger.Info("Server Configured", "address", e.Server.Addr)
 

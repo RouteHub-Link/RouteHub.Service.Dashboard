@@ -9,7 +9,6 @@ import (
 	entHub "RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	hub_enums "RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/features/hubConnection"
 	"RouteHub.Service.Dashboard/web/extensions"
@@ -118,7 +117,7 @@ func (ph PageHandler) AttachHubPost(c echo.Context) error {
 		SetTCPAddress(address).
 		SetOrganizationID(organization.ID).
 		SetStatus(enums.StatusActive).
-		SetDefaultRedirection(hub_enums.Timed).
+		SetDefaultRedirection(enums.RedirectionChoiceTimed).
 		SetDomain(domain).
 		Save(c.Request().Context())
 

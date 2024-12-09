@@ -10,14 +10,13 @@ import (
 	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/enums/domain"
-	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent"
@@ -613,7 +612,7 @@ type HubMutation struct {
 	hub_details         *types.HubDetails
 	tcp_address         *string
 	status              *enums.StatusState
-	default_redirection *hub.RedirectionOption
+	default_redirection *enums.RedirectionChoice
 	created_at          *time.Time
 	clearedFields       map[string]struct{}
 	domain              *mixin.ID
@@ -838,19 +837,19 @@ func (m *HubMutation) OldHubDetails(ctx context.Context) (v types.HubDetails, er
 // ClearHubDetails clears the value of the "hub_details" field.
 func (m *HubMutation) ClearHubDetails() {
 	m.hub_details = nil
-	m.clearedFields[enthub.FieldHubDetails] = struct{}{}
+	m.clearedFields[hub.FieldHubDetails] = struct{}{}
 }
 
 // HubDetailsCleared returns if the "hub_details" field was cleared in this mutation.
 func (m *HubMutation) HubDetailsCleared() bool {
-	_, ok := m.clearedFields[enthub.FieldHubDetails]
+	_, ok := m.clearedFields[hub.FieldHubDetails]
 	return ok
 }
 
 // ResetHubDetails resets all changes to the "hub_details" field.
 func (m *HubMutation) ResetHubDetails() {
 	m.hub_details = nil
-	delete(m.clearedFields, enthub.FieldHubDetails)
+	delete(m.clearedFields, hub.FieldHubDetails)
 }
 
 // SetTCPAddress sets the "tcp_address" field.
@@ -926,12 +925,12 @@ func (m *HubMutation) ResetStatus() {
 }
 
 // SetDefaultRedirection sets the "default_redirection" field.
-func (m *HubMutation) SetDefaultRedirection(ho hub.RedirectionOption) {
-	m.default_redirection = &ho
+func (m *HubMutation) SetDefaultRedirection(ec enums.RedirectionChoice) {
+	m.default_redirection = &ec
 }
 
 // DefaultRedirection returns the value of the "default_redirection" field in the mutation.
-func (m *HubMutation) DefaultRedirection() (r hub.RedirectionOption, exists bool) {
+func (m *HubMutation) DefaultRedirection() (r enums.RedirectionChoice, exists bool) {
 	v := m.default_redirection
 	if v == nil {
 		return
@@ -942,7 +941,7 @@ func (m *HubMutation) DefaultRedirection() (r hub.RedirectionOption, exists bool
 // OldDefaultRedirection returns the old "default_redirection" field's value of the Hub entity.
 // If the Hub object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *HubMutation) OldDefaultRedirection(ctx context.Context) (v hub.RedirectionOption, err error) {
+func (m *HubMutation) OldDefaultRedirection(ctx context.Context) (v enums.RedirectionChoice, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDefaultRedirection is only allowed on UpdateOne operations")
 	}
@@ -1165,25 +1164,25 @@ func (m *HubMutation) Type() string {
 func (m *HubMutation) Fields() []string {
 	fields := make([]string, 0, 7)
 	if m.name != nil {
-		fields = append(fields, enthub.FieldName)
+		fields = append(fields, hub.FieldName)
 	}
 	if m.slug != nil {
-		fields = append(fields, enthub.FieldSlug)
+		fields = append(fields, hub.FieldSlug)
 	}
 	if m.hub_details != nil {
-		fields = append(fields, enthub.FieldHubDetails)
+		fields = append(fields, hub.FieldHubDetails)
 	}
 	if m.tcp_address != nil {
-		fields = append(fields, enthub.FieldTCPAddress)
+		fields = append(fields, hub.FieldTCPAddress)
 	}
 	if m.status != nil {
-		fields = append(fields, enthub.FieldStatus)
+		fields = append(fields, hub.FieldStatus)
 	}
 	if m.default_redirection != nil {
-		fields = append(fields, enthub.FieldDefaultRedirection)
+		fields = append(fields, hub.FieldDefaultRedirection)
 	}
 	if m.created_at != nil {
-		fields = append(fields, enthub.FieldCreatedAt)
+		fields = append(fields, hub.FieldCreatedAt)
 	}
 	return fields
 }
@@ -1193,19 +1192,19 @@ func (m *HubMutation) Fields() []string {
 // schema.
 func (m *HubMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case enthub.FieldName:
+	case hub.FieldName:
 		return m.Name()
-	case enthub.FieldSlug:
+	case hub.FieldSlug:
 		return m.Slug()
-	case enthub.FieldHubDetails:
+	case hub.FieldHubDetails:
 		return m.HubDetails()
-	case enthub.FieldTCPAddress:
+	case hub.FieldTCPAddress:
 		return m.TCPAddress()
-	case enthub.FieldStatus:
+	case hub.FieldStatus:
 		return m.Status()
-	case enthub.FieldDefaultRedirection:
+	case hub.FieldDefaultRedirection:
 		return m.DefaultRedirection()
-	case enthub.FieldCreatedAt:
+	case hub.FieldCreatedAt:
 		return m.CreatedAt()
 	}
 	return nil, false
@@ -1216,19 +1215,19 @@ func (m *HubMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *HubMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case enthub.FieldName:
+	case hub.FieldName:
 		return m.OldName(ctx)
-	case enthub.FieldSlug:
+	case hub.FieldSlug:
 		return m.OldSlug(ctx)
-	case enthub.FieldHubDetails:
+	case hub.FieldHubDetails:
 		return m.OldHubDetails(ctx)
-	case enthub.FieldTCPAddress:
+	case hub.FieldTCPAddress:
 		return m.OldTCPAddress(ctx)
-	case enthub.FieldStatus:
+	case hub.FieldStatus:
 		return m.OldStatus(ctx)
-	case enthub.FieldDefaultRedirection:
+	case hub.FieldDefaultRedirection:
 		return m.OldDefaultRedirection(ctx)
-	case enthub.FieldCreatedAt:
+	case hub.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Hub field %s", name)
@@ -1239,49 +1238,49 @@ func (m *HubMutation) OldField(ctx context.Context, name string) (ent.Value, err
 // type.
 func (m *HubMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case enthub.FieldName:
+	case hub.FieldName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
 		return nil
-	case enthub.FieldSlug:
+	case hub.FieldSlug:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSlug(v)
 		return nil
-	case enthub.FieldHubDetails:
+	case hub.FieldHubDetails:
 		v, ok := value.(types.HubDetails)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetHubDetails(v)
 		return nil
-	case enthub.FieldTCPAddress:
+	case hub.FieldTCPAddress:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTCPAddress(v)
 		return nil
-	case enthub.FieldStatus:
+	case hub.FieldStatus:
 		v, ok := value.(enums.StatusState)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
 		return nil
-	case enthub.FieldDefaultRedirection:
-		v, ok := value.(hub.RedirectionOption)
+	case hub.FieldDefaultRedirection:
+		v, ok := value.(enums.RedirectionChoice)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDefaultRedirection(v)
 		return nil
-	case enthub.FieldCreatedAt:
+	case hub.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -1318,8 +1317,8 @@ func (m *HubMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *HubMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(enthub.FieldHubDetails) {
-		fields = append(fields, enthub.FieldHubDetails)
+	if m.FieldCleared(hub.FieldHubDetails) {
+		fields = append(fields, hub.FieldHubDetails)
 	}
 	return fields
 }
@@ -1335,7 +1334,7 @@ func (m *HubMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *HubMutation) ClearField(name string) error {
 	switch name {
-	case enthub.FieldHubDetails:
+	case hub.FieldHubDetails:
 		m.ClearHubDetails()
 		return nil
 	}
@@ -1346,25 +1345,25 @@ func (m *HubMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *HubMutation) ResetField(name string) error {
 	switch name {
-	case enthub.FieldName:
+	case hub.FieldName:
 		m.ResetName()
 		return nil
-	case enthub.FieldSlug:
+	case hub.FieldSlug:
 		m.ResetSlug()
 		return nil
-	case enthub.FieldHubDetails:
+	case hub.FieldHubDetails:
 		m.ResetHubDetails()
 		return nil
-	case enthub.FieldTCPAddress:
+	case hub.FieldTCPAddress:
 		m.ResetTCPAddress()
 		return nil
-	case enthub.FieldStatus:
+	case hub.FieldStatus:
 		m.ResetStatus()
 		return nil
-	case enthub.FieldDefaultRedirection:
+	case hub.FieldDefaultRedirection:
 		m.ResetDefaultRedirection()
 		return nil
-	case enthub.FieldCreatedAt:
+	case hub.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
 	}
@@ -1375,13 +1374,13 @@ func (m *HubMutation) ResetField(name string) error {
 func (m *HubMutation) AddedEdges() []string {
 	edges := make([]string, 0, 3)
 	if m.domain != nil {
-		edges = append(edges, enthub.EdgeDomain)
+		edges = append(edges, hub.EdgeDomain)
 	}
 	if m.organization != nil {
-		edges = append(edges, enthub.EdgeOrganization)
+		edges = append(edges, hub.EdgeOrganization)
 	}
 	if m.links != nil {
-		edges = append(edges, enthub.EdgeLinks)
+		edges = append(edges, hub.EdgeLinks)
 	}
 	return edges
 }
@@ -1390,15 +1389,15 @@ func (m *HubMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *HubMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case enthub.EdgeDomain:
+	case hub.EdgeDomain:
 		if id := m.domain; id != nil {
 			return []ent.Value{*id}
 		}
-	case enthub.EdgeOrganization:
+	case hub.EdgeOrganization:
 		if id := m.organization; id != nil {
 			return []ent.Value{*id}
 		}
-	case enthub.EdgeLinks:
+	case hub.EdgeLinks:
 		ids := make([]ent.Value, 0, len(m.links))
 		for id := range m.links {
 			ids = append(ids, id)
@@ -1412,7 +1411,7 @@ func (m *HubMutation) AddedIDs(name string) []ent.Value {
 func (m *HubMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
 	if m.removedlinks != nil {
-		edges = append(edges, enthub.EdgeLinks)
+		edges = append(edges, hub.EdgeLinks)
 	}
 	return edges
 }
@@ -1421,7 +1420,7 @@ func (m *HubMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *HubMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case enthub.EdgeLinks:
+	case hub.EdgeLinks:
 		ids := make([]ent.Value, 0, len(m.removedlinks))
 		for id := range m.removedlinks {
 			ids = append(ids, id)
@@ -1435,13 +1434,13 @@ func (m *HubMutation) RemovedIDs(name string) []ent.Value {
 func (m *HubMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
 	if m.cleareddomain {
-		edges = append(edges, enthub.EdgeDomain)
+		edges = append(edges, hub.EdgeDomain)
 	}
 	if m.clearedorganization {
-		edges = append(edges, enthub.EdgeOrganization)
+		edges = append(edges, hub.EdgeOrganization)
 	}
 	if m.clearedlinks {
-		edges = append(edges, enthub.EdgeLinks)
+		edges = append(edges, hub.EdgeLinks)
 	}
 	return edges
 }
@@ -1450,11 +1449,11 @@ func (m *HubMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *HubMutation) EdgeCleared(name string) bool {
 	switch name {
-	case enthub.EdgeDomain:
+	case hub.EdgeDomain:
 		return m.cleareddomain
-	case enthub.EdgeOrganization:
+	case hub.EdgeOrganization:
 		return m.clearedorganization
-	case enthub.EdgeLinks:
+	case hub.EdgeLinks:
 		return m.clearedlinks
 	}
 	return false
@@ -1464,10 +1463,10 @@ func (m *HubMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *HubMutation) ClearEdge(name string) error {
 	switch name {
-	case enthub.EdgeDomain:
+	case hub.EdgeDomain:
 		m.ClearDomain()
 		return nil
-	case enthub.EdgeOrganization:
+	case hub.EdgeOrganization:
 		m.ClearOrganization()
 		return nil
 	}
@@ -1478,13 +1477,13 @@ func (m *HubMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *HubMutation) ResetEdge(name string) error {
 	switch name {
-	case enthub.EdgeDomain:
+	case hub.EdgeDomain:
 		m.ResetDomain()
 		return nil
-	case enthub.EdgeOrganization:
+	case hub.EdgeOrganization:
 		m.ResetOrganization()
 		return nil
-	case enthub.EdgeLinks:
+	case hub.EdgeLinks:
 		m.ResetLinks()
 		return nil
 	}

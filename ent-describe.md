@@ -15,18 +15,18 @@ Domain:
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
 	
 Hub:
-	+---------------------+-----------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------------+------------+---------+
-	|        Field        |         Type          | Unique | Optional | Nillable | Default | UpdateDefault | Immutable |              StructTag               | Validators | Comment |
-	+---------------------+-----------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------------+------------+---------+
-	| id                  | mixin.ID              | false  | false    | false    | true    | false         | false     | json:"id,omitempty"                  |          0 |         |
-	| name                | string                | false  | false    | false    | false   | false         | false     | json:"name,omitempty"                |          1 |         |
-	| slug                | string                | false  | false    | false    | false   | false         | false     | json:"slug,omitempty"                |          1 |         |
-	| hub_details         | types.HubDetails      | false  | true     | false    | false   | false         | false     | json:"hub_details,omitempty"         |          0 |         |
-	| tcp_address         | string                | false  | false    | false    | false   | false         | false     | json:"tcp_address,omitempty"         |          1 |         |
-	| status              | enums.StatusState     | false  | false    | false    | false   | false         | false     | json:"status,omitempty"              |          0 |         |
-	| default_redirection | hub.RedirectionOption | false  | false    | false    | false   | false         | false     | json:"default_redirection,omitempty" |          0 |         |
-	| created_at          | time.Time             | false  | false    | false    | true    | false         | false     | json:"created_at,omitempty"          |          0 |         |
-	+---------------------+-----------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------------+------------+---------+
+	+---------------------+-------------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------------+------------+---------+
+	|        Field        |          Type           | Unique | Optional | Nillable | Default | UpdateDefault | Immutable |              StructTag               | Validators | Comment |
+	+---------------------+-------------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------------+------------+---------+
+	| id                  | mixin.ID                | false  | false    | false    | true    | false         | false     | json:"id,omitempty"                  |          0 |         |
+	| name                | string                  | false  | false    | false    | false   | false         | false     | json:"name,omitempty"                |          1 |         |
+	| slug                | string                  | false  | false    | false    | false   | false         | false     | json:"slug,omitempty"                |          1 |         |
+	| hub_details         | types.HubDetails        | false  | true     | false    | false   | false         | false     | json:"hub_details,omitempty"         |          0 |         |
+	| tcp_address         | string                  | false  | false    | false    | false   | false         | false     | json:"tcp_address,omitempty"         |          1 |         |
+	| status              | enums.StatusState       | false  | false    | false    | false   | false         | false     | json:"status,omitempty"              |          0 |         |
+	| default_redirection | enums.RedirectionChoice | false  | false    | false    | false   | false         | false     | json:"default_redirection,omitempty" |          0 |         |
+	| created_at          | time.Time               | false  | false    | false    | true    | false         | false     | json:"created_at,omitempty"          |          0 |         |
+	+---------------------+-------------------------+--------+----------+----------+---------+---------------+-----------+--------------------------------------+------------+---------+
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
 	|     Edge     |     Type     | Inverse | BackRef | Relation | Unique | Optional | Comment |
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+

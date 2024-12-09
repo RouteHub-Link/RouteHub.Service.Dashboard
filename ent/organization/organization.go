@@ -45,7 +45,7 @@ const (
 	// HubsTable is the table that holds the hubs relation/edge.
 	HubsTable = "hubs"
 	// HubsInverseTable is the table name for the Hub entity.
-	// It exists in this package in order to avoid circular dependency with the "enthub" package.
+	// It exists in this package in order to avoid circular dependency with the "hub" package.
 	HubsInverseTable = "hubs"
 	// HubsColumn is the table column denoting the hubs relation/edge.
 	HubsColumn = "organization_id"

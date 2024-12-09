@@ -39,7 +39,7 @@ var (
 		{Name: "hub_details", Type: field.TypeJSON, Nullable: true},
 		{Name: "tcp_address", Type: field.TypeString},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"STATUS_INACTIVE", "STATUS_ACTIVE"}, Default: "STATUS_INACTIVE"},
-		{Name: "default_redirection", Type: field.TypeEnum, Enums: []string{"TIMED", "NOT_AUTO_REDIRECT", "DIRECT_HTTP_REDIRECT", "CONFIRM_REDIRECT", "CUSTOM"}, Default: "TIMED"},
+		{Name: "default_redirection", Type: field.TypeEnum, Enums: []string{"TIMED", "NOT_AUTO", "DIRECT_HTTP", "CONFIRM", "CUSTOM"}, Default: "TIMED"},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "domain_fk", Type: field.TypeString},
 		{Name: "organization_id", Type: field.TypeString},

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -56,7 +56,7 @@ func (e LinkEdges) HubOrErr() (*Hub, error) {
 	if e.Hub != nil {
 		return e.Hub, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: enthub.Label}
+		return nil, &NotFoundError{label: hub.Label}
 	}
 	return nil, &NotLoadedError{edge: "hub"}
 }

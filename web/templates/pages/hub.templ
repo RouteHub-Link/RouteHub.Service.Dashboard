@@ -34,8 +34,10 @@ templ hubPage(hub *ent.Hub) {
 						<!-- Grid -->
 						<div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								 hx-get={fmt.Sprintf("/hub/%v/links/create",hub.Slug)} hx-target="#hs-modal-content" hx-swap="innerHTML" 
+                                 aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-modal"
+                                 data-hs-overlay="#hs-modal">
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 									<svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-800 dark:text-neutral-200"  height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m226-559 78 33q14-28 29-54t33-52l-56-11-84 84Zm142 83 114 113q42-16 90-49t90-75q70-70 109.5-155.5T806-800q-72-5-158 34.5T492-656q-42 42-75 90t-49 90Zm178-65q-23-23-23-56.5t23-56.5q23-23 57-23t57 23q23 23 23 56.5T660-541q-23 23-57 23t-57-23Zm19 321 84-84-11-56q-26 18-52 32.5T532-299l33 79Zm313-653q19 121-23.5 235.5T708-419l20 99q4 20-2 39t-20 33L538-80l-84-197-171-171-197-84 167-168q14-14 33.5-20t39.5-2l99 20q104-104 218-147t235-24ZM157-321q35-35 85.5-35.5T328-322q35 35 34.5 85.5T327-151q-25 25-83.5 43T82-76q14-103 32-161.5t43-83.5Zm57 56q-10 10-20 36.5T180-175q27-4 53.5-13.5T270-208q12-12 13-29t-11-29q-12-12-29-11.5T214-265Z"/></svg>
@@ -54,8 +56,8 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -82,8 +84,8 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -122,7 +124,7 @@ templ hubPage(hub *ent.Hub) {
 						<!-- Grid -->
 						<div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
 								href={templ.URL(fmt.Sprintf("/hub/%v/links",hub.Slug))}>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
@@ -147,8 +149,8 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -172,8 +174,8 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -196,8 +198,8 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -222,8 +224,8 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -260,8 +262,8 @@ templ hubPage(hub *ent.Hub) {
 						<!-- Grid -->
 						<div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -288,8 +290,8 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -316,8 +318,8 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-								href="../docs/frameworks-vuejs.html">
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg class="size-5 text-gray-800 dark:text-neutral-200" width="16" height="16"
@@ -345,7 +347,7 @@ templ hubPage(hub *ent.Hub) {
 							<!-- End Card -->
 
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
 								href="https://github.com/RouteHub-Link/RouteHub.Service.Dashboard/releases" target="_blank">
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">

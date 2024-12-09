@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"math"
 
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -75,7 +75,7 @@ func (lq *LinkQuery) QueryHub() *HubQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(link.Table, link.FieldID, selector),
-			sqlgraph.To(enthub.Table, enthub.FieldID),
+			sqlgraph.To(hub.Table, hub.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, link.HubTable, link.HubColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(lq.driver.Dialect(), step)
@@ -426,7 +426,7 @@ func (lq *LinkQuery) loadHub(ctx context.Context, query *HubQuery, nodes []*Link
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(enthub.IDIn(ids...))
+	query.Where(hub.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err

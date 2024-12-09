@@ -90,3 +90,15 @@ func (ph PageHandler) GetHubFromSlug(c echo.Context, query *ent.HubQuery) (*ent.
 
 	return hub, nil
 }
+
+func (ph PageHandler) BindAndValidate(c echo.Context, i interface{}) error {
+	if err := c.Bind(i); err != nil {
+		return err
+	}
+
+	if err := c.Validate(i); err != nil {
+		return err
+	}
+
+	return nil
+}

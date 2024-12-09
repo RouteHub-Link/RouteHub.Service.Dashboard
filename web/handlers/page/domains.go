@@ -34,7 +34,7 @@ func (ph PageHandler) DomainsHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, pages.Domains(userInfo, domains))
 }
 
-func (ph PageHandler) CreateDomainGet(c echo.Context) error {
+func (ph PageHandler) DomainCreateGet(c echo.Context) error {
 	isHXRequest := c.Request().Header.Get("HX-Request") != ""
 	if !isHXRequest {
 		return c.Redirect(http.StatusFound, "/domains")
@@ -43,7 +43,7 @@ func (ph PageHandler) CreateDomainGet(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, domain.CreateDomain(nil, true))
 }
 
-func (ph PageHandler) CreateDomainPost(c echo.Context) error {
+func (ph PageHandler) DomainCreatePost(c echo.Context) error {
 
 	url := c.FormValue("url")
 	name := c.FormValue("name")

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
@@ -39,31 +39,31 @@ func init() {
 	entdomainDescID := entdomainMixinFields0[0].Descriptor()
 	// entdomain.DefaultID holds the default value on creation for the id field.
 	entdomain.DefaultID = entdomainDescID.Default.(func() mixin.ID)
-	enthubMixin := schema.Hub{}.Mixin()
-	enthubMixinFields0 := enthubMixin[0].Fields()
-	_ = enthubMixinFields0
-	enthubFields := schema.Hub{}.Fields()
-	_ = enthubFields
-	// enthubDescName is the schema descriptor for name field.
-	enthubDescName := enthubFields[0].Descriptor()
-	// enthub.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	enthub.NameValidator = enthubDescName.Validators[0].(func(string) error)
-	// enthubDescSlug is the schema descriptor for slug field.
-	enthubDescSlug := enthubFields[1].Descriptor()
-	// enthub.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
-	enthub.SlugValidator = enthubDescSlug.Validators[0].(func(string) error)
-	// enthubDescTCPAddress is the schema descriptor for tcp_address field.
-	enthubDescTCPAddress := enthubFields[3].Descriptor()
-	// enthub.TCPAddressValidator is a validator for the "tcp_address" field. It is called by the builders before save.
-	enthub.TCPAddressValidator = enthubDescTCPAddress.Validators[0].(func(string) error)
-	// enthubDescCreatedAt is the schema descriptor for created_at field.
-	enthubDescCreatedAt := enthubFields[6].Descriptor()
-	// enthub.DefaultCreatedAt holds the default value on creation for the created_at field.
-	enthub.DefaultCreatedAt = enthubDescCreatedAt.Default.(func() time.Time)
-	// enthubDescID is the schema descriptor for id field.
-	enthubDescID := enthubMixinFields0[0].Descriptor()
-	// enthub.DefaultID holds the default value on creation for the id field.
-	enthub.DefaultID = enthubDescID.Default.(func() mixin.ID)
+	hubMixin := schema.Hub{}.Mixin()
+	hubMixinFields0 := hubMixin[0].Fields()
+	_ = hubMixinFields0
+	hubFields := schema.Hub{}.Fields()
+	_ = hubFields
+	// hubDescName is the schema descriptor for name field.
+	hubDescName := hubFields[0].Descriptor()
+	// hub.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	hub.NameValidator = hubDescName.Validators[0].(func(string) error)
+	// hubDescSlug is the schema descriptor for slug field.
+	hubDescSlug := hubFields[1].Descriptor()
+	// hub.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	hub.SlugValidator = hubDescSlug.Validators[0].(func(string) error)
+	// hubDescTCPAddress is the schema descriptor for tcp_address field.
+	hubDescTCPAddress := hubFields[3].Descriptor()
+	// hub.TCPAddressValidator is a validator for the "tcp_address" field. It is called by the builders before save.
+	hub.TCPAddressValidator = hubDescTCPAddress.Validators[0].(func(string) error)
+	// hubDescCreatedAt is the schema descriptor for created_at field.
+	hubDescCreatedAt := hubFields[6].Descriptor()
+	// hub.DefaultCreatedAt holds the default value on creation for the created_at field.
+	hub.DefaultCreatedAt = hubDescCreatedAt.Default.(func() time.Time)
+	// hubDescID is the schema descriptor for id field.
+	hubDescID := hubMixinFields0[0].Descriptor()
+	// hub.DefaultID holds the default value on creation for the id field.
+	hub.DefaultID = hubDescID.Default.(func() mixin.ID)
 	linkMixin := schema.Link{}.Mixin()
 	linkMixinFields0 := linkMixin[0].Fields()
 	_ = linkMixinFields0

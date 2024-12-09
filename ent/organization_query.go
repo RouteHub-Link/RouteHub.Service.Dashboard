@@ -9,7 +9,7 @@ import (
 	"math"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
@@ -101,7 +101,7 @@ func (oq *OrganizationQuery) QueryHubs() *HubQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, selector),
-			sqlgraph.To(enthub.Table, enthub.FieldID),
+			sqlgraph.To(hub.Table, hub.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.HubsTable, organization.HubsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)

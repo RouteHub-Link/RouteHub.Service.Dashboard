@@ -14,8 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/person"
@@ -80,7 +79,7 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			entdomain.Table:    entdomain.ValidColumn,
-			enthub.Table:       enthub.ValidColumn,
+			hub.Table:          hub.ValidColumn,
 			link.Table:         link.ValidColumn,
 			organization.Table: organization.ValidColumn,
 			person.Table:       person.ValidColumn,

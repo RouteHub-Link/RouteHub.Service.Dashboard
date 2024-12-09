@@ -9,10 +9,9 @@ import (
 	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent"
@@ -35,7 +34,7 @@ type Hub struct {
 	// Status holds the value of the "status" field.
 	Status enums.StatusState `json:"status,omitempty"`
 	// DefaultRedirection holds the value of the "default_redirection" field.
-	DefaultRedirection hub.RedirectionOption `json:"default_redirection,omitempty"`
+	DefaultRedirection enums.RedirectionChoice `json:"default_redirection,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -95,19 +94,19 @@ func (*Hub) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case enthub.FieldHubDetails:
+		case hub.FieldHubDetails:
 			values[i] = new([]byte)
-		case enthub.FieldStatus:
+		case hub.FieldDefaultRedirection:
+			values[i] = new(enums.RedirectionChoice)
+		case hub.FieldStatus:
 			values[i] = new(enums.StatusState)
-		case enthub.FieldDefaultRedirection:
-			values[i] = new(hub.RedirectionOption)
-		case enthub.FieldID, enthub.FieldName, enthub.FieldSlug, enthub.FieldTCPAddress:
+		case hub.FieldID, hub.FieldName, hub.FieldSlug, hub.FieldTCPAddress:
 			values[i] = new(sql.NullString)
-		case enthub.FieldCreatedAt:
+		case hub.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case enthub.ForeignKeys[0]: // domain_fk
+		case hub.ForeignKeys[0]: // domain_fk
 			values[i] = new(sql.NullString)
-		case enthub.ForeignKeys[1]: // organization_id
+		case hub.ForeignKeys[1]: // organization_id
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -124,25 +123,25 @@ func (h *Hub) assignValues(columns []string, values []any) error {
 	}
 	for i := range columns {
 		switch columns[i] {
-		case enthub.FieldID:
+		case hub.FieldID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				h.ID = mixin.ID(value.String)
 			}
-		case enthub.FieldName:
+		case hub.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				h.Name = value.String
 			}
-		case enthub.FieldSlug:
+		case hub.FieldSlug:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field slug", values[i])
 			} else if value.Valid {
 				h.Slug = value.String
 			}
-		case enthub.FieldHubDetails:
+		case hub.FieldHubDetails:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field hub_details", values[i])
 			} else if value != nil && len(*value) > 0 {
@@ -150,38 +149,38 @@ func (h *Hub) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field hub_details: %w", err)
 				}
 			}
-		case enthub.FieldTCPAddress:
+		case hub.FieldTCPAddress:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tcp_address", values[i])
 			} else if value.Valid {
 				h.TCPAddress = value.String
 			}
-		case enthub.FieldStatus:
+		case hub.FieldStatus:
 			if value, ok := values[i].(*enums.StatusState); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value != nil {
 				h.Status = *value
 			}
-		case enthub.FieldDefaultRedirection:
-			if value, ok := values[i].(*hub.RedirectionOption); !ok {
+		case hub.FieldDefaultRedirection:
+			if value, ok := values[i].(*enums.RedirectionChoice); !ok {
 				return fmt.Errorf("unexpected type %T for field default_redirection", values[i])
 			} else if value != nil {
 				h.DefaultRedirection = *value
 			}
-		case enthub.FieldCreatedAt:
+		case hub.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				h.CreatedAt = value.Time
 			}
-		case enthub.ForeignKeys[0]:
+		case hub.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field domain_fk", values[i])
 			} else if value.Valid {
 				h.domain_fk = new(mixin.ID)
 				*h.domain_fk = mixin.ID(value.String)
 			}
-		case enthub.ForeignKeys[1]:
+		case hub.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
 			} else if value.Valid {

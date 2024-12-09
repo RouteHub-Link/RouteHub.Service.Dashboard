@@ -1,6 +1,7 @@
 package link
 import "RouteHub.Service.Dashboard/ent"
 import "RouteHub.Service.Dashboard/ent/schema/enums"
+import "fmt"
 
 templ LinksTable(links []*ent.Link) {
 <!-- Table -->
@@ -8,8 +9,8 @@ templ LinksTable(links []*ent.Link) {
   <thead class="bg-gray-50 dark:bg-neutral-800">
     <tr>
       <th scope="col" class="px-6 py-3 text-start">
-        <a class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
-          href="#">
+        <p class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
+          >
           Link
           <svg class="shrink-0 size-3.5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -17,11 +18,11 @@ templ LinksTable(links []*ent.Link) {
             <path d="m7 15 5 5 5-5" />
             <path d="m7 9 5-5 5 5" />
           </svg>
-        </a>
+        </p>
       </th>
       <th scope="col" class="px-6 py-3 text-start">
-        <a class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
-          href="#">
+        <p class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
+          >
           Target
           <svg class="shrink-0 size-3.5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -29,11 +30,11 @@ templ LinksTable(links []*ent.Link) {
             <path d="m7 15 5 5 5-5" />
             <path d="m7 9 5-5 5 5" />
           </svg>
-        </a>
+        </p>
       </th>
       <th scope="col" class="px-6 py-3 text-start">
-        <a class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
-          href="#">
+        <p class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
+          >
           Status
           <svg class="shrink-0 size-3.5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -41,11 +42,11 @@ templ LinksTable(links []*ent.Link) {
             <path d="m7 15 5 5 5-5" />
             <path d="m7 9 5-5 5 5" />
           </svg>
-        </a>
+        </p>
       </th>
       <th scope="col" class="px-6 py-3 text-start">
-        <a class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
-          href="#">
+        <p class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
+          >
           Observations
           <svg class="shrink-0 size-3.5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -53,11 +54,11 @@ templ LinksTable(links []*ent.Link) {
             <path d="m7 15 5 5 5-5" />
             <path d="m7 9 5-5 5 5" />
           </svg>
-        </a>
+        </p>
       </th>
       <th scope="col" class="px-6 py-3 text-start">
-        <a class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
-          href="#">
+        <p class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
+          >
           Redirection Choice
           <svg class="shrink-0 size-3.5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -65,12 +66,12 @@ templ LinksTable(links []*ent.Link) {
             <path d="m7 15 5 5 5-5" />
             <path d="m7 9 5-5 5 5" />
           </svg>
-        </a>
+        </p>
       </th>
 
        <th scope="col" class="px-6 py-3 text-start">
-        <a class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
-          href="#">
+        <p class="group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500"
+          >
           Created
           <svg class="shrink-0 size-3.5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -78,7 +79,7 @@ templ LinksTable(links []*ent.Link) {
             <path d="m7 15 5 5 5-5" />
             <path d="m7 9 5-5 5 5" />
           </svg>
-        </a>
+        </p>
       </th>
       <th scope="col" class="px-6 py-3 text-end"></th>
     </tr>
@@ -95,7 +96,7 @@ templ LinksTable(links []*ent.Link) {
 templ linkTableItem(link *ent.Link) {
 <tr class="bg-white hover:bg-gray-50 dark:bg-neutral-900 dark:hover:bg-neutral-800">
   <td class="size-px whitespace-nowrap">
-    <a class="block relative z-10" href="#">
+    <a class="block relative z-10" href={templ.URL(fmt.Sprintf("links/%s",link.Path))}>
       <div class="px-6 py-2">
         <div class="block text-sm text-blue-600 decoration-2 hover:underline dark:text-blue-500">{link.Path}</div>
       </div>
@@ -137,9 +138,10 @@ templ linkTableItem(link *ent.Link) {
   </td>
   <td class="size-px whitespace-nowrap">
     <div class="px-6 py-2">
-        <span class="text-sm text-gray-500 dark:text-neutral-500">{link.CreatedAt.GoString()}</span>
+        <span class="text-sm text-gray-500 dark:text-neutral-500">{link.CreatedAt.Local().String()}</span>
     </div>
   </td>
+  <td></td>
 </tr>
 }
 
@@ -154,7 +156,7 @@ templ linkStatusState(statusState enums.StatusState) {
               d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z">
             </path>
           </svg>
-          Warning
+          Inactive
         </span>
         case enums.StatusActive:
         <span

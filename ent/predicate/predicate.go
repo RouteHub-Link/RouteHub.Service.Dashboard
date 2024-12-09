@@ -9,7 +9,7 @@ import (
 // Domain is the predicate function for entdomain builders.
 type Domain func(*sql.Selector)
 
-// Hub is the predicate function for enthub builders.
+// Hub is the predicate function for hub builders.
 type Hub func(*sql.Selector)
 
 // Link is the predicate function for link builders.

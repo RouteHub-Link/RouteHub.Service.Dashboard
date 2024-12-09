@@ -9,11 +9,10 @@ import (
 	"time"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	"RouteHub.Service.Dashboard/ent/schema/enums/hub"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -66,8 +65,8 @@ func (hc *HubCreate) SetStatus(es enums.StatusState) *HubCreate {
 }
 
 // SetDefaultRedirection sets the "default_redirection" field.
-func (hc *HubCreate) SetDefaultRedirection(ho hub.RedirectionOption) *HubCreate {
-	hc.mutation.SetDefaultRedirection(ho)
+func (hc *HubCreate) SetDefaultRedirection(ec enums.RedirectionChoice) *HubCreate {
+	hc.mutation.SetDefaultRedirection(ec)
 	return hc
 }
 
@@ -172,11 +171,11 @@ func (hc *HubCreate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (hc *HubCreate) defaults() {
 	if _, ok := hc.mutation.CreatedAt(); !ok {
-		v := enthub.DefaultCreatedAt()
+		v := hub.DefaultCreatedAt()
 		hc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := hc.mutation.ID(); !ok {
-		v := enthub.DefaultID()
+		v := hub.DefaultID()
 		hc.mutation.SetID(v)
 	}
 }
@@ -187,7 +186,7 @@ func (hc *HubCreate) check() error {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Hub.name"`)}
 	}
 	if v, ok := hc.mutation.Name(); ok {
-		if err := enthub.NameValidator(v); err != nil {
+		if err := hub.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Hub.name": %w`, err)}
 		}
 	}
@@ -195,7 +194,7 @@ func (hc *HubCreate) check() error {
 		return &ValidationError{Name: "slug", err: errors.New(`ent: missing required field "Hub.slug"`)}
 	}
 	if v, ok := hc.mutation.Slug(); ok {
-		if err := enthub.SlugValidator(v); err != nil {
+		if err := hub.SlugValidator(v); err != nil {
 			return &ValidationError{Name: "slug", err: fmt.Errorf(`ent: validator failed for field "Hub.slug": %w`, err)}
 		}
 	}
@@ -203,7 +202,7 @@ func (hc *HubCreate) check() error {
 		return &ValidationError{Name: "tcp_address", err: errors.New(`ent: missing required field "Hub.tcp_address"`)}
 	}
 	if v, ok := hc.mutation.TCPAddress(); ok {
-		if err := enthub.TCPAddressValidator(v); err != nil {
+		if err := hub.TCPAddressValidator(v); err != nil {
 			return &ValidationError{Name: "tcp_address", err: fmt.Errorf(`ent: validator failed for field "Hub.tcp_address": %w`, err)}
 		}
 	}
@@ -211,7 +210,7 @@ func (hc *HubCreate) check() error {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Hub.status"`)}
 	}
 	if v, ok := hc.mutation.Status(); ok {
-		if err := enthub.StatusValidator(v); err != nil {
+		if err := hub.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Hub.status": %w`, err)}
 		}
 	}
@@ -219,7 +218,7 @@ func (hc *HubCreate) check() error {
 		return &ValidationError{Name: "default_redirection", err: errors.New(`ent: missing required field "Hub.default_redirection"`)}
 	}
 	if v, ok := hc.mutation.DefaultRedirection(); ok {
-		if err := enthub.DefaultRedirectionValidator(v); err != nil {
+		if err := hub.DefaultRedirectionValidator(v); err != nil {
 			return &ValidationError{Name: "default_redirection", err: fmt.Errorf(`ent: validator failed for field "Hub.default_redirection": %w`, err)}
 		}
 	}
@@ -261,46 +260,46 @@ func (hc *HubCreate) sqlSave(ctx context.Context) (*Hub, error) {
 func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Hub{config: hc.config}
-		_spec = sqlgraph.NewCreateSpec(enthub.Table, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(hub.Table, sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString))
 	)
 	if id, ok := hc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
 	if value, ok := hc.mutation.Name(); ok {
-		_spec.SetField(enthub.FieldName, field.TypeString, value)
+		_spec.SetField(hub.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := hc.mutation.Slug(); ok {
-		_spec.SetField(enthub.FieldSlug, field.TypeString, value)
+		_spec.SetField(hub.FieldSlug, field.TypeString, value)
 		_node.Slug = value
 	}
 	if value, ok := hc.mutation.HubDetails(); ok {
-		_spec.SetField(enthub.FieldHubDetails, field.TypeJSON, value)
+		_spec.SetField(hub.FieldHubDetails, field.TypeJSON, value)
 		_node.HubDetails = value
 	}
 	if value, ok := hc.mutation.TCPAddress(); ok {
-		_spec.SetField(enthub.FieldTCPAddress, field.TypeString, value)
+		_spec.SetField(hub.FieldTCPAddress, field.TypeString, value)
 		_node.TCPAddress = value
 	}
 	if value, ok := hc.mutation.Status(); ok {
-		_spec.SetField(enthub.FieldStatus, field.TypeEnum, value)
+		_spec.SetField(hub.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
 	if value, ok := hc.mutation.DefaultRedirection(); ok {
-		_spec.SetField(enthub.FieldDefaultRedirection, field.TypeEnum, value)
+		_spec.SetField(hub.FieldDefaultRedirection, field.TypeEnum, value)
 		_node.DefaultRedirection = value
 	}
 	if value, ok := hc.mutation.CreatedAt(); ok {
-		_spec.SetField(enthub.FieldCreatedAt, field.TypeTime, value)
+		_spec.SetField(hub.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if nodes := hc.mutation.DomainIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   enthub.DomainTable,
-			Columns: []string{enthub.DomainColumn},
+			Table:   hub.DomainTable,
+			Columns: []string{hub.DomainColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entdomain.FieldID, field.TypeString),
@@ -316,8 +315,8 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   enthub.OrganizationTable,
-			Columns: []string{enthub.OrganizationColumn},
+			Table:   hub.OrganizationTable,
+			Columns: []string{hub.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -333,8 +332,8 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   enthub.LinksTable,
-			Columns: []string{enthub.LinksColumn},
+			Table:   hub.LinksTable,
+			Columns: []string{hub.LinksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),

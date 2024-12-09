@@ -9,7 +9,7 @@ import (
 	"math"
 
 	entdomain "RouteHub.Service.Dashboard/ent/domain"
-	enthub "RouteHub.Service.Dashboard/ent/hub"
+	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
 	"RouteHub.Service.Dashboard/ent/predicate"
@@ -24,7 +24,7 @@ import (
 type HubQuery struct {
 	config
 	ctx              *QueryContext
-	order            []enthub.OrderOption
+	order            []hub.OrderOption
 	inters           []Interceptor
 	predicates       []predicate.Hub
 	withDomain       *DomainQuery
@@ -62,7 +62,7 @@ func (hq *HubQuery) Unique(unique bool) *HubQuery {
 }
 
 // Order specifies how the records should be ordered.
-func (hq *HubQuery) Order(o ...enthub.OrderOption) *HubQuery {
+func (hq *HubQuery) Order(o ...hub.OrderOption) *HubQuery {
 	hq.order = append(hq.order, o...)
 	return hq
 }
@@ -79,9 +79,9 @@ func (hq *HubQuery) QueryDomain() *DomainQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(enthub.Table, enthub.FieldID, selector),
+			sqlgraph.From(hub.Table, hub.FieldID, selector),
 			sqlgraph.To(entdomain.Table, entdomain.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, enthub.DomainTable, enthub.DomainColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, hub.DomainTable, hub.DomainColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
 		return fromU, nil
@@ -101,9 +101,9 @@ func (hq *HubQuery) QueryOrganization() *OrganizationQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(enthub.Table, enthub.FieldID, selector),
+			sqlgraph.From(hub.Table, hub.FieldID, selector),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, enthub.OrganizationTable, enthub.OrganizationColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, hub.OrganizationTable, hub.OrganizationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
 		return fromU, nil
@@ -123,9 +123,9 @@ func (hq *HubQuery) QueryLinks() *LinkQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(enthub.Table, enthub.FieldID, selector),
+			sqlgraph.From(hub.Table, hub.FieldID, selector),
 			sqlgraph.To(link.Table, link.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, enthub.LinksTable, enthub.LinksColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, hub.LinksTable, hub.LinksColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
 		return fromU, nil
@@ -141,7 +141,7 @@ func (hq *HubQuery) First(ctx context.Context) (*Hub, error) {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{enthub.Label}
+		return nil, &NotFoundError{hub.Label}
 	}
 	return nodes[0], nil
 }
@@ -163,7 +163,7 @@ func (hq *HubQuery) FirstID(ctx context.Context) (id mixin.ID, err error) {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{enthub.Label}
+		err = &NotFoundError{hub.Label}
 		return
 	}
 	return ids[0], nil
@@ -190,9 +190,9 @@ func (hq *HubQuery) Only(ctx context.Context) (*Hub, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{enthub.Label}
+		return nil, &NotFoundError{hub.Label}
 	default:
-		return nil, &NotSingularError{enthub.Label}
+		return nil, &NotSingularError{hub.Label}
 	}
 }
 
@@ -217,9 +217,9 @@ func (hq *HubQuery) OnlyID(ctx context.Context) (id mixin.ID, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{enthub.Label}
+		err = &NotFoundError{hub.Label}
 	default:
-		err = &NotSingularError{enthub.Label}
+		err = &NotSingularError{hub.Label}
 	}
 	return
 }
@@ -258,7 +258,7 @@ func (hq *HubQuery) IDs(ctx context.Context) (ids []mixin.ID, err error) {
 		hq.Unique(true)
 	}
 	ctx = setContextOp(ctx, hq.ctx, ent.OpQueryIDs)
-	if err = hq.Select(enthub.FieldID).Scan(ctx, &ids); err != nil {
+	if err = hq.Select(hub.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -322,7 +322,7 @@ func (hq *HubQuery) Clone() *HubQuery {
 	return &HubQuery{
 		config:           hq.config,
 		ctx:              hq.ctx.Clone(),
-		order:            append([]enthub.OrderOption{}, hq.order...),
+		order:            append([]hub.OrderOption{}, hq.order...),
 		inters:           append([]Interceptor{}, hq.inters...),
 		predicates:       append([]predicate.Hub{}, hq.predicates...),
 		withDomain:       hq.withDomain.Clone(),
@@ -378,14 +378,14 @@ func (hq *HubQuery) WithLinks(opts ...func(*LinkQuery)) *HubQuery {
 //	}
 //
 //	client.Hub.Query().
-//		GroupBy(enthub.FieldName).
+//		GroupBy(hub.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (hq *HubQuery) GroupBy(field string, fields ...string) *HubGroupBy {
 	hq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &HubGroupBy{build: hq}
 	grbuild.flds = &hq.ctx.Fields
-	grbuild.label = enthub.Label
+	grbuild.label = hub.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -400,12 +400,12 @@ func (hq *HubQuery) GroupBy(field string, fields ...string) *HubGroupBy {
 //	}
 //
 //	client.Hub.Query().
-//		Select(enthub.FieldName).
+//		Select(hub.FieldName).
 //		Scan(ctx, &v)
 func (hq *HubQuery) Select(fields ...string) *HubSelect {
 	hq.ctx.Fields = append(hq.ctx.Fields, fields...)
 	sbuild := &HubSelect{HubQuery: hq}
-	sbuild.label = enthub.Label
+	sbuild.label = hub.Label
 	sbuild.flds, sbuild.scan = &hq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
@@ -427,7 +427,7 @@ func (hq *HubQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range hq.ctx.Fields {
-		if !enthub.ValidColumn(f) {
+		if !hub.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -456,7 +456,7 @@ func (hq *HubQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Hub, err
 		withFKs = true
 	}
 	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, enthub.ForeignKeys...)
+		_spec.Node.Columns = append(_spec.Node.Columns, hub.ForeignKeys...)
 	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Hub).scanValues(nil, columns)
@@ -574,7 +574,7 @@ func (hq *HubQuery) loadLinks(ctx context.Context, query *LinkQuery, nodes []*Hu
 	}
 	query.withFKs = true
 	query.Where(predicate.Link(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(enthub.LinksColumn), fks...))
+		s.Where(sql.InValues(s.C(hub.LinksColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -604,7 +604,7 @@ func (hq *HubQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (hq *HubQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(enthub.Table, enthub.Columns, sqlgraph.NewFieldSpec(enthub.FieldID, field.TypeString))
+	_spec := sqlgraph.NewQuerySpec(hub.Table, hub.Columns, sqlgraph.NewFieldSpec(hub.FieldID, field.TypeString))
 	_spec.From = hq.sql
 	if unique := hq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -613,9 +613,9 @@ func (hq *HubQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := hq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, enthub.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, hub.FieldID)
 		for i := range fields {
-			if fields[i] != enthub.FieldID {
+			if fields[i] != hub.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -645,10 +645,10 @@ func (hq *HubQuery) querySpec() *sqlgraph.QuerySpec {
 
 func (hq *HubQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(hq.driver.Dialect())
-	t1 := builder.Table(enthub.Table)
+	t1 := builder.Table(hub.Table)
 	columns := hq.ctx.Fields
 	if len(columns) == 0 {
-		columns = enthub.Columns
+		columns = hub.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if hq.sql != nil {

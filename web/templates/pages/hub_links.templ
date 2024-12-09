@@ -5,16 +5,17 @@ import "github.com/zitadel/oidc/v3/pkg/oidc"
 import "RouteHub.Service.Dashboard/web/templates/pages/components/utils"
 import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
 import linkComponents "RouteHub.Service.Dashboard/web/templates/pages/components/link"
+import "fmt"
 
-templ HubLinks(userInfo *oidc.UserInfo,hubItem *ent.Hub, links []*ent.Link) {
+templ HubLinks(userInfo *oidc.UserInfo,hub *ent.Hub, links []*ent.Link) {
 @layouts.Main(layouts.PageDescription{
-MainContent: hubLinksPage(links),
+MainContent: hubLinksPage(hub,links),
 UserInfo: userInfo,
-Hub: hubItem,
+Hub: hub,
 })
 }
 
-templ hubLinksPage(links []*ent.Link) {
+templ hubLinksPage(hub *ent.Hub,links []*ent.Link) {
 
     
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
@@ -39,7 +40,7 @@ templ hubLinksPage(links []*ent.Link) {
                             <div class="inline-flex gap-x-2">
                                 <button
                                     class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-teal-700 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
-                                    hx-get="/domains/create" hx-target="#hs-modal-content" hx-swap="innerHTML"
+                                    hx-get={fmt.Sprintf("/hub/%v/links/create",hub.Slug)} hx-target="#hs-modal-content" hx-swap="innerHTML"
                                     aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-modal"
                                     data-hs-overlay="#hs-modal">
                                     <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
