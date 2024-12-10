@@ -1,0 +1,16 @@
+package domain
+import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
+import "github.com/zitadel/oidc/v3/pkg/oidc"
+import "RouteHub.Service.Dashboard/ent"
+import "RouteHub.Service.Dashboard/web/templates/pages/domain/components"
+
+templ index(userInfo *oidc.UserInfo, domains []*ent.Domain) {
+    @layouts.Main(layouts.PageDescription{
+        MainContent: domainsPage(domains),
+        UserInfo:    userInfo,
+    })
+}
+
+templ domainsPage(domains []*ent.Domain) {
+    @components.DomainsTable(domains)
+}

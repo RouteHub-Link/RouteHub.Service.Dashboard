@@ -2,37 +2,41 @@ package groups
 
 import (
 	"RouteHub.Service.Dashboard/web/handlers"
-	"RouteHub.Service.Dashboard/web/handlers/page"
 	"RouteHub.Service.Dashboard/web/middlewares"
+	"RouteHub.Service.Dashboard/web/templates/pages/domain"
 	"github.com/labstack/echo/v4"
 )
 
 func ConfigurePageRoutes(e *echo.Echo, handlers *handlers.WebHandlers) {
-	pageHandlers := handlers.PageHandlers
+	mainGroup := e.Group("/")
+	mainGroup.Use(middlewares.PersonMiddleware(handlers.PageHandlers.Authorizer, handlers.PageHandlers.Logger, handlers.PageHandlers.Ent))
 
-	group := e.Group("/")
-	group.Use(middlewares.PersonMiddleware(handlers.PageHandlers.Authorizer, handlers.PageHandlers.Logger, handlers.PageHandlers.Ent))
+	mainGroup.GET("", handlers.HomeHandlers.IndexHandler)
+	mainGroup.GET("accounts", handlers.AccountHandlers.IndexHandler)
 
-	group.GET("", pageHandlers.HomeHandler)
-	group.GET("accounts", pageHandlers.AccountsHandler)
-
-	configureDomainRoutes(group, pageHandlers)
-	configureHubRoutes(group, pageHandlers)
+	configureDomainRoutes(mainGroup, handlers.DomainHandlers)
+	configureHubRoutes(mainGroup, e, handlers)
 }
 
-func configureDomainRoutes(group *echo.Group, pageHandler *page.PageHandler) {
-	group.GET("domains", pageHandler.DomainsHandler)
-	group.GET("domains/create", pageHandler.DomainCreateGet)
-	group.POST("domains/create", pageHandler.DomainCreatePost)
+func configureDomainRoutes(group *echo.Group, handlers *domain.Handlers) {
+	group.GET("domains", handlers.IndexHandler)
+	group.GET("domains/create", handlers.ComponentHandlers.DomainCreateGet)
+	group.POST("domains/create", handlers.ComponentHandlers.DomainCreatePost)
 }
 
-func configureHubRoutes(group *echo.Group, pageHandler *page.PageHandler) {
-	group.GET("hubs", pageHandler.HubsHandler)
-	group.GET("hubs/attach", pageHandler.AttachHubGet)
-	group.POST("hubs/attach", pageHandler.AttachHubPost)
+func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.WebHandlers) {
+	hubHandlers := handlers.HubHandlers
+	mainGroup.GET("hubs", hubHandlers.HubsHandler)
+	mainGroup.GET("hubs/attach", hubHandlers.ComponentHandlers.AttachHubGet)
+	mainGroup.POST("hubs/attach", hubHandlers.ComponentHandlers.AttachHubPost)
 
-	group.GET("hub/:slug", pageHandler.HubHandler)
-	group.GET("hub/:slug/links", pageHandler.HubLinksHandler)
-	group.GET("hub/:slug/links/create", pageHandler.HubLinksCreateHandler)
-	group.POST("hub/:slug/links/create", pageHandler.HubLinkCreatePostHandler)
+	hubGroup := e.Group("/hub/:slug")
+	hubGroup.Use(middlewares.PersonMiddleware(handlers.PageHandlers.Authorizer, handlers.PageHandlers.Logger, handlers.PageHandlers.Ent))
+
+	hubGroup.GET("", hubHandlers.IndexHandler)
+
+	linkHandlers := handlers.LinkHandlers
+	hubGroup.GET("/links", linkHandlers.HubLinksHandler)
+	hubGroup.GET("/links/create", linkHandlers.HubLinksCreateHandler)
+	hubGroup.POST("/links/create", linkHandlers.HubLinkCreatePostHandler)
 }

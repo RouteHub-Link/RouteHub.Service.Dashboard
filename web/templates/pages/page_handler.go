@@ -1,4 +1,4 @@
-package page
+package pages
 
 import (
 	"log/slog"
@@ -12,24 +12,24 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 )
 
-type PageRequestHandler struct {
+type PageHandler struct {
 	Logger     *slog.Logger
 	Authorizer *extensions.Authorizer
 	Ent        *ent.Client
 }
 
-func NewPageHandler(logger *slog.Logger, authorizer *extensions.Authorizer, ent *ent.Client) *PageRequestHandler {
-	return &PageRequestHandler{
+func NewPageHandler(logger *slog.Logger, authorizer *extensions.Authorizer, ent *ent.Client) *PageHandler {
+	return &PageHandler{
 		Logger:     logger,
 		Authorizer: authorizer,
 		Ent:        ent,
 	}
 }
 
-func (h PageRequestHandler) GetUserInfo(c echo.Context) (*oidc.UserInfo, error) {
+func (ph PageHandler) GetUserInfo(c echo.Context) (*oidc.UserInfo, error) {
 
 	var userInfo *oidc.UserInfo
-	data, err := h.Authorizer.AUTHN.IsAuthenticated(c.Request())
+	data, err := ph.Authorizer.AUTHN.IsAuthenticated(c.Request())
 
 	if err != nil {
 		return nil, err
@@ -37,19 +37,19 @@ func (h PageRequestHandler) GetUserInfo(c echo.Context) (*oidc.UserInfo, error) 
 
 	userInfo = data.GetUserInfo()
 
-	h.Logger.Info("User info", "data", userInfo)
+	ph.Logger.Info("User info", "data", userInfo)
 
 	return userInfo, nil
 }
 
-func (h PageRequestHandler) GetUserWithOrganization(c echo.Context) (*oidc.UserInfo, *ent.Organization, error) {
-	userInfo, err := h.GetUserInfo(c)
+func (ph PageHandler) GetUserWithOrganization(c echo.Context) (*oidc.UserInfo, *ent.Organization, error) {
+	userInfo, err := ph.GetUserInfo(c)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
-	organizationsIDs, err := h.Ent.Person.Query().
+	organizationsIDs, err := ph.Ent.Person.Query().
 		Where(person.SubjectID(userInfo.Subject)).
 		WithOrganizations().
 		QueryOrganizations().
@@ -63,7 +63,7 @@ func (h PageRequestHandler) GetUserWithOrganization(c echo.Context) (*oidc.UserI
 		return nil, nil, echo.NewHTTPError(http.StatusBadRequest, "You are a member of multiple organizations. Please select one to create a domain.")
 	}
 
-	organization, err := h.Ent.Organization.Get(c.Request().Context(), organizationsIDs[0])
+	organization, err := ph.Ent.Organization.Get(c.Request().Context(), organizationsIDs[0])
 	if err != nil {
 		return nil, nil, err
 	}
@@ -71,14 +71,14 @@ func (h PageRequestHandler) GetUserWithOrganization(c echo.Context) (*oidc.UserI
 	return userInfo, organization, nil
 }
 
-func (h PageRequestHandler) GetHubFromSlug(c echo.Context, query *ent.HubQuery) (*ent.Hub, error) {
+func (ph PageHandler) GetHubFromSlug(c echo.Context, query *ent.HubQuery) (*ent.Hub, error) {
 	hubSlug := c.Param("slug")
 	if hubSlug == "" || len(hubSlug) < 2 || len(hubSlug) > 100 {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid hub slug")
 	}
 
 	if query == nil {
-		query = h.Ent.Hub.Query()
+		query = ph.Ent.Hub.Query()
 	}
 
 	query.Where(entHub.Slug(hubSlug))
@@ -91,7 +91,7 @@ func (h PageRequestHandler) GetHubFromSlug(c echo.Context, query *ent.HubQuery) 
 	return hub, nil
 }
 
-func (h PageRequestHandler) BindAndValidate(c echo.Context, i interface{}) error {
+func (ph PageHandler) BindAndValidate(c echo.Context, i interface{}) error {
 	if err := c.Bind(i); err != nil {
 		return err
 	}

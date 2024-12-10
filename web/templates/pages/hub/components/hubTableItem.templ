@@ -1,0 +1,143 @@
+package components
+
+templ hubTableItem() {
+<tr class="bg-white hover:bg-gray-50 dark:bg-neutral-900 dark:hover:bg-neutral-800">
+  <td class="size-px whitespace-nowrap">
+    <a class="block relative z-10" href="#">
+      <div class="px-6 py-2">
+        <div class="block text-sm text-blue-600 decoration-2 hover:underline dark:text-blue-500">myproject.link</div>
+      </div>
+    </a>
+  </td>
+  <td class="h-px w-72 min-w-72">
+    <a class="block relative z-10" href="#">
+      <div class="px-6 py-2">
+        <p class="text-sm text-gray-500 dark:text-neutral-500">Our Project Description is awesome and needs more details
+          mere to humans to understand.</p>
+      </div>
+    </a>
+  </td>
+  <td class="size-px whitespace-nowrap">
+    <a class="block relative z-10" href="#">
+      <div class="px-6 py-2">
+        <span
+          class="py-1 px-1.5 inline-flex items-center gap-x-1 text-xs font-medium bg-teal-100 text-teal-800 rounded-full dark:bg-teal-500/10 dark:text-teal-500">
+          <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            viewBox="0 0 16 16">
+            <path
+              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+          </svg>
+          Live
+        </span>
+        <span
+          class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-green-200">
+          <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            viewBox="0 0 16 16">
+            <path
+              d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z">
+            </path>
+          </svg>
+          Warning
+        </span>
+        <span
+          class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-green-200">
+          <svg class="size-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            viewBox="0 0 16 16">
+            <path
+              d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z">
+            </path>
+          </svg>
+          Danger
+        </span>
+      </div>
+    </a>
+  </td>
+  <td class="size-px whitespace-nowrap">
+    <a class="block relative z-10" href="#">
+      <div class="px-6 py-3">
+        <span class="text-sm text-gray-500 dark:text-neutral-500">28 Dec, 12:12</span>
+      </div>
+    </a>
+  </td>
+  <td class="size-px whitespace-nowrap">
+    <a class="block relative z-10" href="#">
+      <div class="px-6 py-2 flex -space-x-2">
+        <div class="hs-tooltip inline-flex max-w-12 max-h-12 h-auto">
+          <img
+            class="hs-tooltip-toggle inline-block size-6 rounded-full ring-2 ring-white dark:ring-neutral-900 max-w-12 max-h-12 h-auto"
+            src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
+            alt="Avatar" />
+          <span
+            class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm dark:bg-neutral-700"
+            role="tooltip">
+            David Harrison
+          </span>
+        </div>
+        <div class="hs-tooltip inline-flex">
+          <img class="inline-block size-6 rounded-full ring-2 ring-white dark:ring-neutral-900 max-w-12 max-h-12"
+            src="https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
+            alt="Avatar" />
+          <span
+            class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm dark:bg-neutral-700"
+            role="tooltip">
+            Amanda Jr.
+          </span>
+        </div>
+        <div class="hs-tooltip inline-flex">
+          <img class="inline-block size-6 rounded-full ring-2 ring-white dark:ring-neutral-900 max-w-12 max-h-12"
+            src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80"
+            alt="Avatar" />
+          <span
+            class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm dark:bg-neutral-700"
+            role="tooltip">
+            Asia Boone
+          </span>
+        </div>
+      </div>
+    </a>
+  </td>
+  <td class="size-px whitespace-nowrap">
+    <div class="px-6 py-2">
+      <div class="hs-dropdown [--placement:bottom-right] relative inline-block">
+        <button id="hs-table-dropdown-1" type="button"
+          class="hs-dropdown-toggle py-1.5 px-2 inline-flex justify-center items-center gap-2 rounded-lg text-gray-700 align-middle disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:text-neutral-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+          aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="1" />
+            <circle cx="19" cy="12" r="1" />
+            <circle cx="5" cy="12" r="1" />
+          </svg>
+        </button>
+        <div
+          class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden divide-y divide-gray-200 min-w-40 z-20 bg-white shadow-2xl rounded-lg p-2 mt-2 dark:divide-neutral-700 dark:bg-neutral-800 dark:border dark:border-neutral-700"
+          role="menu" aria-orientation="vertical" aria-labelledby="hs-table-dropdown-1">
+          <div class="py-2 first:pt-0 last:pb-0">
+            <span class="block py-2 px-3 text-xs font-medium uppercase text-gray-400 dark:text-neutral-600">
+              Actions
+            </span>
+            <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+              href="#">
+              Rename team
+            </a>
+            <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+              href="#">
+              Add to favorites
+            </a>
+            <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300"
+              href="#">
+              Archive team
+            </a>
+          </div>
+          <div class="py-2 first:pt-0 last:pb-0">
+            <a class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-red-600 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-red-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
+              href="#">
+              Delete
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr>
+}

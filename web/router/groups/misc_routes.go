@@ -54,6 +54,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 		} else if errorCode == http.StatusNotFound {
 			// make redirect url to referer path if available
 			referer := c.Request().Referer()
+
 			url := "/404"
 			if referer != "" {
 				url = fmt.Sprintf("%s?referer=%s", url, referer)
