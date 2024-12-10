@@ -2,14 +2,16 @@ package link
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 
+	"RouteHub.Service.Dashboard/ent"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"RouteHub.Service.Dashboard/features/scrape"
+	"RouteHub.Service.Dashboard/web/context"
 	"RouteHub.Service.Dashboard/web/extensions"
-	"RouteHub.Service.Dashboard/web/handlers/page"
 	"RouteHub.Service.Dashboard/web/templates/pages/hub/link/components"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"RouteHub.Service.Dashboard/web/utils"
@@ -17,12 +19,14 @@ import (
 )
 
 type Handlers struct {
-	RequestHandler *page.PageRequestHandler
+	Ent    *ent.Client
+	Logger *slog.Logger
 }
 
-func NewHandlers(RequestHandler *page.PageRequestHandler) *Handlers {
+func NewHandlers(logger *slog.Logger, ent *ent.Client) *Handlers {
 	return &Handlers{
-		RequestHandler: RequestHandler,
+		Logger: logger,
+		Ent:    ent,
 	}
 }
 
@@ -31,21 +35,21 @@ var (
 )
 
 func (h Handlers) HubLinksHandler(c echo.Context) error {
-	user, err := h.RequestHandler.GetUserInfo(c)
+	user, err := context.GetUserFromContext(c)
 	if err != nil {
 		return c.Redirect(http.StatusForbidden, "/")
 	}
 
-	query := h.RequestHandler.Ent.Hub.Query().WithDomain().WithLinks()
+	hub, err := context.GetHubFromContext(c)
 
-	hub, err := h.RequestHandler.GetHubFromSlug(c, query)
+	links, err := h.Ent.Hub.QueryLinks(hub).All(c.Request().Context())
 
 	if err != nil {
-		h.RequestHandler.Logger.Error("Error fetching hub", "error", err)
+		h.Logger.Error("Error fetching hub", "error", err)
 		return c.Redirect(http.StatusFound, "/hubs")
 	}
 
-	return extensions.Render(c, http.StatusOK, index(user, hub, hub.Edges.Links))
+	return extensions.Render(c, http.StatusOK, index(user, hub, links))
 }
 
 func (h Handlers) HubLinksCreateHandler(c echo.Context) error {
@@ -65,7 +69,7 @@ func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
 
 	linkCreateRequest := new(HubLinkCreate)
 
-	if err := h.RequestHandler.BindAndValidate(c, linkCreateRequest); err != nil {
+	if err := extensions.BindAndValidate(c, linkCreateRequest); err != nil {
 		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
 		feedback := partial.FormFeedback("error", &title, &msg)
 
@@ -75,15 +79,15 @@ func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, components.CreateLink(hubSlug, randSlug, feedback, true))
 	}
 
-	hub, err := h.RequestHandler.GetHubFromSlug(c, nil)
+	hub, err := context.GetHubFromContext(c)
 	if err != nil {
-		h.RequestHandler.Logger.Error("Error fetching hub", "error", err)
+		h.Logger.Error("Error fetching hub", "error", err)
 		c.Response().Header().Set("HX-Redirect", "/hubs")
 		return err
 	}
 
 	scraped, err := collyClient.VisitScrapeOG(linkCreateRequest.Target)
-	h.RequestHandler.Logger.Info("Scraped", "scraped", scraped, "error", err)
+	h.Logger.Info("Scraped", "scraped", scraped, "error", err)
 
 	if err != nil {
 		msg := strings.Join([]string{"Error Scraping URL", err.Error()}, " ")
@@ -91,7 +95,7 @@ func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, components.CreateLink(hub.Slug, linkCreateRequest.Slug, feedback, true))
 	}
 
-	createQuery := h.RequestHandler.Ent.Link.Create().
+	createQuery := h.Ent.Link.Create().
 		SetPath(linkCreateRequest.Slug).
 		SetTarget(linkCreateRequest.Target).
 		SetHub(hub).
@@ -109,7 +113,7 @@ func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
 	link, err := createQuery.Save(c.Request().Context())
 
 	if err != nil {
-		h.RequestHandler.Logger.Error("Error creating link", "error", err)
+		h.Logger.Error("Error creating link", "error", err)
 		msg := strings.Join([]string{"Error Creating Link", err.Error()}, " ")
 		feedback := partial.FormFeedback("error", &title, &msg)
 		return extensions.Render(c, http.StatusOK, components.CreateLink(hub.Slug, linkCreateRequest.Slug, feedback, true))

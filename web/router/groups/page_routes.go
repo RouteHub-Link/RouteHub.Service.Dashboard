@@ -1,15 +1,16 @@
 package groups
 
 import (
+	"RouteHub.Service.Dashboard/web/context"
 	"RouteHub.Service.Dashboard/web/handlers"
-	"RouteHub.Service.Dashboard/web/middlewares"
 	"RouteHub.Service.Dashboard/web/templates/pages/domain"
 	"github.com/labstack/echo/v4"
 )
 
 func ConfigurePageRoutes(e *echo.Echo, handlers *handlers.WebHandlers) {
 	mainGroup := e.Group("/")
-	mainGroup.Use(middlewares.PersonMiddleware(handlers.PageHandlers.Authorizer, handlers.PageHandlers.Logger, handlers.PageHandlers.Ent))
+	mainGroup.Use(context.UserContextMiddleware(handlers.Authorizer),
+		context.OrganizationContextMiddleware(handlers.Ent))
 
 	mainGroup.GET("", handlers.HomeHandlers.IndexHandler)
 	mainGroup.GET("accounts", handlers.AccountHandlers.IndexHandler)
@@ -31,7 +32,10 @@ func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.
 	mainGroup.POST("hubs/attach", hubHandlers.ComponentHandlers.AttachHubPost)
 
 	hubGroup := e.Group("/hub/:slug")
-	hubGroup.Use(middlewares.PersonMiddleware(handlers.PageHandlers.Authorizer, handlers.PageHandlers.Logger, handlers.PageHandlers.Ent))
+	hubGroup.Use(context.UserContextMiddleware(handlers.Authorizer),
+		context.OrganizationContextMiddleware(handlers.Ent))
+
+	hubGroup.Use(context.HubContextMiddleware(handlers.Ent))
 
 	hubGroup.GET("", hubHandlers.IndexHandler)
 

@@ -1,18 +1,28 @@
 package components
 
 import (
+	"log/slog"
 	"net/http"
 
+	"RouteHub.Service.Dashboard/ent"
 	domainEnum "RouteHub.Service.Dashboard/ent/schema/enums/domain"
+	"RouteHub.Service.Dashboard/web/context"
 	"RouteHub.Service.Dashboard/web/extensions"
-	"RouteHub.Service.Dashboard/web/handlers/page"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"github.com/RouteHub-Link/DomainUtils/validator"
 	"github.com/labstack/echo/v4"
 )
 
 type Handlers struct {
-	RequestHandler *page.PageRequestHandler
+	Logger *slog.Logger
+	Ent    *ent.Client
+}
+
+func NewHandlers(logger *slog.Logger, ent *ent.Client) *Handlers {
+	return &Handlers{
+		Logger: logger,
+		Ent:    ent,
+	}
 }
 
 func (h Handlers) DomainCreateGet(c echo.Context) error {
@@ -28,7 +38,7 @@ func (h Handlers) DomainCreatePost(c echo.Context) error {
 
 	url := c.FormValue("url")
 	name := c.FormValue("name")
-	h.RequestHandler.Logger.Info("URL", "url", url)
+	h.Logger.Info("URL", "url", url)
 
 	var _validator = validator.DefaultValidator()
 	isValid, err := _validator.ValidateURL(url)
@@ -39,7 +49,7 @@ func (h Handlers) DomainCreatePost(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, CreateDomain(feedback, true))
 	}
 
-	_, organization, err := h.RequestHandler.GetUserWithOrganization(c)
+	organization, err := context.GetOrganizationFromContext(c)
 
 	if err != nil {
 		msg := err.Error()
@@ -48,7 +58,7 @@ func (h Handlers) DomainCreatePost(c echo.Context) error {
 	}
 
 	// Create domain
-	_, err = h.RequestHandler.Ent.Domain.Create().
+	_, err = h.Ent.Domain.Create().
 		SetURL(url).
 		SetName(name).
 		SetOrganizationID(organization.ID).

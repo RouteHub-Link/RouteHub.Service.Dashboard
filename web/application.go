@@ -119,8 +119,6 @@ func (app *Application) configureMiddleware() {
 	// TODO When this middleware is added, the application gets an error when trying to access the /auth/logout
 	app.Echo.Use(middlewares.OAuthGuard(app.Authorizer, app.config.OAuth, app.Logger))
 
-	app.Echo.Use(middlewares.PersonMiddleware(app.Authorizer, app.Logger, app.Ent))
-
 	app.Logger.Info("OTEL Status", "enabled", app.config.OTEL.IsEnabled())
 
 	if app.config.OTEL.IsEnabled() {
