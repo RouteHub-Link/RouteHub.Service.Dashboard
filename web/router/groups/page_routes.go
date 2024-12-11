@@ -23,6 +23,8 @@ func configureDomainRoutes(group *echo.Group, handlers *domain.Handlers) {
 	group.GET("domains", handlers.IndexHandler)
 	group.GET("domains/create", handlers.ComponentHandlers.DomainCreateGet)
 	group.POST("domains/create", handlers.ComponentHandlers.DomainCreatePost)
+
+	group.GET("domains/partial/table", handlers.ComponentHandlers.PartialDomainTable)
 }
 
 func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.WebHandlers) {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"RouteHub.Service.Dashboard/ent"
+	"RouteHub.Service.Dashboard/ent/person"
 	domainEnum "RouteHub.Service.Dashboard/ent/schema/enums/domain"
 	"RouteHub.Service.Dashboard/web/context"
 	"RouteHub.Service.Dashboard/web/extensions"
@@ -72,7 +73,30 @@ func (h Handlers) DomainCreatePost(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, CreateDomain(feedback, true))
 	}
 
-	c.Response().Header().Set("HX-Redirect", "/domains")
-	return c.String(http.StatusOK, "Domain created successfully.")
+	message := "Domain created successfully."
+	feedback := partial.FormFeedback("success", nil, &message)
 
+	extensions.HTMXAppendTrigger(c, "newDomain, close-modal")
+	extensions.HTMXAppendToast(c, message)
+
+	return extensions.Render(c, http.StatusOK, CreateDomain(feedback, false))
+}
+
+func (h Handlers) PartialDomainTable(c echo.Context) error {
+	userInfo, _ := context.GetUserFromContext(c)
+
+	personOrganizaitonAndDomains, err := h.Ent.Person.Query().
+		Where(person.SubjectID(userInfo.Subject)).
+		WithOrganizations().
+		QueryOrganizations().
+		WithDomains().
+		First(c.Request().Context())
+
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	domains := personOrganizaitonAndDomains.Edges.Domains
+
+	return extensions.Render(c, http.StatusOK, domainsTableContainer(domains))
 }

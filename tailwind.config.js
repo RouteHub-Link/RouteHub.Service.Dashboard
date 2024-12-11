@@ -7,8 +7,10 @@ module.exports = {
     './web/templates/layouts/*.{js,jsx,ts,tsx,templ,go,txt}',
     './web/templates/pages/*.{js,jsx,ts,tsx,templ,go,txt}',
     './web/templates/pages/**/*.{js,jsx,ts,tsx,templ,go,txt}',
-    './web/templates/misc/*.{js,jsx,ts,tsx,templ,go,txt}',
+    './web/templates/pages/misc/*.{js,jsx,ts,tsx,templ,go,txt}',
     './web/templates/components/**/*.{js,jsx,ts,tsx,templ,go,txt}',
+    './web/templates/components/**/**/*.{js,jsx,ts,tsx,templ,go,txt}',
+    './web/public/**/*.{js,jsx,ts,tsx,templ,go,txt}',
     './node_modules/preline/dist/*.js',],
   theme: {
     extend: {},

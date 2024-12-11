@@ -37,6 +37,43 @@ func DomainsTable(domains []*ent.Domain) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = domainsTableContainer(domains).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func domainsTableContainer(domains []*ent.Domain) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-get=\"domains/partial/table\" hx-trigger=\"newDomain from:body\" hx-swap=\"innerHTML\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		if len(domains) == 0 {
 			templ_7745c5c3_Err = partial.TableEmpty("Domains", "Add a domain to verify for deploying projects.").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -56,7 +93,7 @@ func DomainsTable(domains []*ent.Domain) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,9 +117,9 @@ func domainsTable(domains []*ent.Domain) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- Table --><table class=\"min-w-full divide-y divide-gray-200 dark:divide-neutral-700\"><thead class=\"bg-gray-50 dark:bg-neutral-800\"><tr><th scope=\"col\" class=\"ps-6 py-3 text-start\"></th><th scope=\"col\" class=\"ps-6 lg:ps-3 xl:ps-0 pe-6 py-3 text-start\"><div class=\"flex items-center gap-x-2\"><span class=\"text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200\">Name</span></div></th><th scope=\"col\" class=\"ps-6 lg:ps-3 xl:ps-0 pe-6 py-3 text-start\"><div class=\"flex items-center gap-x-2\"><span class=\"text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200\">Domain</span></div></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><div class=\"flex items-center gap-x-2\"><span class=\"text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200\">Status</span></div></th><th scope=\"col\" class=\"px-6 py-3 text-end\"></th></tr></thead> <tbody class=\"divide-y divide-gray-200 dark:divide-neutral-700\">")
@@ -119,9 +156,9 @@ func domainsTableDemo() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- Table --><table class=\"min-w-full divide-y divide-gray-200 dark:divide-neutral-700\"><thead class=\"bg-gray-50 dark:bg-neutral-800\"><tr><th scope=\"col\" class=\"ps-6 py-3 text-start\"></th><th scope=\"col\" class=\"ps-6 lg:ps-3 xl:ps-0 pe-6 py-3 text-start\"><div class=\"flex items-center gap-x-2\"><span class=\"text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200\">Domain</span></div></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><div class=\"flex items-center gap-x-2\"><span class=\"text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200\">Status</span></div></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><div class=\"flex items-center gap-x-2\"><span class=\"text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200\">DNS Record</span></div></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><div class=\"flex items-center gap-x-2\"><span class=\"text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-neutral-200\">Dates</span></div></th><th scope=\"col\" class=\"px-6 py-3 text-end\"></th></tr></thead> <tbody class=\"divide-y divide-gray-200 dark:divide-neutral-700\">")
@@ -156,21 +193,21 @@ func domainsFooter(len int) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- Footer --><div class=\"px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200 dark:border-neutral-700\"><div><p class=\"text-sm text-gray-600 dark:text-neutral-400\"><span class=\"font-semibold text-gray-800 dark:text-neutral-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len))
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/domain/components/domainsTable.templ`, Line: 166, Col: 94}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/domain/components/domainsTable.templ`, Line: 174, Col: 94}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

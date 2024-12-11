@@ -44,17 +44,25 @@ templ DomainsTable(domains []*ent.Domain) {
                     </div>
                     <!-- End Header -->
 
-                    if len(domains) == 0 {
-                    @partial.TableEmpty("Domains", "Add a domain to verify for deploying projects.")
-                    } else {
-                    @domainsTable(domains)
-                    @domainsFooter(len(domains))
-                    }
+                    @domainsTableContainer(domains)
 
                 </div>
             </div>
         </div>
     </div>
+</div>
+}
+
+templ domainsTableContainer(domains []*ent.Domain) {
+<div hx-get="domains/partial/table" hx-trigger="newDomain from:body" hx-swap="innerHTML">
+
+    if len(domains) == 0 {
+    @partial.TableEmpty("Domains", "Add a domain to verify for deploying projects.")
+    } else {
+    @domainsTable(domains)
+    @domainsFooter(len(domains))
+    }
+
 </div>
 }
 

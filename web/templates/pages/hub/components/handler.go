@@ -1,6 +1,7 @@
 package components
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -108,11 +109,6 @@ func (h Handlers) AttachHubPost(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, AttachHub(slug, domains, feedback, true))
 	}
 
-	//c.Response().Header().Set("HX-Redirect", "/hubs")
-	message := "Hub created successfully"
-	feedback := partial.FormFeedback("success", &title, &message)
-
-	h.Logger.Info("Hub created", "hub", createdHub)
-	return extensions.Render(c, http.StatusOK, AttachHub(slug, domains, feedback, false))
-
+	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/hub/%s", createdHub.Slug))
+	return extensions.Render(c, http.StatusOK, AttachHub(slug, domains, nil, false))
 }
