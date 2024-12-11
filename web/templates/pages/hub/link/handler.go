@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"RouteHub.Service.Dashboard/ent"
+	entLink "RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"RouteHub.Service.Dashboard/features/scrape"
@@ -121,4 +122,21 @@ func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
 
 	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/hubs/%s/links/%s", hub.Slug, link.Path))
 	return nil
+}
+
+func (h Handlers) HubLinkEditHandler(c echo.Context) error {
+	linkPath := c.Param("path")
+	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
+	if err != nil {
+		h.Logger.Error("Error fetching link", "error", err)
+		return c.Redirect(http.StatusFound, "/links")
+	}
+
+	userInfo, _ := context.GetUserFromContext(c)
+	hub, _ := context.GetHubFromContext(c)
+
+	hubLinkPaylod := new(EditPayload)
+	hubLinkPaylod.FromModel(link)
+
+	return extensions.Render(c, http.StatusOK, edit(userInfo, hub, *hubLinkPaylod))
 }
