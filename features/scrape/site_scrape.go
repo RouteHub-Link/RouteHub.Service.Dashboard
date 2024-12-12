@@ -80,7 +80,6 @@ func (cc CollyClient) VisitScrapeOG(url string) (meta *types.MetaDescription, er
 			OGDescription: e.ChildAttr("meta[property='og:description']", "content"),
 			OGURL:         e.ChildAttr("meta[property='og:url']", "content"),
 			OGSiteName:    e.ChildAttr("meta[property='og:site_name']", "content"),
-			OGMetaType:    e.ChildAttr("meta[property='og:type']", "content"),
 			OGLocale:      e.ChildAttr("meta[property='og:locale']", "content"),
 			OGBigImage:    e.ChildAttr("meta[property='og:image']", "content"),
 			OGBigWidth:    e.ChildAttr("meta[property='og:image:width']", "content"),
@@ -89,7 +88,6 @@ func (cc CollyClient) VisitScrapeOG(url string) (meta *types.MetaDescription, er
 			OGSmallWidth:  e.ChildAttr("meta[property='og:image:secure_url:width']", "content"),
 			OGSmallHeight: e.ChildAttr("meta[property='og:image:secure_url:height']", "content"),
 			OGCard:        e.ChildAttr("meta[property='twitter:card']", "content"),
-			OGSite:        e.ChildAttr("meta[property='twitter:site']", "content"),
 			OGType:        e.ChildAttr("meta[property='twitter:type']", "content"),
 			OGCreator:     e.ChildAttr("meta[property='twitter:creator']", "content"),
 		}

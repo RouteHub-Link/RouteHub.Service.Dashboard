@@ -34,7 +34,6 @@ type MetaDescription struct {
 	OGDescription string
 	OGURL         string
 	OGSiteName    string
-	OGMetaType    string
 	OGLocale      string
 	OGBigImage    string
 	OGBigWidth    string
@@ -43,7 +42,6 @@ type MetaDescription struct {
 	OGSmallWidth  string
 	OGSmallHeight string
 	OGCard        string
-	OGSite        string
 	OGType        string
 	OGCreator     string
 }

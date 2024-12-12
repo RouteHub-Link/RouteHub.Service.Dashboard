@@ -11,6 +11,7 @@ module.exports = {
     './web/templates/components/**/*.{js,jsx,ts,tsx,templ,go,txt}',
     './web/templates/components/**/**/*.{js,jsx,ts,tsx,templ,go,txt}',
     './web/public/**/*.{js,jsx,ts,tsx,templ,go,txt}',
+    '/web/templates/pages/partial/*.{js,jsx,ts,tsx,templ,go,txt}',
     './node_modules/preline/dist/*.js',],
   theme: {
     extend: {},

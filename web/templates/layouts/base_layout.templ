@@ -10,17 +10,17 @@ templ Main(pd PageDescription) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
   <link rel="stylesheet" href="/static/css/output.css" />
   <title>RouteHUB</title>
 
   <script src="https://unpkg.com/@popperjs/core@2"></script>
-
   <script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>
-
   <script type="module" src="https://cdn.jsdelivr.net/npm/zero-md@3?register"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
+  
   <script src="/static/js/feedback-events.js"></script>
+  <script src="/static/js/file-upload.js"></script>
 
   if pd.AdditionalHead != nil {
     @pd.GetAdditionalHead()

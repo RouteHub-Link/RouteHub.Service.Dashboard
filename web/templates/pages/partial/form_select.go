@@ -28,3 +28,13 @@ func (sos SelectOptions) Select(value string) SelectOptions {
 	return sos
 
 }
+
+func (sos SelectOptions) SelectedAny() bool {
+	for _, so := range sos {
+		if so.Selected {
+			return true
+		}
+	}
+
+	return false
+}

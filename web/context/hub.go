@@ -39,10 +39,9 @@ func getHubFromSlug(c echo.Context, ent *ent.Client) (*ent.Hub, error) {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid hub slug")
 	}
 
-	query := ent.Hub.Query().WithDomain().WithLinks().
-		Where(entHub.Slug(hubSlug))
+	hub, err := ent.Hub.Query().WithDomain().
+		Where(entHub.Slug(hubSlug)).Only(c.Request().Context())
 
-	hub, err := query.WithDomain().Only(c.Request().Context())
 	if err != nil {
 		return nil, err
 	}

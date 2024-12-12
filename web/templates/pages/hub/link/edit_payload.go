@@ -1,10 +1,13 @@
 package link
 
 import (
+	"strings"
+
 	"RouteHub.Service.Dashboard/ent"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"RouteHub.Service.Dashboard/web/extensions"
+	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"github.com/labstack/echo/v4"
 )
 
@@ -64,23 +67,38 @@ func (p *EditPayload) UpdateModel(link *ent.Link) {
 	p.MetaDescription.UpdateModel(link.LinkContent.MetaDescription)
 }
 
+// templates\layouts\components\meta.templ Edit this file after the fields
+// https://developer.x.com/en/docs/x-for-websites/cards/overview/markup
+// https://ogp.me
 type MetaDescriptionPayload struct {
-	Title         string `json:"title" form:"title"`
-	Description   string `json:"description" form:"description"`
-	FavIcon       string `json:"favicon" form:"favicon"`
-	Locale        string `json:"locale" form:"locale"`
-	OGTitle       string `json:"og_title" form:"og_title"`
+	Title       string `json:"title" form:"title"`
+	FavIcon     string `json:"favicon" form:"favicon"`
+	Description string `json:"description" form:"description"`
+
+	// og:description, twitter:description
 	OGDescription string `json:"og_description" form:"og_description"`
-	OGURL         string `json:"og_url" form:"og_url"`
-	OGSiteName    string `json:"og_site_name" form:"og_site_name"`
-	OGMetaType    string `json:"og_meta_type" form:"og_meta_type"`
-	OGLocale      string `json:"og_locale" form:"og_locale"`
-	OGBigImage    string `json:"og_big_image" form:"og_big_image"`
-	OGSmallImage  string `json:"og_small_image" form:"og_small_image"`
-	OGCard        string `json:"og_card" form:"og_card"`
-	OGSite        string `json:"og_site" form:"og_site"`
 	OGType        string `json:"og_type" form:"og_type"`
-	OGCreator     string `json:"og_creator" form:"og_creator"`
+
+	// og:url, twitter:url
+	OGURL string `json:"og_url" form:"og_url"`
+	// og:title, twitter:title
+	OGTitle string `json:"og_title" form:"og_title"`
+
+	OGBigImage   string `json:"og_big_image" form:"og_big_image"`
+	OGSmallImage string `json:"og_small_image" form:"og_small_image"`
+
+	Locale     string `json:"locale" form:"locale"`
+	OGSiteName string `json:"og_site_name" form:"og_site_name"`
+	OGLocale   string `json:"og_locale" form:"og_locale"`
+	// twitter:card
+	OGCard string `json:"og_card" form:"og_card"`
+	/*
+		twitter:creator
+		@username of content creator
+
+		Used with summary_large_image cards
+	*/
+	OGCreator string `json:"og_creator" form:"og_creator"`
 }
 
 func (mdp *MetaDescriptionPayload) FromModel(linkMeta *types.MetaDescription) {
@@ -93,12 +111,10 @@ func (mdp *MetaDescriptionPayload) FromModel(linkMeta *types.MetaDescription) {
 		mdp.OGDescription = linkMeta.OGDescription
 		mdp.OGURL = linkMeta.OGURL
 		mdp.OGSiteName = linkMeta.OGSiteName
-		mdp.OGMetaType = linkMeta.OGMetaType
 		mdp.OGLocale = linkMeta.OGLocale
 		mdp.OGBigImage = linkMeta.OGBigImage
 		mdp.OGSmallImage = linkMeta.OGSmallImage
 		mdp.OGCard = linkMeta.OGCard
-		mdp.OGSite = linkMeta.OGSite
 		mdp.OGType = linkMeta.OGType
 		mdp.OGCreator = linkMeta.OGCreator
 	}
@@ -117,12 +133,10 @@ func (mdp *MetaDescriptionPayload) UpdateModel(linkMeta *types.MetaDescription) 
 	linkMeta.OGDescription = mdp.OGDescription
 	linkMeta.OGURL = mdp.OGURL
 	linkMeta.OGSiteName = mdp.OGSiteName
-	linkMeta.OGMetaType = mdp.OGMetaType
 	linkMeta.OGLocale = mdp.OGLocale
 	linkMeta.OGBigImage = mdp.OGBigImage
 	linkMeta.OGSmallImage = mdp.OGSmallImage
 	linkMeta.OGCard = mdp.OGCard
-	linkMeta.OGSite = mdp.OGSite
 	linkMeta.OGType = mdp.OGType
 	linkMeta.OGCreator = mdp.OGCreator
 }
@@ -132,4 +146,34 @@ func (mdp *MetaDescriptionPayload) AsModel() *types.MetaDescription {
 	mdp.UpdateModel(linkMeta)
 
 	return linkMeta
+}
+
+func OGURLOptions(selected string, ep EditPayload, hub *ent.Hub) partial.SelectOptions {
+	pathLink := strings.Join([]string{hub.Edges.Domain.URL, ep.Path}, "/")
+	optionsArray := []partial.SelectOption{
+		{Value: "target", Label: strings.Join([]string{"Target", ep.Target}, " : ")},
+		{Value: "path", Label: strings.Join([]string{"Path", pathLink}, " : ")},
+	}
+
+	if selected == "" {
+		selected = "target"
+	}
+
+	options := partial.NewSelectOptions(optionsArray)
+	options.Select(selected)
+
+	return options
+}
+
+func OGTwitterCardOptions(selected string) partial.SelectOptions {
+	if selected == "" {
+		selected = "summary_large_image"
+	}
+
+	return partial.NewSelectOptions([]partial.SelectOption{
+		{Value: "summary", Label: "Summary"},
+		{Value: "summary_large_image", Label: "Summary Large Image"},
+		{Value: "app", Label: "App"},
+		{Value: "player", Label: "Player"},
+	}).Select(selected)
 }

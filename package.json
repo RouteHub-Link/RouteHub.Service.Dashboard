@@ -3,8 +3,11 @@
     "@popperjs/core": "^2.11.8",
     "@preline/collapse": "^2.5.0",
     "@preline/dropdown": "^2.5.0",
-    "@preline/theme-switch": "^2.5.0",
+    "@preline/file-upload": "^2.6.0",
+    "@preline/select": "^2.6.0",
     "@preline/tooltip": "^2.5.0",
+    "dropzone": "^6.0.0-beta.2",
+    "lodash": "^4.17.21",
     "preline": "^2.5.1"
   },
   "devDependencies": {
