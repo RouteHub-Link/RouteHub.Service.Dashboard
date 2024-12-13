@@ -1,7 +1,5 @@
 package types
 
-import "encoding/json"
-
 type LinkContent struct {
 	Title              string
 	Subtitle           string
@@ -11,18 +9,6 @@ type LinkContent struct {
 	MetaDescription    *MetaDescription
 	AdditionalHead     *string
 	AdditionalFooter   *string
-}
-
-func (lc LinkContent) UnmarshalJSON(data []byte) error {
-	type Alias LinkContent
-	aux := &struct {
-		*Alias
-	}{
-		Alias: (*Alias)(&lc),
-	}
-	err := json.Unmarshal(data, &aux)
-
-	return err
 }
 
 type MetaDescription struct {
@@ -44,16 +30,4 @@ type MetaDescription struct {
 	OGCard        string
 	OGType        string
 	OGCreator     string
-}
-
-func (og *MetaDescription) ParseFromJSON(jsonOpenGraph string) {
-	json.Unmarshal([]byte(jsonOpenGraph), &og)
-}
-
-func (og *MetaDescription) AsJSON() (string, error) {
-	jsonOpengraph, err := json.Marshal(og)
-	if err != nil {
-		return "", err
-	}
-	return string(jsonOpengraph), nil
 }

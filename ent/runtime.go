@@ -12,6 +12,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
+	"RouteHub.Service.Dashboard/ent/schema/types"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -77,6 +78,10 @@ func init() {
 	linkDescPath := linkFields[1].Descriptor()
 	// link.PathValidator is a validator for the "path" field. It is called by the builders before save.
 	link.PathValidator = linkDescPath.Validators[0].(func(string) error)
+	// linkDescLinkContent is the schema descriptor for link_content field.
+	linkDescLinkContent := linkFields[2].Descriptor()
+	// link.DefaultLinkContent holds the default value on creation for the link_content field.
+	link.DefaultLinkContent = linkDescLinkContent.Default.(*types.LinkContent)
 	// linkDescCreatedAt is the schema descriptor for created_at field.
 	linkDescCreatedAt := linkFields[5].Descriptor()
 	// link.DefaultCreatedAt holds the default value on creation for the created_at field.

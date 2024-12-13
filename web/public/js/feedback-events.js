@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
     HSOverlay.close(document.getElementById("hs-modal"));
   })
 
+  document.body.addEventListener("preline-refresh", function (evt) {
+    window.HSStaticMethods.autoInit();
+  })
+
 
   document.body.addEventListener("toast", function (evt) {
 
@@ -56,3 +60,5 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // document.body.dispatchEvent(new Event("toast"));
+
+

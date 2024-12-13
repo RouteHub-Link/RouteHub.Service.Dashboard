@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 
 	"RouteHub.Service.Dashboard/ent/schema/types"
+	"RouteHub.Service.Dashboard/web/utils"
 	"github.com/RouteHub-Link/DomainUtils/validator"
 	"github.com/gocolly/colly/v2"
 )
@@ -95,12 +96,7 @@ func (cc CollyClient) VisitScrapeOG(url string) (meta *types.MetaDescription, er
 
 	// download favicon
 	c.OnResponse(func(r *colly.Response) {
-		// download favicon & images
-		if r.Headers.Get("Content-Type") == "image/x-icon" ||
-			r.Headers.Get("Content-Type") == "image/png" ||
-			r.Headers.Get("Content-Type") == "image/jpeg" ||
-			r.Headers.Get("Content-Type") == "image/jpg" ||
-			r.Headers.Get("Content-Type") == "image/gif" {
+		if isImage, err := utils.CheckHeaderIsImage(r.Headers.Get("Content-Type")); err == nil && isImage {
 			// check file size
 			if len(r.Body) < cc.MaxImageSizeInBytes {
 				fileName := r.FileName()
@@ -116,7 +112,7 @@ func (cc CollyClient) VisitScrapeOG(url string) (meta *types.MetaDescription, er
 		return nil, err
 	}
 
-	transformMetaImages(meta, cc, images)
+	//transformMetaImages(meta, cc, images)
 
 	return
 }

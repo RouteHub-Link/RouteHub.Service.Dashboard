@@ -11,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type EditPayload struct {
+type EditLinkPayload struct {
 	Target             string                  `json:"target_address" form:"target_address" validate:"required,url"`
 	Path               string                  `json:"path" form:"path" validate:"required"`
 	Title              string                  `json:"title" form:"title"`
@@ -22,14 +22,13 @@ type EditPayload struct {
 	RedirectionDelay   *int                    `json:"redirection_delay" form:"redirection_delay"`
 	AdditionalHead     *string                 `json:"additional_head" form:"additional_head"`
 	AdditionalFooter   *string                 `json:"additional_foot" form:"additional_foot"`
-	MetaDescription    MetaDescriptionPayload  `json:"meta_description" form:"meta_description"`
 }
 
-func (p *EditPayload) Validate(c echo.Context) error {
+func (p *EditLinkPayload) Validate(c echo.Context) error {
 	return extensions.BindAndValidate(c, p)
 }
 
-func (p *EditPayload) FromModel(link *ent.Link) {
+func (p *EditLinkPayload) FromModel(link *ent.Link) {
 	p.Target = link.Target
 	p.Path = link.Path
 	p.Title = link.LinkContent.Title
@@ -42,14 +41,9 @@ func (p *EditPayload) FromModel(link *ent.Link) {
 
 	p.AdditionalHead = link.LinkContent.AdditionalHead
 	p.AdditionalFooter = link.LinkContent.AdditionalFooter
-
-	linkMeta := link.LinkContent.MetaDescription
-	if linkMeta != nil {
-		p.MetaDescription.FromModel(linkMeta)
-	}
 }
 
-func (p *EditPayload) UpdateModel(link *ent.Link) {
+func (p *EditLinkPayload) UpdateModel(link *ent.Link) {
 	link.Target = p.Target
 	link.Path = p.Path
 
@@ -63,45 +57,43 @@ func (p *EditPayload) UpdateModel(link *ent.Link) {
 
 	link.LinkContent.AdditionalHead = p.AdditionalHead
 	link.LinkContent.AdditionalFooter = p.AdditionalFooter
-
-	p.MetaDescription.UpdateModel(link.LinkContent.MetaDescription)
 }
 
 // templates\layouts\components\meta.templ Edit this file after the fields
 // https://developer.x.com/en/docs/x-for-websites/cards/overview/markup
 // https://ogp.me
-type MetaDescriptionPayload struct {
-	Title       string `json:"title" form:"title"`
-	FavIcon     string `json:"favicon" form:"favicon"`
-	Description string `json:"description" form:"description"`
+type EditLinkMetaDescriptionPayload struct {
+	Title       string `json:"meta_description_title" form:"meta_description_title"`
+	FavIcon     string `json:"meta_description_favicon" form:"meta_description_favicon"`
+	Description string `json:"meta_description_description" form:"meta_description_description"`
 
 	// og:description, twitter:description
-	OGDescription string `json:"og_description" form:"og_description"`
-	OGType        string `json:"og_type" form:"og_type"`
+	OGDescription string `json:"meta_description_og_description" form:"meta_description_og_description"`
+	OGType        string `json:"meta_description_og_type" form:"meta_description_og_type"`
 
 	// og:url, twitter:url
-	OGURL string `json:"og_url" form:"og_url"`
+	OGURL string `json:"meta_description_og_url" form:"meta_description_og_url"`
 	// og:title, twitter:title
-	OGTitle string `json:"og_title" form:"og_title"`
+	OGTitle string `json:"meta_description_og_title" form:"meta_description_og_title"`
 
-	OGBigImage   string `json:"og_big_image" form:"og_big_image"`
-	OGSmallImage string `json:"og_small_image" form:"og_small_image"`
+	OGBigImage   string `json:"meta_description_og_big_image" form:"meta_description_og_big_image"`
+	OGSmallImage string `json:"meta_description_og_small_image" form:"meta_description_og_small_image"`
 
-	Locale     string `json:"locale" form:"locale"`
-	OGSiteName string `json:"og_site_name" form:"og_site_name"`
-	OGLocale   string `json:"og_locale" form:"og_locale"`
+	Locale     string `json:"meta_description_locale" form:"meta_description_locale"`
+	OGSiteName string `json:"meta_description_og_site_name" form:"meta_description_og_site_name"`
+	OGLocale   string `json:"meta_description_og_locale" form:"meta_description_og_locale"`
 	// twitter:card
-	OGCard string `json:"og_card" form:"og_card"`
+	OGCard string `json:"meta_description_og_card" form:"meta_description_og_card"`
 	/*
 		twitter:creator
 		@username of content creator
 
 		Used with summary_large_image cards
 	*/
-	OGCreator string `json:"og_creator" form:"og_creator"`
+	OGCreator string `json:"meta_description_og_creator" form:"meta_description_og_creator"`
 }
 
-func (mdp *MetaDescriptionPayload) FromModel(linkMeta *types.MetaDescription) {
+func (mdp *EditLinkMetaDescriptionPayload) FromModel(linkMeta *types.MetaDescription) {
 	if linkMeta != nil {
 		mdp.Title = linkMeta.Title
 		mdp.Description = linkMeta.Description
@@ -120,7 +112,7 @@ func (mdp *MetaDescriptionPayload) FromModel(linkMeta *types.MetaDescription) {
 	}
 }
 
-func (mdp *MetaDescriptionPayload) UpdateModel(linkMeta *types.MetaDescription) {
+func (mdp *EditLinkMetaDescriptionPayload) UpdateModel(linkMeta *types.MetaDescription) {
 	if linkMeta == nil {
 		linkMeta = new(types.MetaDescription)
 	}
@@ -141,14 +133,14 @@ func (mdp *MetaDescriptionPayload) UpdateModel(linkMeta *types.MetaDescription) 
 	linkMeta.OGCreator = mdp.OGCreator
 }
 
-func (mdp *MetaDescriptionPayload) AsModel() *types.MetaDescription {
+func (mdp *EditLinkMetaDescriptionPayload) AsModel() *types.MetaDescription {
 	linkMeta := new(types.MetaDescription)
 	mdp.UpdateModel(linkMeta)
 
 	return linkMeta
 }
 
-func OGURLOptions(selected string, ep EditPayload, hub *ent.Hub) partial.SelectOptions {
+func OGURLOptions(selected string, ep EditLinkPayload, hub *ent.Hub) partial.SelectOptions {
 	pathLink := strings.Join([]string{hub.Edges.Domain.URL, ep.Path}, "/")
 	optionsArray := []partial.SelectOption{
 		{Value: "target", Label: strings.Join([]string{"Target", ep.Target}, " : ")},

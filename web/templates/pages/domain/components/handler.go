@@ -77,7 +77,7 @@ func (h Handlers) DomainCreatePost(c echo.Context) error {
 	feedback := partial.FormFeedback("success", nil, &message)
 
 	extensions.HTMXAppendTrigger(c, "newDomain, close-modal")
-	extensions.HTMXAppendToast(c, message)
+	extensions.HTMXAppendSuccessToast(c, message)
 
 	return extensions.Render(c, http.StatusOK, CreateDomain(feedback, false))
 }

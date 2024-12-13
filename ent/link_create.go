@@ -37,16 +37,8 @@ func (lc *LinkCreate) SetPath(s string) *LinkCreate {
 }
 
 // SetLinkContent sets the "link_content" field.
-func (lc *LinkCreate) SetLinkContent(tc types.LinkContent) *LinkCreate {
+func (lc *LinkCreate) SetLinkContent(tc *types.LinkContent) *LinkCreate {
 	lc.mutation.SetLinkContent(tc)
-	return lc
-}
-
-// SetNillableLinkContent sets the "link_content" field if the given value is not nil.
-func (lc *LinkCreate) SetNillableLinkContent(tc *types.LinkContent) *LinkCreate {
-	if tc != nil {
-		lc.SetLinkContent(*tc)
-	}
 	return lc
 }
 
@@ -136,6 +128,10 @@ func (lc *LinkCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (lc *LinkCreate) defaults() {
+	if _, ok := lc.mutation.LinkContent(); !ok {
+		v := link.DefaultLinkContent
+		lc.mutation.SetLinkContent(v)
+	}
 	if _, ok := lc.mutation.CreatedAt(); !ok {
 		v := link.DefaultCreatedAt()
 		lc.mutation.SetCreatedAt(v)

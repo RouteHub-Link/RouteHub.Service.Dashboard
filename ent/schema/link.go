@@ -37,7 +37,8 @@ func (Link) Fields() []ent.Field {
 			NotEmpty().
 			Unique(),
 
-		field.JSON("link_content", types.LinkContent{}).
+		field.JSON("link_content", &types.LinkContent{}).
+			Default(&types.LinkContent{}).
 			Optional().
 			Annotations(entgql.Type("LinkContent")),
 

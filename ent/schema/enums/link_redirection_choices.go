@@ -37,3 +37,19 @@ func (r RedirectionChoice) HumanizeAll() []string {
 		RedirectionChoiceCustom.Humanize(),
 	}
 }
+
+func (r RedirectionChoice) HumanizeWithValue() []struct {
+	Value int
+	Label string
+} {
+	return []struct {
+		Value int
+		Label string
+	}{
+		{int(RedirectionChoiceTimed), RedirectionChoiceTimed.Humanize()},
+		{int(RedirectionChoiceNotAuto), RedirectionChoiceNotAuto.Humanize()},
+		{int(RedirectionChoiceDirectHTTP), RedirectionChoiceDirectHTTP.Humanize()},
+		{int(RedirectionChoiceConfirm), RedirectionChoiceConfirm.Humanize()},
+		{int(RedirectionChoiceCustom), RedirectionChoiceCustom.Humanize()},
+	}
+}

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"time"
 
 	"RouteHub.Service.Dashboard/ent"
 	entLink "RouteHub.Service.Dashboard/ent/link"
@@ -108,7 +109,7 @@ func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
 			MetaDescription: scraped,
 			Title:           scraped.Title,
 		}
-		createQuery.SetLinkContent(linkContent)
+		createQuery.SetLinkContent(&linkContent)
 	}
 
 	link, err := createQuery.Save(c.Request().Context())
@@ -120,11 +121,11 @@ func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, components.CreateLink(hub.Slug, linkCreateRequest.Slug, feedback, true))
 	}
 
-	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/hubs/%s/links/%s", hub.Slug, link.Path))
+	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/hub/%s/links/%s", hub.Slug, link.Path))
 	return nil
 }
 
-func (h Handlers) HubLinkEditHandler(c echo.Context) error {
+func (h Handlers) HubLinkEditGetHandler(c echo.Context) error {
 	linkPath := c.Param("path")
 	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
 	if err != nil {
@@ -135,8 +136,88 @@ func (h Handlers) HubLinkEditHandler(c echo.Context) error {
 	userInfo, _ := context.GetUserFromContext(c)
 	hub, _ := context.GetHubFromContext(c)
 
-	hubLinkPaylod := new(EditPayload)
+	hubLinkPaylod := new(EditLinkPayload)
 	hubLinkPaylod.FromModel(link)
 
-	return extensions.Render(c, http.StatusOK, edit(userInfo, hub, *hubLinkPaylod))
+	hubLinkMetaPayload := new(EditLinkMetaDescriptionPayload)
+	hubLinkMetaPayload.FromModel(link.LinkContent.MetaDescription)
+
+	return extensions.Render(c, http.StatusOK, edit(userInfo, hub, link, *hubLinkPaylod, *hubLinkMetaPayload))
+}
+
+func (h Handlers) HubLinkEditPostHandler(c echo.Context) error {
+	linkPath := c.Param("path")
+	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
+
+	if err != nil {
+		h.Logger.Error("Error fetching link", "error", err)
+		return c.Redirect(http.StatusFound, "/links")
+	}
+
+	LinkUpdatePayload := new(EditLinkPayload)
+	MetaPayload := new(EditLinkMetaDescriptionPayload)
+
+	hub, _ := context.GetHubFromContext(c)
+
+	if err := extensions.BindAndValidate(c, LinkUpdatePayload); err != nil {
+		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
+		feedback := partial.FormFeedback("error", nil, &msg)
+		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
+	}
+
+	if err := extensions.BindAndValidate(c, MetaPayload); err != nil {
+		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
+		feedback := partial.FormFeedback("error", nil, &msg)
+		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
+	}
+
+	isPathChanged := linkPath != LinkUpdatePayload.Path
+
+	timeStamp := time.Now().Unix()
+	favIconName := fmt.Sprintf("favicon_%d", timeStamp)
+
+	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.FavIcon, "meta_description_favicon", "links", "images", favIconName); err != nil {
+		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
+		feedback := partial.FormFeedback("error", nil, &msg)
+		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
+	}
+
+	ogImageName := fmt.Sprintf("og_image_%d", timeStamp)
+
+	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGBigImage, "meta_description_og_big_image", "links", "images", ogImageName); err != nil {
+		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
+		feedback := partial.FormFeedback("error", nil, &msg)
+		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
+	}
+
+	LinkUpdatePayload.UpdateModel(link)
+	if link.LinkContent.MetaDescription == nil {
+		link.LinkContent.MetaDescription = &types.MetaDescription{}
+	}
+
+	MetaPayload.UpdateModel(link.LinkContent.MetaDescription)
+
+	link, err = h.Ent.Link.UpdateOne(link).
+		SetLinkContent(link.LinkContent).
+		Save(c.Request().Context())
+
+	if err != nil {
+		h.Logger.Error("Error updating link", "error", err)
+		msg := strings.Join([]string{"Error Updating Link", err.Error()}, " ")
+		feedback := partial.FormFeedback("error", nil, &msg)
+		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
+	}
+
+	if isPathChanged {
+		// HX-Replace-Url
+		c.Response().Header().Set("HX-Replace-Url", fmt.Sprintf("/hubs/%s/links/%s", hub.Slug, link.Path))
+	}
+
+	extensions.HTMXAppendSuccessToast(c, "Link Updated Successfully")
+	extensions.HTMXAppendPrelineRefresh(c)
+
+	LinkUpdatePayload.FromModel(link)
+	MetaPayload.FromModel(link.LinkContent.MetaDescription)
+
+	return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, nil))
 }

@@ -4,17 +4,18 @@ import "github.com/zitadel/oidc/v3/pkg/oidc"
 import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
 import "RouteHub.Service.Dashboard/web/templates/pages/partial"
 import "RouteHub.Service.Dashboard/web/utils"
+import "fmt"
 
 
-templ edit(userInfo *oidc.UserInfo,hub *ent.Hub, payload EditPayload) {
+templ edit(userInfo *oidc.UserInfo,hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) {
 @layouts.Main(layouts.PageDescription{
-MainContent: editPage(hub,payload),
+MainContent: editPage(hub, link, payload, metaPayload),
 UserInfo: userInfo,
 Hub: hub,
 })
 }
 
-templ editPage(hub *ent.Hub,payload EditPayload) {
+templ editPage(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) {
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
     <div class="flex flex-col">
         <div class="-m-1.5 overflow-x-auto">
@@ -31,11 +32,13 @@ templ editPage(hub *ent.Hub,payload EditPayload) {
                             <p class="text-sm text-gray-600 dark:text-neutral-400">
                                 Edit the short link details.
                             </p>
+                  
                         </div>
                     </div>
                     <!-- End Header -->
-
-                    @editForm(hub,payload)
+                    <div class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 px-8 py-4">
+                        @editForm(hub, link, payload,metaPayload,nil)
+                    </div>
 
                 </div>
             </div>
@@ -44,25 +47,38 @@ templ editPage(hub *ent.Hub,payload EditPayload) {
 </div>
 }
 
-templ editForm(hub *ent.Hub,payload EditPayload) {
-<div class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 px-8 py-4">
-    <form method="post" action="/" enctype="multipart/form-data">
+templ editForm(hub *ent.Hub, link *ent.Link, payload EditLinkPayload,metaPayload EditLinkMetaDescriptionPayload, feedback templ.Component) {
+    <form hx-post={fmt.Sprintf("/hub/%s/links/%s", hub.Slug, link.Path)} enctype="multipart/form-data" hx-indicator="#spinner" hx-swap="outerHTML">
+        if feedback != nil {
+            @feedback
+        }
+
         @shortLinkFields(payload)
 
         @pageFields(payload)
 
-        @metaDescriptionFields(hub, payload)
+        @metaDescriptionFields(hub, payload, metaPayload)
+
+        <div class="mt-5 flex justify-end gap-x-2">
+            <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+            Save changes
+              <div class="htmx-indicator" id="spinner">
+                <div class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500" role="status" aria-label="loading">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            </button>
+        </div>
+
     </form>
-</div>
 }
 
-templ shortLinkFields(payload EditPayload) {
+templ shortLinkFields(payload EditLinkPayload) {
 <div
     class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4">
     Link Details</div>
 
 <div class="grid gap-4 lg:gap-6">
-
     <!-- Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
         <div>
@@ -105,7 +121,7 @@ templ shortLinkFields(payload EditPayload) {
 </div>
 }
 
-templ pageFields(payload EditPayload) {
+templ pageFields(payload EditLinkPayload) {
 <div
     class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4">
     Page Options</div>
@@ -134,7 +150,7 @@ templ pageFields(payload EditPayload) {
                 </div>
 
             </div>
-            <input type="text" name="title" required placeholder="Wrote title about your page." value={payload.Title}
+            <input type="text" name="title" placeholder="Wrote title about your page." value={payload.Title}
                 aria-describedby="title"
                 class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
         </div>
@@ -199,7 +215,7 @@ templ pageFields(payload EditPayload) {
 </div>
 }
 
-templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
+templ metaDescriptionFields(hub *ent.Hub, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) {
 <div
     class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4">
     SEO Fields</div>
@@ -208,11 +224,11 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
         <div>
-          @partial.SimpleFileUploader("meta_description_favicon", payload.MetaDescription.FavIcon, "Fav Icon", "Upload a Favicon", "Please upload a favicon under 2mb.")
+          @partial.SimpleFileUploader("meta_description_favicon", metaPayload.FavIcon, "Fav Icon", "Upload a Favicon", "Please upload a favicon under 2mb.")
         </div>
 
         <div>
-            @partial.SimpleFileUploader("meta_description_og_big_image", payload.MetaDescription.OGBigImage, "OG Image", "Upload a OG Image", "Please upload a OG Image under 10mb.")
+            @partial.SimpleFileUploader("meta_description_og_big_image", metaPayload.OGBigImage, "OG Image", "Upload a OG Image", "Please upload a OG Image under 10mb.")
         </div>
     </div>
 
@@ -221,18 +237,18 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
         <div>
             <label for="meta_description_title"
                 class="block mb-2 text-sm text-gray-700 font-medium dark:text-white">Meta Title</label>
-            <input type="text" name="meta_description_title" required
+            <input type="text" name="meta_description_title"
                 placeholder="This will be visible at tab and SEO Crawlers as Page Title."
-                value={payload.MetaDescription.Title} aria-describedby="meta_description_title"
+                value={metaPayload.Title} aria-describedby="meta_description_title"
                 class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
         </div>
 
         <div>
             <label for="meta_description_og_title"
                 class="block mb-2 text-sm text-gray-700 font-medium dark:text-white">OG Title</label>
-            <input type="text" name="meta_description_og_title" required
+            <input type="text" name="meta_description_og_title"
                 placeholder="This will be crawled as OpenGraph Title when placed link the some other platform."
-                value={payload.MetaDescription.OGTitle} aria-describedby="meta_description_og_title"
+                value={metaPayload.OGTitle} aria-describedby="meta_description_og_title"
                 class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
         </div>
     </div>
@@ -244,7 +260,7 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
             <textarea name="meta_description_description" aria-describedby="meta_description_description"
                 class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                 rows="3"
-                placeholder="This will be crawled by bots as Page Description Meta Data.">{payload.MetaDescription.Description}</textarea>
+                placeholder="This will be crawled by bots as Page Description Meta Data.">{metaPayload.Description}</textarea>
         </div>
 
         <div>
@@ -253,7 +269,7 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
             <textarea name="meta_description_og_description" aria-describedby="meta_description_og_description"
                 class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                 rows="3"
-                placeholder="This will be crawled by bots as OpenGraph Description usefull for link placement.">{payload.MetaDescription.OGDescription}</textarea>
+                placeholder="This will be crawled by bots as OpenGraph Description usefull for link placement.">{metaPayload.OGDescription}</textarea>
         </div>
     </div>
 
@@ -261,7 +277,7 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
         <div>
             <label for="meta_description_og_type"
                 class="block mb-2 text-sm text-gray-700 font-medium dark:text-white">Type</label>
-            @partial.FormSelect(OGTypeOptions(payload.MetaDescription.AsModel()),"meta_description_og_type")
+            @partial.FormSelect(OGTypeOptions(metaPayload.AsModel()),"meta_description_og_type")
         </div>
 
         <div>
@@ -286,7 +302,7 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
                 </div>
             </div>
 
-            <input type="text" name="meta_description_og_site_name" required value={payload.MetaDescription.OGSiteName}
+            <input type="text" name="meta_description_og_site_name" value={metaPayload.OGSiteName}
                 aria-describedby="meta_description_og_site_name"
                 class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
 
@@ -297,13 +313,13 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
         <div>
             <label for="meta_description_og_url" class="block mb-2 text-sm text-gray-700 font-medium dark:text-white">OG
                 URL</label>
-            @partial.FormSelect(OGURLOptions(payload.MetaDescription.OGURL, payload, hub),"meta_description_og_url")
+            @partial.FormSelect(OGURLOptions(metaPayload.OGURL, payload, hub),"meta_description_og_url")
         </div>
 
         <div>
             <label for="meta_description_locale"
                 class="block mb-2 text-sm text-gray-700 font-medium dark:text-white">Locale</label>
-            @partial.FormSelectWithSearch(utils.LocaleOptions(payload.MetaDescription.Locale),"meta_description_locale","Select an Locale")
+            @partial.FormSelectWithSearch(utils.LocaleOptions(metaPayload.Locale),"meta_description_locale","Select an Locale")
         </div>
     </div>
 
@@ -329,7 +345,7 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
                 </div>
             </div>
 
-            @partial.FormSelect(OGTwitterCardOptions(payload.MetaDescription.OGCard),"meta_description_og_cad")
+            @partial.FormSelect(OGTwitterCardOptions(metaPayload.OGCard),"meta_description_og_cad")
 
         </div>
 
@@ -359,7 +375,7 @@ templ metaDescriptionFields(hub *ent.Hub,payload EditPayload) {
                 <div class="relative">
                     <input type="text" name="meta_description_og_creator" aria-describedby="meta_description_og_creator"
                         class="py-3 px-4 ps-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                        placeholder="yourusername" value={payload.MetaDescription.OGCreator}>
+                        placeholder="yourusername" value={metaPayload.OGCreator}>
                     <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480v58q0 59-40.5 100.5T740-280q-35 0-66-15t-52-43q-29 29-65.5 43.5T480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480v58q0 26 17 44t43 18q26 0 43-18t17-44v-58q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93h200v80H480Zm0-280q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/></svg>
                     </div>

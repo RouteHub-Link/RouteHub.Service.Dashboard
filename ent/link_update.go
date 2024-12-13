@@ -61,16 +61,8 @@ func (lu *LinkUpdate) SetNillablePath(s *string) *LinkUpdate {
 }
 
 // SetLinkContent sets the "link_content" field.
-func (lu *LinkUpdate) SetLinkContent(tc types.LinkContent) *LinkUpdate {
+func (lu *LinkUpdate) SetLinkContent(tc *types.LinkContent) *LinkUpdate {
 	lu.mutation.SetLinkContent(tc)
-	return lu
-}
-
-// SetNillableLinkContent sets the "link_content" field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableLinkContent(tc *types.LinkContent) *LinkUpdate {
-	if tc != nil {
-		lu.SetLinkContent(*tc)
-	}
 	return lu
 }
 
@@ -310,16 +302,8 @@ func (luo *LinkUpdateOne) SetNillablePath(s *string) *LinkUpdateOne {
 }
 
 // SetLinkContent sets the "link_content" field.
-func (luo *LinkUpdateOne) SetLinkContent(tc types.LinkContent) *LinkUpdateOne {
+func (luo *LinkUpdateOne) SetLinkContent(tc *types.LinkContent) *LinkUpdateOne {
 	luo.mutation.SetLinkContent(tc)
-	return luo
-}
-
-// SetNillableLinkContent sets the "link_content" field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableLinkContent(tc *types.LinkContent) *LinkUpdateOne {
-	if tc != nil {
-		luo.SetLinkContent(*tc)
-	}
 	return luo
 }
 

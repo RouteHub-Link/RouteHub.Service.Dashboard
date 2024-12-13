@@ -96,7 +96,7 @@ templ LinksTable(links []*ent.Link) {
 templ linkTableItem(link *ent.Link) {
 <tr class="bg-white hover:bg-gray-50 dark:bg-neutral-900 dark:hover:bg-neutral-800">
   <td class="size-px whitespace-nowrap">
-    <a class="block relative z-10" href={templ.URL(fmt.Sprintf("links/%s/",link.Path))}>
+    <a class="block relative z-10" href={templ.URL(fmt.Sprintf("links/%s",link.Path))}>
       <div class="px-6 py-2">
         <div class="block text-sm text-blue-600 decoration-2 hover:underline dark:text-blue-500">{link.Path}</div>
       </div>

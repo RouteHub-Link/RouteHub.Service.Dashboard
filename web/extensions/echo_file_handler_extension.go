@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"path/filepath"
 
+	"RouteHub.Service.Dashboard/features/fileUpload"
 	"github.com/labstack/echo/v4"
 )
 
@@ -15,7 +16,12 @@ func ProcessFile(ctx context.Context, filePart *multipart.FileHeader, bucket str
 		hasFile = true
 		favLink := FileBucketLocation(bucket, path, fileName)
 
-		uploadedPath, err := cr2Client.UploadFormFileThroughR2(ctx, *filePart, favLink)
+		s3ClientService, err := fileUpload.GetS3ClientService()
+		if err != nil {
+			return "", hasFile, err
+		}
+
+		uploadedPath, err := s3ClientService.UploadFormFileThroughS3(ctx, *filePart, favLink)
 		if err != nil {
 			return "", hasFile, err
 		}

@@ -14,20 +14,16 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-// s3 upload client initiliazation and filepart uploader
-
 var (
-	// s3 client
 	client             *s3.Client
 	once               sync.Once
 	ConfigurationError error
 )
 
-type S3ClientService struct {
-	configuration configuration.S3ClientConfig
-}
+type S3ClientService struct{ configuration configuration.S3ClientConfig }
 
-func ConfigureS3ClientService(cc configuration.S3ClientConfig) (service *S3ClientService, err error) {
+func GetS3ClientService() (service *S3ClientService, err error) {
+	cc := configuration.Get().S3Config
 	if isValid, err := cc.Validate(); !isValid {
 		return nil, err
 	}
@@ -54,7 +50,7 @@ func ConfigureS3ClientService(cc configuration.S3ClientConfig) (service *S3Clien
 
 		client = s3.NewFromConfig(cfg)
 		service = &S3ClientService{
-			configuration: cc,
+			configuration: *cc,
 		}
 	})
 
@@ -73,7 +69,7 @@ func (cs S3ClientService) GetClient() (*s3.Client, error) {
 	return client, nil
 }
 
-func (cs S3ClientService) UploadFormFileThroughR2(ctx context.Context, fileHeader multipart.FileHeader, objectPath string) (filePath string, err error) {
+func (cs S3ClientService) UploadFormFileThroughS3(ctx context.Context, fileHeader multipart.FileHeader, objectPath string) (filePath string, err error) {
 	client, err := cs.GetClient()
 
 	if err != nil {

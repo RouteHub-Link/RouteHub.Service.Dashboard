@@ -1498,7 +1498,7 @@ type LinkMutation struct {
 	id                 *mixin.ID
 	target             *string
 	_path              *string
-	link_content       *types.LinkContent
+	link_content       **types.LinkContent
 	status             *enums.StatusState
 	redirection_choice *enums.RedirectionChoice
 	created_at         *time.Time
@@ -1687,12 +1687,12 @@ func (m *LinkMutation) ResetPath() {
 }
 
 // SetLinkContent sets the "link_content" field.
-func (m *LinkMutation) SetLinkContent(tc types.LinkContent) {
+func (m *LinkMutation) SetLinkContent(tc *types.LinkContent) {
 	m.link_content = &tc
 }
 
 // LinkContent returns the value of the "link_content" field in the mutation.
-func (m *LinkMutation) LinkContent() (r types.LinkContent, exists bool) {
+func (m *LinkMutation) LinkContent() (r *types.LinkContent, exists bool) {
 	v := m.link_content
 	if v == nil {
 		return
@@ -1703,7 +1703,7 @@ func (m *LinkMutation) LinkContent() (r types.LinkContent, exists bool) {
 // OldLinkContent returns the old "link_content" field's value of the Link entity.
 // If the Link object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LinkMutation) OldLinkContent(ctx context.Context) (v types.LinkContent, err error) {
+func (m *LinkMutation) OldLinkContent(ctx context.Context) (v *types.LinkContent, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldLinkContent is only allowed on UpdateOne operations")
 	}
@@ -2000,7 +2000,7 @@ func (m *LinkMutation) SetField(name string, value ent.Value) error {
 		m.SetPath(v)
 		return nil
 	case link.FieldLinkContent:
-		v, ok := value.(types.LinkContent)
+		v, ok := value.(*types.LinkContent)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

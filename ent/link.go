@@ -27,7 +27,7 @@ type Link struct {
 	// Path holds the value of the "path" field.
 	Path string `json:"path,omitempty"`
 	// LinkContent holds the value of the "link_content" field.
-	LinkContent types.LinkContent `json:"link_content,omitempty"`
+	LinkContent *types.LinkContent `json:"link_content,omitempty"`
 	// Status holds the value of the "status" field.
 	Status enums.StatusState `json:"status,omitempty"`
 	// RedirectionChoice holds the value of the "redirection_choice" field.
