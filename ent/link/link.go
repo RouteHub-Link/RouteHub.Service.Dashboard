@@ -9,6 +9,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -75,7 +76,13 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "RouteHub.Service.Dashboard/ent/runtime"
 var (
+	Hooks [1]ent.Hook
 	// TargetValidator is a validator for the "target" field. It is called by the builders before save.
 	TargetValidator func(string) error
 	// PathValidator is a validator for the "path" field. It is called by the builders before save.

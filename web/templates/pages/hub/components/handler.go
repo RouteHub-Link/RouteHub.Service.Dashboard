@@ -62,7 +62,7 @@ func (h Handlers) AttachHubPost(c echo.Context) error {
 	address := c.FormValue("address")
 	name := c.FormValue("name")
 	slug := c.FormValue("slug")
-	domain_id := c.FormValue("domain_id")
+	domainID := c.FormValue("domain_id")
 
 	organization, err := context.GetOrganizationFromContext(c)
 
@@ -84,7 +84,7 @@ func (h Handlers) AttachHubPost(c echo.Context) error {
 	h.Logger.Info("MQTT Connection", "data", mqc.ClientID)
 
 	domain := From(domains).WhereT(func(d *ent.Domain) bool {
-		return d.ID == mixin.ID(domain_id)
+		return d.ID == mixin.ID(domainID)
 	}).First().(*ent.Domain)
 
 	if domain == nil {

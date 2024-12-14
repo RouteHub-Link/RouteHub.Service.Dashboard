@@ -10,6 +10,7 @@ import (
 
 	"RouteHub.Service.Dashboard/ent"
 	"RouteHub.Service.Dashboard/ent/migrate"
+	_ "RouteHub.Service.Dashboard/ent/runtime"
 	"RouteHub.Service.Dashboard/features"
 	"RouteHub.Service.Dashboard/features/auth"
 	"RouteHub.Service.Dashboard/features/configuration"

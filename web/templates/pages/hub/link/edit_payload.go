@@ -28,6 +28,14 @@ func (p *EditLinkPayload) Validate(c echo.Context) error {
 	return extensions.BindAndValidate(c, p)
 }
 
+func (p *EditLinkPayload) GetRedirectionDelay() int {
+	if p.RedirectionDelay == nil {
+		return 10
+	}
+
+	return *p.RedirectionDelay
+}
+
 func (p *EditLinkPayload) FromModel(link *ent.Link) {
 	p.Target = link.Target
 	p.Path = link.Path

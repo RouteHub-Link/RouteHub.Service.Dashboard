@@ -100,7 +100,9 @@ func (lc *LinkCreate) Mutation() *LinkMutation {
 
 // Save creates the Link in the database.
 func (lc *LinkCreate) Save(ctx context.Context) (*Link, error) {
-	lc.defaults()
+	if err := lc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, lc.sqlSave, lc.mutation, lc.hooks)
 }
 
@@ -127,19 +129,26 @@ func (lc *LinkCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (lc *LinkCreate) defaults() {
+func (lc *LinkCreate) defaults() error {
 	if _, ok := lc.mutation.LinkContent(); !ok {
 		v := link.DefaultLinkContent
 		lc.mutation.SetLinkContent(v)
 	}
 	if _, ok := lc.mutation.CreatedAt(); !ok {
+		if link.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized link.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := link.DefaultCreatedAt()
 		lc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := lc.mutation.ID(); !ok {
+		if link.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized link.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := link.DefaultID()
 		lc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

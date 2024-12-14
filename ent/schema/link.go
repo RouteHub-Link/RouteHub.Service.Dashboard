@@ -1,11 +1,16 @@
 package schema
 
 import (
+	"context"
+	"log"
 	"time"
 
+	gen "RouteHub.Service.Dashboard/ent"
+	"RouteHub.Service.Dashboard/ent/hook"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
+	"RouteHub.Service.Dashboard/features/hubConnection"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -68,4 +73,49 @@ func (Link) Edges() []ent.Edge {
 			Required().   // A Hub is required for a link
 			Annotations(entgql.RelayConnection()),
 	}
+}
+
+func (Link) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hook.On(
+			func(next ent.Mutator) ent.Mutator {
+				return linkMutatorWithMQTT(next)
+			},
+			ent.OpCreate|ent.OpUpdate|ent.OpUpdateOne|ent.OpDelete,
+		),
+	}
+}
+
+func linkMutatorWithMQTT(next ent.Mutator) ent.Mutator {
+	return hook.LinkFunc(func(ctx context.Context, m *gen.LinkMutation) (ent.Value, error) {
+		result, err := next.Mutate(ctx, m)
+		if err != nil {
+			return nil, err
+		}
+
+		link, _ := result.(*gen.Link)
+		link.Edges.Hub = link.QueryHub().OnlyX(ctx)
+		hub := link.Edges.Hub
+
+		mqttClient, err := hubConnection.NewMQTTPublisher(hub.TCPAddress)
+		if err != nil {
+			// log error
+			log.Printf("Error creating mqtt client: %v, TCPAddress:%s", err, hub.TCPAddress)
+			return nil, err
+		}
+
+		if m.Op() == ent.OpCreate || m.Op() == ent.OpUpdate || m.Op() == ent.OpUpdateOne {
+			err := mqttClient.PublishLinkSet(link)
+			if err != nil {
+				log.Printf("Error publishing link set: %v", err)
+			}
+		} else if m.Op() == ent.OpDelete {
+			err := mqttClient.PublishLinkDel(link)
+			if err != nil {
+				log.Printf("Error publishing link delete: %v", err)
+			}
+		}
+
+		return result, nil
+	})
 }

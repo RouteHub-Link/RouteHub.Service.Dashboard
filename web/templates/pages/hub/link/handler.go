@@ -42,7 +42,7 @@ func (h Handlers) HubLinksHandler(c echo.Context) error {
 		return c.Redirect(http.StatusForbidden, "/")
 	}
 
-	hub, err := context.GetHubFromContext(c)
+	hub, _ := context.GetHubFromContext(c)
 
 	links, err := h.Ent.Hub.QueryLinks(hub).All(c.Request().Context())
 
@@ -199,6 +199,10 @@ func (h Handlers) HubLinkEditPostHandler(c echo.Context) error {
 
 	link, err = h.Ent.Link.UpdateOne(link).
 		SetLinkContent(link.LinkContent).
+		SetPath(LinkUpdatePayload.Path).
+		SetTarget(LinkUpdatePayload.Target).
+		SetRedirectionChoice(LinkUpdatePayload.RedirectionChoice).
+		//SetStatus(LinkUpdatePayload.Status).
 		Save(c.Request().Context())
 
 	if err != nil {
