@@ -29,7 +29,6 @@ func GetS3ClientService() (service *S3ClientService, err error) {
 	}
 
 	once.Do(func() {
-
 		resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 			return aws.Endpoint{
 				URL: cc.DefaultEndpoint,

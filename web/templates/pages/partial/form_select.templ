@@ -1,19 +1,21 @@
 package partial
 
 templ FormSelect(so SelectOptions, name string) {
-<select name={name} class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
-    for _, option := range so {
-        if option.Selected {
-            <option value={option.Value} selected>{option.Label}</option>
-        } else {
-            <option value={option.Value}>{option.Label}</option>
-        }
-    }
-</select>
+	<select name={ name } id={ name } class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
+		for _, option := range so {
+			if option.Selected {
+				<option value={ option.Value } selected>{ option.Label }</option>
+			} else {
+				<option value={ option.Value }>{ option.Label }</option>
+			}
+		}
+	</select>
 }
 
 templ FormSelectWithSearch(so SelectOptions, name string, placeholder string) {
-<select name={name} data-hs-select='{
+	<select
+		name={ name }
+		data-hs-select='{
   "hasSearch": true,
   "searchPlaceholder": "Search...",
   "searchClasses": "block w-full text-sm border-gray-200 rounded-lg focus:border-blue-500 focus:ring-blue-500 before:absolute before:inset-0 before:z-[1] dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 py-2 px-3",
@@ -25,21 +27,21 @@ templ FormSelectWithSearch(so SelectOptions, name string, placeholder string) {
   "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:text-neutral-200 dark:focus:bg-neutral-800",
   "optionTemplate": "<div><div class=\"flex items-center\"><div class=\"me-2\" data-icon></div><div class=\"text-gray-800 dark:text-neutral-200 \" data-title></div></div></div>",
   "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-gray-500 dark:text-neutral-500 \" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
-}' class="hidden">
-
-    switch so.SelectedAny() {
-        case true:
-        <option value="" disabled hidden>{placeholder}</option>
-        case false:
-        <option value="" disabled selected hidden>{placeholder}</option>
-    }
-
-    for _, option := range so {
-        if option.Selected {
-            <option value={option.Value} selected>{option.Label}</option>
-        } else {
-            <option value={option.Value}>{option.Label}</option>
-        }
-    }
-</select>
+}'
+		class="hidden"
+	>
+		switch so.SelectedAny() {
+			case true:
+				<option value="" disabled hidden>{ placeholder }</option>
+			case false:
+				<option value="" disabled selected hidden>{ placeholder }</option>
+		}
+		for _, option := range so {
+			if option.Selected {
+				<option value={ option.Value } selected>{ option.Label }</option>
+			} else {
+				<option value={ option.Value }>{ option.Label }</option>
+			}
+		}
+	</select>
 }

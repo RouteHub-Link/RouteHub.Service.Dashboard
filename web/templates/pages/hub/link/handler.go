@@ -225,3 +225,55 @@ func (h Handlers) HubLinkEditPostHandler(c echo.Context) error {
 
 	return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, nil))
 }
+
+func (h Handlers) HubLinkStatusGetHandler(c echo.Context) error {
+	linkPath := c.Param("path")
+	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
+	if err != nil {
+		h.Logger.Error("Error fetching link", "error", err)
+		return c.Redirect(http.StatusFound, "/links")
+	}
+
+	hub, _ := context.GetHubFromContext(c)
+
+	payload := components.EditLinkStatusPayload{
+		Status:   link.Status,
+		HubSlug:  hub.Slug,
+		LinkPath: link.Path,
+	}
+
+	return extensions.Render(c, http.StatusOK, components.LinkStatusForm(payload))
+}
+
+func (h Handlers) HubLinkStatusPostHandler(c echo.Context) error {
+	linkPath := c.Param("path")
+	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
+	if err != nil {
+		h.Logger.Error("Error fetching link", "error", err)
+		return c.Redirect(http.StatusFound, "/links")
+	}
+
+	payload := new(components.EditLinkStatusPayload)
+
+	if err := extensions.BindAndValidate(c, payload); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	hub, _ := context.GetHubFromContext(c)
+	payload.HubSlug = hub.Slug
+	payload.LinkPath = link.Path
+
+	link, err = h.Ent.Link.UpdateOne(link).
+		SetStatus(payload.Status).
+		Save(c.Request().Context())
+
+	if err != nil {
+		h.Logger.Error("Error updating link", "error", err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	extensions.HTMXAppendSuccessToast(c, "Link Status Updated Successfully")
+	extensions.HTMXAppendPrelineRefresh(c)
+
+	return extensions.Render(c, http.StatusOK, components.LinkStatusForm(*payload))
+}

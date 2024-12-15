@@ -48,4 +48,6 @@ func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.
 	hubGroup.POST("/links/create", linkHandlers.HubLinkCreatePostHandler)
 	hubGroup.GET("/links/:path", linkHandlers.HubLinkEditGetHandler)
 	hubGroup.POST("/links/:path", linkHandlers.HubLinkEditPostHandler)
+	hubGroup.GET("/links/:path/status", linkHandlers.HubLinkStatusGetHandler)
+	hubGroup.POST("/links/:path/status", linkHandlers.HubLinkStatusPostHandler)
 }
