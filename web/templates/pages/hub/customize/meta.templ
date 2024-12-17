@@ -1,0 +1,95 @@
+package customize
+
+import (
+	"RouteHub.Service.Dashboard/web/templates/pages/partial"
+	"RouteHub.Service.Dashboard/web/utils"
+)
+
+type MetaPayload struct {
+	Title       string `json:"meta_description_title" form:"meta_description_title"`
+	FavIcon     string `json:"meta_description_favicon" form:"meta_description_favicon"`
+	Description string `json:"meta_description_description" form:"meta_description_description"`
+
+	// og:description, twitter:description
+	OGDescription string `json:"meta_description_og_description" form:"meta_description_og_description"`
+
+	// og:title, twitter:title
+	OGTitle string `json:"meta_description_og_title" form:"meta_description_og_title"`
+
+	Locale string `json:"meta_description_locale" form:"meta_description_locale"`
+}
+
+templ meta(metaPayload MetaPayload) {
+	<div class="grid gap-4 lg:gap-6">
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+			<div>
+				<label
+					for="meta_description_title"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Meta Title</label>
+				<input
+					type="text"
+					name="meta_description_title"
+					placeholder="This will be visible at tab and SEO Crawlers as Page Title."
+					value={ metaPayload.Title }
+					aria-describedby="meta_description_title"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			</div>
+			<div>
+				<label
+					for="meta_description_og_title"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>OG Title</label>
+				<input
+					type="text"
+					name="meta_description_og_title"
+					placeholder="This will be crawled as OpenGraph Title when placed link the some other platform."
+					value={ metaPayload.OGTitle }
+					aria-describedby="meta_description_og_title"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			</div>
+		</div>
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+			<div>
+				<label
+					for="meta_description_description"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Meta Description</label>
+				<textarea
+					name="meta_description_description"
+					aria-describedby="meta_description_description"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					rows="3"
+					placeholder="This will be crawled by bots as Page Description Meta Data."
+				>{ metaPayload.Description }</textarea>
+			</div>
+			<div>
+				<label
+					for="meta_description_og_description"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>OG Description</label>
+				<textarea
+					name="meta_description_og_description"
+					aria-describedby="meta_description_og_description"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					rows="3"
+					placeholder="This will be crawled by bots as OpenGraph Description usefull for link placement."
+				>{ metaPayload.OGDescription }</textarea>
+			</div>
+		</div>
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+			<div>
+				@partial.SimpleFileUploader("meta_description_favicon", metaPayload.FavIcon, "Fav Icon", "Upload a Favicon", "Please upload a favicon under 2mb.")
+			</div>
+			<div>
+				<label
+					for="meta_description_locale"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Locale</label>
+				@partial.FormSelectWithSearch(utils.LocaleOptions(metaPayload.Locale), "meta_description_locale", "Select an Locale")
+			</div>
+		</div>
+	</div>
+}

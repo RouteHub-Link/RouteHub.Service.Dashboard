@@ -10,6 +10,7 @@ import (
 	"RouteHub.Service.Dashboard/web/context"
 	"RouteHub.Service.Dashboard/web/extensions"
 	"RouteHub.Service.Dashboard/web/templates/pages/hub/components"
+	"RouteHub.Service.Dashboard/web/templates/pages/hub/customize"
 	"github.com/labstack/echo/v4"
 )
 
@@ -17,6 +18,7 @@ type Handlers struct {
 	Ent               *ent.Client
 	Logger            *slog.Logger
 	ComponentHandlers *components.Handlers
+	CustomizeHandlers *customize.Handlers
 }
 
 func NewHandlers(logger *slog.Logger, ent *ent.Client) *Handlers {
@@ -24,6 +26,10 @@ func NewHandlers(logger *slog.Logger, ent *ent.Client) *Handlers {
 		Ent:    ent,
 		Logger: logger,
 		ComponentHandlers: &components.Handlers{
+			Logger: logger,
+			Ent:    ent,
+		},
+		CustomizeHandlers: &customize.Handlers{
 			Logger: logger,
 			Ent:    ent,
 		},

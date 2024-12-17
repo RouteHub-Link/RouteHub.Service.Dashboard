@@ -1,0 +1,24 @@
+package partial
+
+templ ShadowHub(template templ.Component) {
+	<div id="navbar-shadow-host" class="bulma-shadow">
+		@template
+	</div>
+	<script>
+        	const shadowHost = document.getElementById("navbar-shadow-host");
+        	const cloneInside = shadowHost.innerHTML;
+
+        	// Create a shadow root
+        	const shadowRoot = shadowHost.attachShadow({ mode: "open" });
+        	shadowRoot.innerHTML = `
+
+        	<link
+        		rel="stylesheet"
+        		href="/static/css/bulma.host.css"
+        	/>
+
+        	${cloneInside}
+
+        	`;
+	 </script>
+}

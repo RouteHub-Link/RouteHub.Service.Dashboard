@@ -1,0 +1,291 @@
+package customize
+
+import (
+	"RouteHub.Service.Dashboard/ent/schema/types"
+	"RouteHub.Service.Dashboard/web/templates/pages/partial"
+	"RouteHub.Service.Dashboard/web/utils"
+	"fmt"
+)
+
+templ navbar(nd types.NavbarDescription, hubSlug string) {
+	<div class="grid gap-4 lg:gap-6">
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+			<div>
+				<label
+					for="brand_name"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Brand Name</label>
+				<input
+					type="text"
+					name="brand_name"
+					placeholder="Brand Name will be visible at Navbar."
+					value={ nd.BrandName }
+					aria-describedby="brand_name"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			</div>
+			<div>
+				<label
+					for="brand_url"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Brand URL</label>
+				<input
+					type="url"
+					name="brand_url"
+					placeholder="Brand URL will be redirected when clicked on Brand Name."
+					value={ nd.BrandURL }
+					aria-describedby="brand_url"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			</div>
+		</div>
+	</div>
+	<div
+		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
+	>
+		Navbar Item CRUD
+	</div>
+	@navbarItemForm(types.NavbarItem{})
+	<div
+		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
+	>
+		Navbar Preview
+	</div>
+	@partial.ShadowHub(NavbarShadow(&nd))
+	<div
+		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
+	>
+		Navbar Tree
+	</div>
+	@partial.TreeView(NavbarToTree(&nd, hubSlug))
+}
+
+templ navbarItemForm(ni types.NavbarItem) {
+	<div class="grid gap-4 lg:gap-6">
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+			<div>
+				<label
+					for="text"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Name</label>
+				<input
+					type="text"
+					name="text"
+					placeholder="Navbar Item Text."
+					value={ ni.Text }
+					aria-describedby="text"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			</div>
+			<div>
+				<label
+					for="url"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Item URL</label>
+				<input
+					type="url"
+					name="url"
+					placeholder="Brand URL will be redirected when clicked on Brand Name."
+					value={ ni.URL }
+					aria-describedby="brand_url"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			</div>
+		</div>
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+			<div>
+				<label
+					for="icon"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Icon</label>
+				<input
+					type="text"
+					name="icon"
+					placeholder="Item icon."
+					value={ ni.Icon }
+					aria-describedby="text"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			</div>
+			<div>
+				<label
+					for="target"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Target</label>
+				@partial.FormSelect(utils.ElementTargetOptions(ni.URL), "meta_description_og_cad")
+			</div>
+		</div>
+	</div>
+}
+
+templ NavbarShadow(nd *types.NavbarDescription) {
+	if (nd != nil) {
+		<nav class="navbar" role="navigation" aria-label="main navigation">
+			@navbarBrand(*nd)
+			@navbarMenu(*nd)
+		</nav>
+	}
+}
+
+templ navbarMenu(nd types.NavbarDescription) {
+	<div id="company-navbar" class="navbar-menu">
+		@navbarStart(nd)
+		@navbarEnd(nd)
+	</div>
+}
+
+templ navbarBrand(nd types.NavbarDescription) {
+	<div class="navbar-brand">
+		<a class="navbar-item" href={ templ.URL(nd.BrandURL) } target={ nd.Target }>
+			if (nd.BrandImg != nil) {
+				@Img(nd.BrandImg)
+			} else {
+				{ nd.BrandName }
+			}
+		</a>
+		if nd.StartItems != nil {
+			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="company-navbar">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+			</a>
+		}
+	</div>
+}
+
+templ navbarStart(nd types.NavbarDescription) {
+	<div class="navbar-start">
+		if nd.StartItems != nil {
+			for _, item := range *nd.StartItems {
+				@navbarItem(item)
+			}
+		}
+	</div>
+}
+
+templ navbarEnd(nd types.NavbarDescription) {
+	<div class="navbar-end">
+		if nd.EndButtons != nil {
+			for _, button := range *nd.EndButtons {
+				@navbarButton(button)
+			}
+		}
+	</div>
+}
+
+templ navbarItem(item types.NavbarItem) {
+	if item.Dropdown == nil {
+		<a class="navbar-item" href={ templ.URL(item.URL) } target={ item.Target }>
+			if (item.Icon != "") {
+				<span class="icon">
+					<i class={ item.Icon }></i>
+				</span>
+			}
+			{ item.Text }
+		</a>
+	} else {
+		<div class="navbar-item has-dropdown is-hoverable">
+			<a class="navbar-link">
+				<span class="icon">
+					<i class={ item.Icon }></i>
+				</span>
+				{ item.Text }
+			</a>
+			<div class="navbar-dropdown">
+				for _, subItem := range *item.Dropdown {
+					@navbarItem(subItem)
+				}
+			</div>
+		</div>
+	}
+}
+
+templ navbarButton(button types.NavbarButton) {
+	<div class="navbar-item is-hidden-tablet">
+		<a class={ "button is-fullwidth is-small " + button.ColorClass } href={ templ.URL(button.URL) } target={ button.Target }>
+			if (button.Icon != "") {
+				<span class={ "icon " }>
+					<i data-feather={ button.Icon }></i>
+				</span>
+			}
+			{ button.Text }
+		</a>
+	</div>
+	<div class="navbar-item is-hidden-mobile">
+		<a class={ "button " + button.ColorClass } href={ templ.URL(button.URL) } target={ button.Target }>
+			if (button.Icon != "") {
+				<span class={ "icon " }>
+					<i data-feather={ button.Icon }></i>
+				</span>
+			}
+			{ button.Text }
+		</a>
+	</div>
+}
+
+templ Img(imageDescription *types.ImageDescription) {
+	if (imageDescription != nil) {
+		<img
+			src={ imageDescription.SRC }
+			alt={ imageDescription.Alt }
+			if imageDescription.Width != "" {
+				width={ imageDescription.Width }
+			} else {
+				width="112"
+			}
+			if imageDescription.Height != "" {
+				height={ imageDescription.Height }
+			} else {
+				height="28"
+			}
+		/>
+	}
+}
+
+templ navbarFunctions(tn *partial.TreeNode, isAddable bool, isRemovable bool, isEditable bool, hubSlug string) {
+	<div class="pl-2 flex">
+		if isAddable {
+			<a
+				hx-get={ fmt.Sprintf("/hub/%s/customize/navbar/item/%s/new", hubSlug, tn.ID) }
+				hx-target="#hs-modal-content"
+				hx-swap="innerHTML"
+				aria-haspopup="dialog"
+				aria-expanded="false"
+				aria-controls="hs-modal"
+				data-hs-overlay="#hs-modal"
+				class=""
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"></path></svg>
+			</a>
+		}
+		if isRemovable {
+			<a
+				hx-get={ fmt.Sprintf("/hub/%s/customize/navbar/item/%s/remove", hubSlug, tn.ID) }
+				hx-target="#hs-modal-content"
+				hx-swap="innerHTML"
+				aria-haspopup="dialog"
+				aria-expanded="false"
+				aria-controls="hs-modal"
+				data-hs-overlay="#hs-modal"
+				class=""
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"></path></svg>
+			</a>
+		}
+		if isEditable {
+			<a
+				hx-get={ fmt.Sprintf("/hub/%s/customize/navbar/item/%s/edit", hubSlug, tn.ID) }
+				hx-target="#hs-modal-content"
+				hx-swap="innerHTML"
+				aria-haspopup="dialog"
+				aria-expanded="false"
+				aria-controls="hs-modal"
+				data-hs-overlay="#hs-modal"
+				class=""
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"></path></svg>
+			</a>
+		}
+	</div>
+}

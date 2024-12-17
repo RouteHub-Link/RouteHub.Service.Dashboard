@@ -9,10 +9,17 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/web/templates/pages/hub"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"fmt"
 )
+
+type EditLinkStatusPayload struct {
+	Status   enums.StatusState `json:"link_status" form:"link_status"`
+	HubSlug  string
+	LinkPath string
+}
 
 func LinkStatusForm(payload EditLinkStatusPayload) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -42,7 +49,7 @@ func LinkStatusForm(payload EditLinkStatusPayload) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%s/links/%s/status", payload.HubSlug, payload.LinkPath))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/status.templ`, Line: 11, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/status.templ`, Line: 18, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

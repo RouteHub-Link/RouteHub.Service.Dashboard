@@ -1,10 +1,17 @@
 package components
 
 import (
+	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/web/templates/pages/hub"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"fmt"
 )
+
+type EditLinkStatusPayload struct {
+	Status   enums.StatusState `json:"link_status" form:"link_status"`
+	HubSlug  string
+	LinkPath string
+}
 
 templ LinkStatusForm(payload EditLinkStatusPayload) {
 	// hx target select element changed

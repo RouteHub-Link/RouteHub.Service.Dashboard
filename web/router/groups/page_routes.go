@@ -42,6 +42,17 @@ func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.
 
 	hubGroup.GET("", hubHandlers.IndexHandler)
 
+	customizeHandlers := hubHandlers.CustomizeHandlers
+	hubGroup.GET("/customize", customizeHandlers.CustomizeGetHandler)
+	hubGroup.GET("/customize/meta", customizeHandlers.MetaGetHandler)
+	hubGroup.POST("/customize/meta", customizeHandlers.MetaPostHandler)
+
+	hubGroup.GET("/customize/navbar", customizeHandlers.NavbarGetHandler)
+
+	hubGroup.GET("/customize/navbar/item/:itemID/new", customizeHandlers.NavbarNewItemFormGetHandler)
+	hubGroup.GET("/customize/navbar/item/:itemID/edit", customizeHandlers.NavbarEditItemFormGetHandler)
+	hubGroup.POST("/customize/navbar/item/:itemID/edit", customizeHandlers.NavbarItemEditFormPostHandler)
+
 	linkHandlers := handlers.LinkHandlers
 	hubGroup.GET("/links", linkHandlers.HubLinksHandler)
 	hubGroup.GET("/links/create", linkHandlers.HubLinksCreateHandler)
