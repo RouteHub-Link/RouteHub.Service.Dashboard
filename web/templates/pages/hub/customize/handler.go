@@ -1,12 +1,14 @@
 package customize
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
 
 	"RouteHub.Service.Dashboard/ent"
+	"RouteHub.Service.Dashboard/ent/schema/types"
 	"RouteHub.Service.Dashboard/web/context"
 	"RouteHub.Service.Dashboard/web/extensions"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
@@ -108,7 +110,7 @@ func (h Handlers) NavbarGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, navbar(hub.HubDetails.NavbarDescription, hub.Slug))
 }
 
-func (h Handlers) NavbarEditItemFormGetHandler(c echo.Context) error {
+func (h Handlers) NavbarItemEditFormGetHandler(c echo.Context) error {
 	fmt.Println("NavbarEditItemFormGetHandler Called")
 	hub, _ := context.GetHubFromContext(c)
 
@@ -118,18 +120,19 @@ func (h Handlers) NavbarEditItemFormGetHandler(c echo.Context) error {
 	itemID := c.Param("itemID")
 	fmt.Printf("ItemID : %s", itemID)
 	if itemID != "" {
-		item, err := h.GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
+		item, err := GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
 		fmt.Printf("item : %+v", item)
 		fmt.Printf("err : %v", err)
 
-		if err == nil {
-			payload = &NavbarItemFormPayload{
-				HubSlug: hub.Slug,
-				Name:    item.Text,
-				URL:     item.URL,
-				Target:  item.Target,
-				Icon:    item.Icon,
-			}
+		if err != nil {
+			return c.NoContent(http.StatusNotFound)
+		}
+		payload = &NavbarItemFormPayload{
+			HubSlug: hub.Slug,
+			Name:    item.Text,
+			URL:     item.URL,
+			Target:  item.Target,
+			Icon:    item.Icon,
 		}
 	}
 
@@ -137,19 +140,9 @@ func (h Handlers) NavbarEditItemFormGetHandler(c echo.Context) error {
 		return c.NoContent(http.StatusNotFound)
 	}
 
-	fmt.Printf("Payload : %+v", payload)
+	payload.ID = itemID
 
 	return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, nil))
-}
-
-func (h Handlers) NavbarNewItemFormGetHandler(c echo.Context) error {
-	hub, _ := context.GetHubFromContext(c)
-
-	payload := NavbarItemFormPayload{
-		HubSlug: hub.Slug,
-	}
-
-	return extensions.Render(c, http.StatusOK, NavbarItemForm(payload, nil))
 }
 
 func (h Handlers) NavbarItemEditFormPostHandler(c echo.Context) error {
@@ -171,7 +164,7 @@ func (h Handlers) NavbarItemEditFormPostHandler(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 	}
 
-	item, err := h.GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
+	item, err := GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
 	if err != nil {
 		msg := "Error finding item"
 		feedback := partial.FormFeedback("error", &title, &msg)
@@ -183,7 +176,7 @@ func (h Handlers) NavbarItemEditFormPostHandler(c echo.Context) error {
 	item.Target = payload.Target
 	item.Icon = payload.Icon
 
-	err = h.ReplaceItemByIndex(&hub.HubDetails.NavbarDescription, itemID, *item)
+	err = ReplaceItemByIndex(&hub.HubDetails.NavbarDescription, itemID, *item)
 
 	if err != nil {
 		msg := "Error updating item"
@@ -195,6 +188,190 @@ func (h Handlers) NavbarItemEditFormPostHandler(c echo.Context) error {
 
 	extensions.HTMXAppendSuccessToast(c, "Item Updated Successfully")
 	extensions.HTMXAppendPrelineRefresh(c)
+	extensions.HTMXAppendEventsAfterSwap(c, map[string]interface{}{
+		"navbarItemUpdated": "",
+	})
+	extensions.HTMXCloseModal(c)
+
+	return nil
+}
+
+func (h Handlers) NavbarItemAddFormGetHandler(c echo.Context) error {
+	hub, _ := context.GetHubFromContext(c)
+
+	itemID := c.Param("itemID")
+	payload := NavbarItemFormPayload{
+		HubSlug: hub.Slug,
+		ID:      itemID,
+	}
+
+	if itemID == "nav-root" {
+		return extensions.Render(c, http.StatusOK, NavbarItemAddForm(payload, nil))
+	}
+
+	_, err := GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
+	if err != nil {
+		message := fmt.Sprintf("Error finding item with id %s", itemID)
+		feedback := partial.FormFeedback("error", nil, &message)
+		return extensions.Render(c, http.StatusOK, NavbarItemAddForm(NavbarItemFormPayload{}, feedback))
+	}
+
+	return extensions.Render(c, http.StatusOK, NavbarItemAddForm(payload, nil))
+}
+
+func (h Handlers) NavbarItemAddFormPostHandler(c echo.Context) error {
+	hub, _ := context.GetHubFromContext(c)
+	title := "Navbar Item Form"
+
+	payload := new(NavbarItemFormPayload)
+	if err := extensions.BindAndValidate(c, payload); err != nil {
+		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
+		feedback := partial.FormFeedback("error", &title, &msg)
+		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
+	}
+
+	itemID := c.Param("itemID")
+	if itemID == "" {
+		msg := "Error finding item"
+		feedback := partial.FormFeedback("error", &title, &msg)
+		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
+	}
+
+	newItem := types.NavbarItem{
+		Text:   payload.Name,
+		URL:    payload.URL,
+		Target: payload.Target,
+		Icon:   payload.Icon,
+	}
+
+	if itemID == "nav-root" {
+		startItems := hub.HubDetails.NavbarDescription.StartItems
+		if startItems == nil {
+			startItems = &[]types.NavbarItem{}
+		}
+		*startItems = append(*startItems, newItem)
+		hub.HubDetails.NavbarDescription.StartItems = startItems
+
+	} else {
+		_, err := navbarItemAppendToItem(&hub.HubDetails.NavbarDescription, itemID, newItem)
+
+		if err != nil {
+			msg := "Error finding item"
+			feedback := partial.FormFeedback("error", &title, &msg)
+			return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
+		}
+	}
+
+	hub, err := h.Ent.Hub.UpdateOne(hub).SetHubDetails(hub.HubDetails).Save(c.Request().Context())
+	if err != nil {
+		msg := "Error updating item"
+		feedback := partial.FormFeedback("error", &title, &msg)
+		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
+	}
+
+	extensions.HTMXAppendSuccessToast(c, "Item Updated Successfully")
+	extensions.HTMXAppendPrelineRefresh(c)
+	extensions.HTMXAppendEventsAfterSwap(c, map[string]interface{}{
+		"navbarItemUpdated": "",
+	})
+	extensions.HTMXCloseModal(c)
+
+	return nil
+}
+
+func navbarItemAppendToItem(nav *types.NavbarDescription, indexPath string, newItem types.NavbarItem) (*types.NavbarItem, error) {
+	item, err := GetItemByIndex(nav, indexPath)
+
+	if err != nil {
+		msg := "Error finding item"
+		return nil, errors.New(msg)
+	}
+
+	if item.Dropdown == nil {
+		item.Dropdown = &[]types.NavbarItem{}
+	}
+
+	*item.Dropdown = append(*item.Dropdown, newItem)
+
+	err = ReplaceItemByIndex(nav, indexPath, *item)
+
+	if err != nil {
+		msg := "Error updating item"
+		return nil, errors.New(msg)
+	}
+
+	return item, nil
+}
+
+func (h Handlers) NavbarItemDeleteFormGetHandler(c echo.Context) error {
+	fmt.Println("NavbarEditItemFormGetHandler Called")
+	hub, _ := context.GetHubFromContext(c)
+
+	payload := new(NavbarItemFormPayload)
+
+	// itemId
+	itemID := c.Param("itemID")
+	if itemID != "" {
+		item, err := GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
+
+		if err != nil {
+			return err
+		}
+
+		payload = &NavbarItemFormPayload{
+			HubSlug: hub.Slug,
+			Name:    item.Text,
+			URL:     item.URL,
+			Target:  item.Target,
+			Icon:    item.Icon,
+		}
+	}
+
+	if payload == nil {
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	payload.ID = itemID
+
+	return extensions.Render(c, http.StatusOK, NavbarItemDeleteForm(*payload, nil))
+}
+
+func (h Handlers) NavbarItemDeletePostHandler(c echo.Context) error {
+	hub, _ := context.GetHubFromContext(c)
+
+	payload := NavbarItemFormPayload{
+		HubSlug: hub.Slug,
+	}
+
+	itemID := c.Param("itemID")
+	if itemID == "" {
+		msg := "Error finding item"
+		feedback := partial.FormFeedback("error", nil, &msg)
+		return extensions.Render(c, http.StatusOK, NavbarItemDeleteForm(payload, feedback))
+	}
+
+	_, err := GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
+	if err != nil {
+		msg := "Error finding item"
+		feedback := partial.FormFeedback("error", nil, &msg)
+		return extensions.Render(c, http.StatusOK, NavbarItemDeleteForm(payload, feedback))
+	}
+
+	err = DeleteItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
+
+	if err != nil {
+		msg := "Error deleting item"
+		feedback := partial.FormFeedback("error", nil, &msg)
+		return extensions.Render(c, http.StatusOK, NavbarItemDeleteForm(payload, feedback))
+	}
+
+	hub, err = h.Ent.Hub.UpdateOne(hub).SetHubDetails(hub.HubDetails).Save(c.Request().Context())
+
+	extensions.HTMXAppendSuccessToast(c, "Item Deleted Successfully")
+	extensions.HTMXAppendPrelineRefresh(c)
+	extensions.HTMXAppendEventsAfterSwap(c, map[string]interface{}{
+		"navbarItemUpdated": "",
+	})
 	extensions.HTMXCloseModal(c)
 
 	return nil

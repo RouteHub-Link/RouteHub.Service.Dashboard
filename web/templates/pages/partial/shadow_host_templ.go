@@ -37,7 +37,7 @@ func ShadowHub(template templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><script>\n        \tconst shadowHost = document.getElementById(\"navbar-shadow-host\");\n        \tconst cloneInside = shadowHost.innerHTML;\n\n        \t// Create a shadow root\n        \tconst shadowRoot = shadowHost.attachShadow({ mode: \"open\" });\n        \tshadowRoot.innerHTML = `\n\n        \t<link\n        \t\trel=\"stylesheet\"\n        \t\thref=\"/static/css/bulma.host.css\"\n        \t/>\n\n        \t${cloneInside}\n\n        \t`;\n\t </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><script>\n        \tvar shadowHost = document.getElementById(\"navbar-shadow-host\");\n        \tvar cloneInside = shadowHost.innerHTML;\n\n        \t// Create a shadow root\n        \tvar shadowRoot = shadowHost.attachShadow({ mode: \"open\" });\n        \tshadowRoot.innerHTML = `\n\n        \t<link\n        \t\trel=\"stylesheet\"\n        \t\thref=\"/static/css/bulma.host.css\"\n        \t/>\n\n        \t${cloneInside}\n\n        \t`;\n\t </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -6,40 +6,35 @@ import (
 	"fmt"
 )
 
-type NavbarItemFormPayload struct {
-	HubSlug string
-	ID      string `json:"id" form:"id"`
-	Name    string `json:"name" form:"name" validate:"required"`
-	URL     string `json:"url" form:"url"`
-	Icon    string `json:"icon" form:"icon"`
-	Target  string `json:"target" form:"target" validate:"required"`
+type NavbarItemButtonFormPayload struct {
+	HubSlug    string
+	ID         string `json:"id" form:"id"`
+	Name       string `json:"name" form:"name" validate:"required"`
+	URL        string `json:"url" form:"url"`
+	Icon       string `json:"icon" form:"icon"`
+	Target     string `json:"target" form:"target" validate:"required"`
+	ColorClass string `json:"color_class" form:"color_class"`
 }
 
-templ NavbarItemForm(payload NavbarItemFormPayload, messageTemplate templ.Component) {
+templ NavbarItemButtonForm(payload NavbarItemButtonFormPayload, messageTemplate templ.Component) {
 	if messageTemplate != nil {
 		@messageTemplate
 	} else {
-		<div id="navbar_item_form">
-			<form hx-post={ fmt.Sprintf("/hub/%s/customize/navbar/item/%s/edit", payload.HubSlug, payload.ID) }>
-				@navbarItemForm(payload)
-			</form>
+		<div id="navbar_item_button_form">
+			if payload.ID != "" {
+				<form hx-post={ fmt.Sprintf("/hub/%s/customize/navbar/button/%s/edit", payload.HubSlug, payload.ID) }>
+					@navbarItemButtonForm(payload)
+				</form>
+			} else {
+				<form hx-post={ fmt.Sprintf("/hub/%s/customize/navbar/button/new", payload.HubSlug) }>
+					@navbarItemButtonForm(payload)
+				</form>
+			}
 		</div>
 	}
 }
 
-templ NavbarItemAddForm(payload NavbarItemFormPayload, messageTemplate templ.Component) {
-	if messageTemplate != nil {
-		@messageTemplate
-	} else {
-		<div id="navbar_item_form">
-			<form hx-post={ fmt.Sprintf("/hub/%s/customize/navbar/item/%s/new", payload.HubSlug, payload.ID) }>
-				@navbarItemForm(payload)
-			</form>
-		</div>
-	}
-}
-
-templ navbarItemForm(payload NavbarItemFormPayload) {
+templ navbarItemButtonForm(payload NavbarItemButtonFormPayload) {
 	<input name="id" value={ payload.ID } type="hidden"/>
 	<div class="grid gap-4 lg:gap-6">
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
@@ -68,6 +63,20 @@ templ navbarItemForm(payload NavbarItemFormPayload) {
 					placeholder="Brand URL will be redirected when clicked on Brand Name."
 					value={ payload.URL }
 					aria-describedby="brand_url"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			</div>
+			<div class="col-span-2">
+				<label
+					for="color_class"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Color Class</label>
+				<input
+					type="text"
+					name="color_class"
+					placeholder="Color class for the button."
+					value={ payload.ColorClass }
+					aria-describedby="color_class"
 					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
 				/>
 			</div>

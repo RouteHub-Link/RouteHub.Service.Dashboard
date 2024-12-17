@@ -1,0 +1,59 @@
+package customize
+
+import "fmt"
+
+templ NavbarItemDeleteForm(payload NavbarItemFormPayload, messageTemplate templ.Component) {
+	if messageTemplate != nil {
+		@messageTemplate
+	} else {
+		<div>
+			<form hx-post={ fmt.Sprintf("/hub/%s/customize/navbar/item/%s/delete", payload.HubSlug, payload.ID) }>
+				<input name="id" value={ payload.ID } type="hidden"/>
+				<div class="grid gap-4 lg:gap-6">
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+						<div>
+							<label
+								for="name"
+								class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+							>Name : { payload.Name }</label>
+						</div>
+						<div>
+							<label
+								for="url"
+								class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+							>Item URL : { payload.URL }</label>
+						</div>
+					</div>
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+						<div>
+							<label
+								for="icon"
+								class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+							>Icon: { payload.Icon }</label>
+						</div>
+						<div>
+							<label
+								for="target"
+								class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+							>Target :  { payload.Target }</label>
+						</div>
+					</div>
+					<button
+						type="submit"
+						class="relative py-3 px-4 inline-flex justify-center items-center gap-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none"
+					>
+						Delete Navbar Item
+						<div class="htmx-indicator absolute w-full h-full pt-3 dark:bg-gray-800/[.4]" id="spinner">
+							<span
+								class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+								role="status"
+								aria-label="loading"
+								id="spinner"
+							></span>
+						</div>
+					</button>
+				</div>
+			</form>
+		</div>
+	}
+}

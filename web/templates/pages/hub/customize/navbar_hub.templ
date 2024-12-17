@@ -1,0 +1,128 @@
+package customize
+
+import "RouteHub.Service.Dashboard/ent/schema/types"
+
+templ NavbarShadow(nd *types.NavbarDescription) {
+	if (nd != nil) {
+		<nav class="navbar" role="navigation" aria-label="main navigation">
+			@navbarBrand(*nd)
+			@navbarMenu(*nd)
+		</nav>
+	}
+}
+
+templ navbarMenu(nd types.NavbarDescription) {
+	<div id="company-navbar" class="navbar-menu">
+		@navbarStart(nd)
+		@navbarEnd(nd)
+	</div>
+}
+
+templ navbarBrand(nd types.NavbarDescription) {
+	<div class="navbar-brand">
+		<a class="navbar-item" href={ templ.URL(nd.BrandURL) } target={ nd.Target }>
+			if (nd.BrandImg != nil) {
+				@Img(nd.BrandImg)
+			} else {
+				{ nd.BrandName }
+			}
+		</a>
+		if nd.StartItems != nil {
+			<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="company-navbar">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+			</a>
+		}
+	</div>
+}
+
+templ navbarStart(nd types.NavbarDescription) {
+	<div class="navbar-start">
+		if nd.StartItems != nil {
+			for _, item := range *nd.StartItems {
+				@navbarItem(item)
+			}
+		}
+	</div>
+}
+
+templ navbarEnd(nd types.NavbarDescription) {
+	<div class="navbar-end">
+		if nd.EndButtons != nil {
+			for _, button := range *nd.EndButtons {
+				@navbarButton(button)
+			}
+		}
+	</div>
+}
+
+templ navbarItem(item types.NavbarItem) {
+	if item.Dropdown == nil {
+		<a class="navbar-item" href={ templ.URL(item.URL) } target={ item.Target }>
+			if (item.Icon != "") {
+				<span class="icon">
+					<i class={ item.Icon }></i>
+				</span>
+			}
+			{ item.Text }
+		</a>
+	} else {
+		<div class="navbar-item has-dropdown is-hoverable">
+			<a class="navbar-link">
+				<span class="icon">
+					<i class={ item.Icon }></i>
+				</span>
+				{ item.Text }
+			</a>
+			<div class="navbar-dropdown">
+				for _, subItem := range *item.Dropdown {
+					@navbarItem(subItem)
+				}
+			</div>
+		</div>
+	}
+}
+
+templ navbarButton(button types.NavbarButton) {
+	<div class="navbar-item is-hidden-tablet">
+		<a class={ "button is-fullwidth is-small " + button.ColorClass } href={ templ.URL(button.URL) } target={ button.Target }>
+			if (button.Icon != "") {
+				<span class={ "icon " }>
+					<i data-feather={ button.Icon }></i>
+				</span>
+			}
+			{ button.Text }
+		</a>
+	</div>
+	<div class="navbar-item is-hidden-mobile">
+		<a class={ "button " + button.ColorClass } href={ templ.URL(button.URL) } target={ button.Target }>
+			if (button.Icon != "") {
+				<span class={ "icon " }>
+					<i data-feather={ button.Icon }></i>
+				</span>
+			}
+			{ button.Text }
+		</a>
+	</div>
+}
+
+templ Img(imageDescription *types.ImageDescription) {
+	if (imageDescription != nil) {
+		<img
+			src={ imageDescription.SRC }
+			alt={ imageDescription.Alt }
+			if imageDescription.Width != "" {
+				width={ imageDescription.Width }
+			} else {
+				width="112"
+			}
+			if imageDescription.Height != "" {
+				height={ imageDescription.Height }
+			} else {
+				height="28"
+			}
+		/>
+	}
+}
