@@ -1,62 +1,72 @@
 package layouts
 
 templ Main(pd PageDescription) {
+	<!DOCTYPE html>
+	<html lang="en" class="dark">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
+			<link rel="stylesheet" href="/static/css/output.css"/>
+			<title>RouteHUB</title>
+			<script src="https://unpkg.com/@popperjs/core@2"></script>
+			<script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.7/dist/cdn.min.js"></script>
+			<script type="module" src="https://cdn.jsdelivr.net/npm/zero-md@3?register"></script>
+			<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+			@editorJS()
+			<script src="/static/js/feedback-events.js"></script>
+			<script src="/static/js/file-upload.js"></script>
+			<script src="/static/js/editorjs-initializer.js"></script>
+			if pd.AdditionalHead != nil {
+				@pd.GetAdditionalHead()
+			}
+		</head>
+		<body class="bg-gray-50 dark:bg-neutral-900">
+			@Header(pd.UserInfo)
+			<div class="-mt-px">
+				@Breadcrumb()
+			</div>
+			if pd.Hub != nil {
+				@HubSidebar(*pd.Hub)
+			} else {
+				@Sidebar()
+			}
+			<div class="w-full lg:ps-64">
+				<div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
+					<div class="md:container md:mx-auto">
+						@pd.MainContent
+						@hsModal()
+					</div>
+				</div>
+			</div>
+			<script src="/static/dist/preline/preline.js" type="module"></script>
+			if pd.AdditionalFooter != nil {
+				@pd.GetAdditionalFooter()
+			}
+		</body>
+	</html>
+}
 
-<!DOCTYPE html>
-<html lang="en" class="dark">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-
-  <link rel="stylesheet" href="/static/css/output.css" />
-  <title>RouteHUB</title>
-
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
-  <script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/zero-md@3?register"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  
-  <script src="/static/js/feedback-events.js"></script>
-  <script src="/static/js/file-upload.js"></script>
-
-  if pd.AdditionalHead != nil {
-    @pd.GetAdditionalHead()
-  }
-
-</head>
-
-<body class="bg-gray-50 dark:bg-neutral-900">
-
-  @Header(pd.UserInfo)
-
-  <div class="-mt-px">
-    @Breadcrumb()
-  </div>
-  if pd.Hub != nil {
-    @HubSidebar(*pd.Hub)
-  } else {
-    @Sidebar()
-  }
-
-  <div class="w-full lg:ps-64">
-    <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
-      <div class="md:container md:mx-auto">
-        @pd.MainContent
-
-        @hsModal()
-      </div>
-    </div>
-  </div>
-
-  <script src="/static/dist/preline/preline.js" type="module"></script>
-
-  if pd.AdditionalFooter != nil {
-    @pd.GetAdditionalFooter()
-  }
-</body>
-
-</html>
+templ editorJS() {
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/link@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/attaches@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/undo@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@editorjs/redo@latest"></script>
 }

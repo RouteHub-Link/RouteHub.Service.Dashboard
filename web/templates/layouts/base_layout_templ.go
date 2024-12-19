@@ -29,7 +29,15 @@ func Main(pd PageDescription) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" class=\"dark\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css\"><link rel=\"stylesheet\" href=\"/static/css/output.css\"><title>RouteHUB</title><script src=\"https://unpkg.com/@popperjs/core@2\"></script><script src=\"https://unpkg.com/htmx.org@2.0.3\" integrity=\"sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq\" crossorigin=\"anonymous\"></script><script type=\"module\" src=\"https://cdn.jsdelivr.net/npm/zero-md@3?register\"></script><script type=\"text/javascript\" src=\"https://cdn.jsdelivr.net/npm/toastify-js\"></script><script src=\"/static/js/feedback-events.js\"></script><script src=\"/static/js/file-upload.js\"></script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" class=\"dark\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css\"><link rel=\"stylesheet\" href=\"/static/css/output.css\"><title>RouteHUB</title><script src=\"https://unpkg.com/@popperjs/core@2\"></script><script src=\"https://unpkg.com/htmx.org@2.0.3\" integrity=\"sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq\" crossorigin=\"anonymous\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.14.7/dist/cdn.min.js\"></script><script type=\"module\" src=\"https://cdn.jsdelivr.net/npm/zero-md@3?register\"></script><script type=\"text/javascript\" src=\"https://cdn.jsdelivr.net/npm/toastify-js\"></script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = editorJS().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"/static/js/feedback-events.js\"></script><script src=\"/static/js/file-upload.js\"></script><script src=\"/static/js/editorjs-initializer.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -93,6 +101,35 @@ func Main(pd PageDescription) templ.Component {
 			}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</body></html>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func editorJS() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/header@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/list@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/image@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/embed@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/table@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/link@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/marker@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/code@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/quote@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/warning@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/attaches@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/raw@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/undo@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/redo@latest\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

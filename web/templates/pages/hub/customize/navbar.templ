@@ -44,13 +44,21 @@ templ navbar(nd types.NavbarDescription, hubSlug string) {
 	>
 		Navbar Preview
 	</div>
-	<div hx-get={ fmt.Sprintf("/hub/%s/customize/partial/navbar/shadow", hubSlug) } hx-trigger="load, navbarItemUpdated from:body" hx-swap="innerHTML"></div>
+	<div
+		hx-get={ fmt.Sprintf("/hub/%s/customize/partial/navbar/shadow", hubSlug) }
+		hx-trigger="load, navbarItemUpdated from:body"
+		hx-swap="innerHTML"
+	></div>
 	<div
 		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
 	>
 		Navbar Tree
 	</div>
-	<div hx-get={ fmt.Sprintf("/hub/%s/customize/partial/navbar/tree", hubSlug) } hx-trigger="load, navbarItemUpdated from:body" hx-swap="innerHTML"></div>
+	<div
+		hx-get={ fmt.Sprintf("/hub/%s/customize/partial/navbar/tree", hubSlug) }
+		hx-trigger="load, navbarItemUpdated from:body"
+		hx-swap="innerHTML"
+	></div>
 }
 
 templ navbarFunctions(tn *partial.TreeNode, isAddable bool, isRemovable bool, isEditable bool, hubSlug string) {

@@ -2165,6 +2165,10 @@ select {
   text-transform: lowercase;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .leading-4 {
   line-height: 1rem;
 }
@@ -2417,6 +2421,11 @@ select {
 
 .\[--strategy\:absolute\] {
   --strategy: absolute;
+}
+
+.html-editor {
+  background-color: #f6f6f6;
+  border-radius: 5px;
 }
 
 @media (min-width: 768px) {
@@ -3489,6 +3498,16 @@ select {
 
   .dark\:open\:ring-white\/10[open] {
     --tw-ring-color: rgb(255 255 255 / 0.1);
+  }
+
+  .dark\:checked\:border-blue-500:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(59 130 246 / var(--tw-border-opacity));
+  }
+
+  .dark\:checked\:bg-blue-500:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(59 130 246 / var(--tw-bg-opacity));
   }
 
   .dark\:hover\:border-white\/10:hover {

@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.html-editor {
+    background-color: #f6f6f6;
+    border-radius: 5px;
+}

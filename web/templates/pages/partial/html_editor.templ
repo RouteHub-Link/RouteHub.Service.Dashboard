@@ -1,0 +1,10 @@
+package partial
+
+import "fmt"
+
+templ EditorJS(elementName string) {
+	<div x-init={ fmt.Sprintf("InitializeEditorJS('%s')", elementName) }>
+		<div id={ elementName } class="html-editor"></div>
+		<input type="text" hidden name={ elementName }/>
+	</div>
+}

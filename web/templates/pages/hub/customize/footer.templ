@@ -1,0 +1,33 @@
+package customize
+
+import (
+	"RouteHub.Service.Dashboard/ent/schema/types"
+	"RouteHub.Service.Dashboard/web/templates/pages/partial"
+	"fmt"
+)
+
+templ footer(fd types.FooterDescription, hubSlug string) {
+	<div class="grid gap-4 lg:gap-6">
+		<div class="grid grid-cols-1 sm:grid-cols-1 gap-4 lg:gap-6">
+			<div>
+				<label
+					for="Company Branding HTML"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Company Branding HTML</label>
+				@partial.EditorJS("branding-html")
+			</div>
+			<div>
+				<label for="hs-checkbox-in-form" class="flex p-3 w-full bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+					<input
+						type="checkbox"
+						name="show_routehub_branding"
+						checked={ fmt.Sprintf("%t", fd.ShowRouteHubBranding) }
+						class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+						id="hs-checkbox-in-form"
+					/>
+					<span class="text-sm text-gray-500 ms-3 dark:text-neutral-400">Show RouteHUB Branding</span>
+				</label>
+			</div>
+		</div>
+	</div>
+}
