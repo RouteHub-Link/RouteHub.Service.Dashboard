@@ -1,0 +1,48 @@
+package customize
+
+import "RouteHub.Service.Dashboard/ent/schema/types"
+
+templ FooterShadow(fd *types.FooterDescription, brandingHTML string) {
+	<footer class="footer">
+		<div class="content has-text-centered">
+			if (fd != nil) {
+				if (fd.CompanyBrandingHTML != "") {
+					@templ.Raw(brandingHTML)
+				}
+				if (fd.SocialMediaContainer != nil) {
+					@socialMedia(*fd.SocialMediaContainer)
+				}
+				if (fd.ShowRouteHubBranding) {
+					@routehubBranding()
+				}
+			} else {
+				@routehubBranding()
+			}
+		</div>
+	</footer>
+}
+
+templ routehubBranding() {
+	<p class="has-text-grey-darker p-5">
+		<strong class="has-text-grey-darker">Provided</strong> by
+		<a class="has-text-grey-dark" href="https://routehub.link">RouteHub</a>
+	</p>
+}
+
+templ socialMedia(smc types.SocialMediaContainer) {
+	<p class={ smc.SocialMediaColorClass + " " + smc.SocialMediaSizeClass + " " + smc.SocialMediaPeddingClass }>
+		if (smc.SocialMediaLinks != nil) {
+			for _, socialMedia := range *smc.SocialMediaLinks {
+				@SpanSocialMedia(socialMedia, smc.SocialMediaSizeClass)
+			}
+		}
+	</p>
+}
+
+templ SpanSocialMedia(socialMedia types.ASocialMedia, sizeClass string) {
+	<a href={ templ.URL(socialMedia.Link) } target={ socialMedia.Target }>
+		<span class={ "icon " + sizeClass }>
+			<i data-feather={ socialMedia.Icon }></i>
+		</span>
+	</a>
+}

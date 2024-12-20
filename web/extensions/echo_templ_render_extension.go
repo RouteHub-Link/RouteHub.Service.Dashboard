@@ -64,6 +64,17 @@ func HTMXAppendSuccessToast(c echo.Context, message string) {
 	HTMXAppendEventsAfterSwap(c, event)
 }
 
+func HTMXAppendErrorToast(c echo.Context, message string) {
+	event := map[string]interface{}{
+		"toast": map[string]interface{}{
+			"message": message,
+			"level":   "error",
+		},
+	}
+
+	HTMXAppendEventsAfterSwap(c, event)
+}
+
 func HTMXAppendToast(c echo.Context, message string, level string) {
 	event := map[string]interface{}{
 		"toast": map[string]interface{}{

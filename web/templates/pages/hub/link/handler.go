@@ -54,7 +54,7 @@ func (h Handlers) HubLinksHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, index(user, hub, links))
 }
 
-func (h Handlers) HubLinksCreateHandler(c echo.Context) error {
+func (h Handlers) HubLinksCreate(c echo.Context) error {
 	randSlug := utils.RandomShortKey()
 	hubSlug := c.Param("slug")
 
@@ -66,7 +66,7 @@ type HubLinkCreate struct {
 	Slug   string `json:"slug" form:"slug" validate:"required"`
 }
 
-func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
+func (h Handlers) HubLinkCreatePost(c echo.Context) error {
 	title := "Short an URL"
 
 	linkCreateRequest := new(HubLinkCreate)
@@ -125,7 +125,7 @@ func (h Handlers) HubLinkCreatePostHandler(c echo.Context) error {
 	return nil
 }
 
-func (h Handlers) HubLinkEditGetHandler(c echo.Context) error {
+func (h Handlers) HubLinkEditGet(c echo.Context) error {
 	linkPath := c.Param("path")
 	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
 	if err != nil {
@@ -145,7 +145,7 @@ func (h Handlers) HubLinkEditGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, edit(userInfo, hub, link, *hubLinkPaylod, *hubLinkMetaPayload))
 }
 
-func (h Handlers) HubLinkEditPostHandler(c echo.Context) error {
+func (h Handlers) HubLinkEditPost(c echo.Context) error {
 	linkPath := c.Param("path")
 	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
 
@@ -226,7 +226,7 @@ func (h Handlers) HubLinkEditPostHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, nil))
 }
 
-func (h Handlers) HubLinkStatusGetHandler(c echo.Context) error {
+func (h Handlers) HubLinkStatusGet(c echo.Context) error {
 	linkPath := c.Param("path")
 	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
 	if err != nil {
@@ -245,7 +245,7 @@ func (h Handlers) HubLinkStatusGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, components.LinkStatusForm(payload))
 }
 
-func (h Handlers) HubLinkStatusPostHandler(c echo.Context) error {
+func (h Handlers) HubLinkStatusPost(c echo.Context) error {
 	linkPath := c.Param("path")
 	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
 	if err != nil {

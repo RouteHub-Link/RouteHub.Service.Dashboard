@@ -53,44 +53,54 @@ func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.
 
 func mapCustomize(hubGroup *echo.Group, customizeHandlers *customize.Handlers) {
 	hubGroup.GET("/customize", customizeHandlers.CustomizeGetHandler)
-	hubGroup.GET("/customize/meta", customizeHandlers.MetaGetHandler)
-	hubGroup.POST("/customize/meta", customizeHandlers.MetaPostHandler)
+	hubGroup.GET("/customize/meta", customizeHandlers.MetaGet)
+	hubGroup.POST("/customize/meta", customizeHandlers.MetaPost)
 
-	hubGroup.GET("/customize/navbar", customizeHandlers.NavbarGetHandler)
+	hubGroup.GET("/customize/navbar", customizeHandlers.NavbarGet)
 
 	// Two button for new navbar item and new navbar button
-	hubGroup.GET("/customize/navbar/new/selection", customizeHandlers.NavbarNewSelectionGetHandler)
+	hubGroup.GET("/customize/navbar/new/selection", customizeHandlers.NavbarNewSelectionGet)
 
-	hubGroup.GET("/customize/navbar/item/:itemID/new", customizeHandlers.NavbarItemAddFormGetHandler)
-	hubGroup.POST("/customize/navbar/item/:itemID/new", customizeHandlers.NavbarItemAddFormPostHandler)
+	hubGroup.GET("/customize/navbar/item/:itemID/new", customizeHandlers.NavbarItemAddFormGet)
+	hubGroup.POST("/customize/navbar/item/:itemID/new", customizeHandlers.NavbarItemAddFormPost)
 
-	hubGroup.GET("/customize/navbar/item/:itemID/edit", customizeHandlers.NavbarItemEditFormGetHandler)
-	hubGroup.POST("/customize/navbar/item/:itemID/edit", customizeHandlers.NavbarItemEditFormPostHandler)
+	hubGroup.GET("/customize/navbar/item/:itemID/edit", customizeHandlers.NavbarItemEditFormGet)
+	hubGroup.POST("/customize/navbar/item/:itemID/edit", customizeHandlers.NavbarItemEditFormPost)
 
-	hubGroup.GET("/customize/navbar/item/:itemID/delete", customizeHandlers.NavbarItemDeleteFormGetHandler)
-	hubGroup.POST("/customize/navbar/item/:itemID/delete", customizeHandlers.NavbarItemDeletePostHandler)
+	hubGroup.GET("/customize/navbar/item/:itemID/delete", customizeHandlers.NavbarItemDeleteFormGet)
+	hubGroup.POST("/customize/navbar/item/:itemID/delete", customizeHandlers.NavbarItemDeletePost)
 
-	hubGroup.GET("/customize/navbar/button/new", customizeHandlers.NavbarButtonEditFormGetHandler)
-	hubGroup.POST("/customize/navbar/button/new", customizeHandlers.NavbarButtonEditFormPostHandler)
+	hubGroup.GET("/customize/navbar/button/new", customizeHandlers.NavbarButtonEditFormGet)
+	hubGroup.POST("/customize/navbar/button/new", customizeHandlers.NavbarButtonEditFormPost)
 
-	hubGroup.GET("/customize/navbar/button/:itemID/edit", customizeHandlers.NavbarButtonEditFormGetHandler)
-	hubGroup.POST("/customize/navbar/button/:itemID/edit", customizeHandlers.NavbarButtonEditFormPostHandler)
+	hubGroup.GET("/customize/navbar/button/:itemID/edit", customizeHandlers.NavbarButtonEditFormGet)
+	hubGroup.POST("/customize/navbar/button/:itemID/edit", customizeHandlers.NavbarButtonEditFormPost)
 
-	hubGroup.GET("/customize/navbar/button/:itemID/delete", customizeHandlers.NavbarButtonDeleteFormGetHandler)
-	hubGroup.POST("/customize/navbar/button/:itemID/delete", customizeHandlers.NavbarButtonDeleteFormPostHandler)
+	hubGroup.GET("/customize/navbar/button/:itemID/delete", customizeHandlers.NavbarButtonDeleteFormGet)
+	hubGroup.POST("/customize/navbar/button/:itemID/delete", customizeHandlers.NavbarButtonDeleteFormPost)
 
-	hubGroup.GET("/customize/partial/navbar/tree", customizeHandlers.NavbarItemsTreeGetHandler)
-	hubGroup.GET("/customize/partial/navbar/shadow", customizeHandlers.NavbarItemsShadowGetHandler)
+	hubGroup.GET("/customize/partial/navbar/tree", customizeHandlers.NavbarItemsTreeGet)
+	hubGroup.GET("/customize/partial/navbar/shadow", customizeHandlers.NavbarItemsShadowGet)
+
+	hubGroup.GET("/customize/footer", customizeHandlers.FooterGet)
+	hubGroup.GET("/customize/footer/social-media-container", customizeHandlers.FooterSocialMediaContainerGet)
+	hubGroup.GET("/customize/footer/social-media-links", customizeHandlers.FooterSocialMediaLinksGet)
+	hubGroup.POST("/customize/footer/social-media-links", customizeHandlers.FooterSocialMediaLinksPost)
+	hubGroup.GET("/customize/partial/footer/shadow", customizeHandlers.FooterShadow)
+
+	hubGroup.GET("/customize/footer/branding-html", customizeHandlers.FooterBrandingHTMLGet)
+	hubGroup.POST("/customize/footer/branding-html", customizeHandlers.FooterBrandingHTMLPost)
+
 }
 
 func mapLink(hubGroup *echo.Group, linkHandlers *link.Handlers) {
 	hubGroup.GET("/links", linkHandlers.HubLinksHandler)
-	hubGroup.GET("/links/create", linkHandlers.HubLinksCreateHandler)
-	hubGroup.POST("/links/create", linkHandlers.HubLinkCreatePostHandler)
+	hubGroup.GET("/links/create", linkHandlers.HubLinksCreate)
+	hubGroup.POST("/links/create", linkHandlers.HubLinkCreatePost)
 
-	hubGroup.GET("/links/:path", linkHandlers.HubLinkEditGetHandler)
-	hubGroup.POST("/links/:path", linkHandlers.HubLinkEditPostHandler)
+	hubGroup.GET("/links/:path", linkHandlers.HubLinkEditGet)
+	hubGroup.POST("/links/:path", linkHandlers.HubLinkEditPost)
 
-	hubGroup.GET("/links/:path/status", linkHandlers.HubLinkStatusGetHandler)
-	hubGroup.POST("/links/:path/status", linkHandlers.HubLinkStatusPostHandler)
+	hubGroup.GET("/links/:path/status", linkHandlers.HubLinkStatusGet)
+	hubGroup.POST("/links/:path/status", linkHandlers.HubLinkStatusPost)
 }

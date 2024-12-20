@@ -60,7 +60,7 @@ templ indexPage(hub *ent.Hub) {
 								>
 									Footer
 								</div>
-								@footer(hub.HubDetails.FooterDescription, hub.Slug)
+								<div hx-get={ fmt.Sprintf("/hub/%s/customize/footer", hub.Slug) } hx-swap="innerHTML" hx-trigger="load"></div>
 							</div>
 						</div>
 					</div>

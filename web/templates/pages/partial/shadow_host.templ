@@ -1,24 +1,9 @@
 package partial
 
-templ ShadowHub(template templ.Component) {
-	<div id="navbar-shadow-host" class="bulma-shadow">
+import "fmt"
+
+templ ShadowHub(template templ.Component, id string) {
+	<div id={ id } class="shadow-hub" x-init={ fmt.Sprintf("initializeShadowRoot('%s')", id) }>
 		@template
 	</div>
-	<script>
-        	var shadowHost = document.getElementById("navbar-shadow-host");
-        	var cloneInside = shadowHost.innerHTML;
-
-        	// Create a shadow root
-        	var shadowRoot = shadowHost.attachShadow({ mode: "open" });
-        	shadowRoot.innerHTML = `
-
-        	<link
-        		rel="stylesheet"
-        		href="/static/css/bulma.host.css"
-        	/>
-
-        	${cloneInside}
-
-        	`;
-	 </script>
 }

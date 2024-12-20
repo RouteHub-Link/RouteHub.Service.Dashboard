@@ -2,9 +2,19 @@ package partial
 
 import "fmt"
 
-templ EditorJS(elementName string) {
-	<div x-init={ fmt.Sprintf("InitializeEditorJS('%s')", elementName) }>
+templ EditorJS(elementName string, initialData string) {
+	<div x-init={ fmt.Sprintf("InitializeEditorJS('%s','%s')", elementName, initialData) }>
 		<div id={ elementName } class="html-editor"></div>
+		<input type="text" hidden name={ fmt.Sprintf("%s-json", elementName) }/>
+		<input type="text" hidden name={ fmt.Sprintf("%s-html", elementName) }/>
+	</div>
+}
+
+templ QuillHTMLEditor(elementName string, initialData string) {
+	<div x-init={ fmt.Sprintf("QuillInitializer('%s')", elementName) }>
+		<div id={ elementName } class="html-editor">
+			@templ.Raw(initialData)
+		</div>
 		<input type="text" hidden name={ elementName }/>
 	</div>
 }

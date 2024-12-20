@@ -39,7 +39,7 @@ func (h Handlers) CustomizeGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, index(userInfo, hub))
 }
 
-func (h Handlers) MetaGetHandler(c echo.Context) error {
+func (h Handlers) MetaGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 
 	hubMeta := hub.HubDetails.MetaDescription
@@ -56,7 +56,7 @@ func (h Handlers) MetaGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, meta(MetaPayload))
 }
 
-func (h Handlers) MetaPostHandler(c echo.Context) error {
+func (h Handlers) MetaPost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 
 	payload := new(MetaPayload)
@@ -86,7 +86,7 @@ func (h Handlers) MetaPostHandler(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-func (h Handlers) NavbarGetHandler(c echo.Context) error {
+func (h Handlers) NavbarGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 	//mockMetaDescription := types.MetaDescription{Title: "RouteHub", Description: "RouteHub is a platform that allows you to create, share, and discover routes for your favorite activities."}
 
@@ -110,7 +110,7 @@ func (h Handlers) NavbarGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, navbar(hub.HubDetails.NavbarDescription, hub.Slug))
 }
 
-func (h Handlers) NavbarItemEditFormGetHandler(c echo.Context) error {
+func (h Handlers) NavbarItemEditFormGet(c echo.Context) error {
 	fmt.Println("NavbarEditItemFormGetHandler Called")
 	hub, _ := context.GetHubFromContext(c)
 
@@ -145,7 +145,7 @@ func (h Handlers) NavbarItemEditFormGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, nil))
 }
 
-func (h Handlers) NavbarItemEditFormPostHandler(c echo.Context) error {
+func (h Handlers) NavbarItemEditFormPost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 	title := "Navbar Item Form"
 
@@ -196,7 +196,7 @@ func (h Handlers) NavbarItemEditFormPostHandler(c echo.Context) error {
 	return nil
 }
 
-func (h Handlers) NavbarItemAddFormGetHandler(c echo.Context) error {
+func (h Handlers) NavbarItemAddFormGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 
 	itemID := c.Param("itemID")
@@ -219,7 +219,7 @@ func (h Handlers) NavbarItemAddFormGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, NavbarItemAddForm(payload, nil))
 }
 
-func (h Handlers) NavbarItemAddFormPostHandler(c echo.Context) error {
+func (h Handlers) NavbarItemAddFormPost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 	title := "Navbar Item Form"
 
@@ -303,7 +303,7 @@ func navbarItemAppendToItem(nav *types.NavbarDescription, indexPath string, newI
 	return item, nil
 }
 
-func (h Handlers) NavbarItemDeleteFormGetHandler(c echo.Context) error {
+func (h Handlers) NavbarItemDeleteFormGet(c echo.Context) error {
 	fmt.Println("NavbarEditItemFormGetHandler Called")
 	hub, _ := context.GetHubFromContext(c)
 
@@ -336,7 +336,7 @@ func (h Handlers) NavbarItemDeleteFormGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, NavbarItemDeleteForm(*payload, nil))
 }
 
-func (h Handlers) NavbarItemDeletePostHandler(c echo.Context) error {
+func (h Handlers) NavbarItemDeletePost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 
 	payload := NavbarItemFormPayload{

@@ -8,14 +8,27 @@ import (
 
 templ footer(fd types.FooterDescription, hubSlug string) {
 	<div class="grid gap-4 lg:gap-6">
+		<div
+			class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
+		>
+			Footer Preview
+		</div>
+		<div
+			hx-get={ fmt.Sprintf("/hub/%s/customize/partial/footer/shadow", hubSlug) }
+			hx-trigger="load, footerItemUpdated from:body"
+			hx-swap="innerHTML"
+		></div>
+		<div
+			class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
+		>
+			Footer Configuration
+		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-1 gap-4 lg:gap-6">
-			<div>
-				<label
-					for="Company Branding HTML"
-					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
-				>Company Branding HTML</label>
-				@partial.EditorJS("branding-html")
-			</div>
+			<div
+				hx-get={ fmt.Sprintf("/hub/%s/customize/footer/branding-html", hubSlug) }
+				hx-trigger="load, footerItemUpdated from:body"
+				hx-swap="innerHTML"
+			></div>
 			<div>
 				<label for="hs-checkbox-in-form" class="flex p-3 w-full bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
 					<input
@@ -30,4 +43,30 @@ templ footer(fd types.FooterDescription, hubSlug string) {
 			</div>
 		</div>
 	</div>
+	<div
+		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
+	>
+		Social Media Container
+	</div>
+	<div
+		hx-get={ fmt.Sprintf("/hub/%s/customize/footer/social-media-container", hubSlug) }
+		hx-trigger="load, footerItemUpdated from:body"
+		hx-swap="innerHTML"
+	></div>
+}
+
+templ BrandingHTML(fd types.FooterDescription, hubSlug string) {
+	<form hx-post={ fmt.Sprintf("/hub/%s/customize/footer/branding-html", hubSlug) }>
+		<label
+			for="Company Branding HTML"
+			class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+		>Company Branding HTML</label>
+		@partial.QuillHTMLEditor("companyBrandingHTML", fd.CompanyBrandingHTML)
+		<button
+			type="submit"
+			class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+		>
+			Save
+		</button>
+	</form>
 }

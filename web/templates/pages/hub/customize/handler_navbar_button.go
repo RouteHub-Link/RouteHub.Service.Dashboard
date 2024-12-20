@@ -11,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h Handlers) NavbarButtonEditFormGetHandler(c echo.Context) error {
+func (h Handlers) NavbarButtonEditFormGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 	title := "Navbar Button Form"
 
@@ -39,7 +39,7 @@ func (h Handlers) NavbarButtonEditFormGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(payload, nil))
 }
 
-func (h Handlers) NavbarButtonDeleteFormGetHandler(c echo.Context) error {
+func (h Handlers) NavbarButtonDeleteFormGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 	title := "Navbar Button Form"
 
@@ -70,7 +70,7 @@ func (h Handlers) NavbarButtonDeleteFormGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, NavbarItemButtonDeleteForm(payload, nil))
 }
 
-func (h Handlers) NavbarButtonDeleteFormPostHandler(c echo.Context) error {
+func (h Handlers) NavbarButtonDeleteFormPost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 	title := "Navbar Button Form"
 
@@ -112,7 +112,7 @@ func (h Handlers) NavbarButtonDeleteFormPostHandler(c echo.Context) error {
 	return nil
 }
 
-func (h Handlers) NavbarButtonEditFormPostHandler(c echo.Context) error {
+func (h Handlers) NavbarButtonEditFormPost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 	title := "Navbar Button Form"
 

@@ -14,10 +14,15 @@ templ Main(pd PageDescription) {
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.7/dist/cdn.min.js"></script>
 			<script type="module" src="https://cdn.jsdelivr.net/npm/zero-md@3?register"></script>
 			<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-			@editorJS()
+			<link
+				href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css"
+				rel="stylesheet"
+			/>
+			<script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
 			<script src="/static/js/feedback-events.js"></script>
 			<script src="/static/js/file-upload.js"></script>
-			<script src="/static/js/editorjs-initializer.js"></script>
+			<script src="/static/js/quill-initializer.js"></script>
+			<script src="/static/js/shadow-initializer.js"></script>
 			if pd.AdditionalHead != nil {
 				@pd.GetAdditionalHead()
 			}
@@ -50,6 +55,7 @@ templ Main(pd PageDescription) {
 
 templ editorJS() {
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+	<script src="/static/js/editorjs-html.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest"></script>
@@ -67,6 +73,5 @@ templ editorJS() {
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/attaches@latest"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/undo@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/redo@latest"></script>
+	<script src="/static/js/editorjs-initializer.js"></script>
 }

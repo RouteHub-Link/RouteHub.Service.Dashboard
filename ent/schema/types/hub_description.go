@@ -52,7 +52,7 @@ type SocialMediaContainer struct {
 }
 
 type ASocialMedia struct {
-	Icon   string
-	Link   string
-	Target string
+	Icon   string `json:"icon" form:"icon" validate:"required"`
+	Link   string `json:"link" form:"link" validate:"required,url"`
+	Target string `json:"target" form:"target" validate:"required"`
 }

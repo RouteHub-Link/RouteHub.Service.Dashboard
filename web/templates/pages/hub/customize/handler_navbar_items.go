@@ -9,20 +9,21 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h Handlers) NavbarItemsTreeGetHandler(c echo.Context) error {
+func (h Handlers) NavbarItemsTreeGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 
 	extensions.HTMXAppendPrelineRefresh(c)
 	return extensions.Render(c, http.StatusOK, partial.TreeView(NavbarToTree(&hub.HubDetails.NavbarDescription, hub.Slug)))
 }
 
-func (h Handlers) NavbarItemsShadowGetHandler(c echo.Context) error {
+func (h Handlers) NavbarItemsShadowGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
+	shadowID := "navbar-items"
 
-	return extensions.Render(c, http.StatusOK, partial.ShadowHub(NavbarShadow(&hub.HubDetails.NavbarDescription)))
+	return extensions.Render(c, http.StatusOK, partial.ShadowHub(NavbarShadow(&hub.HubDetails.NavbarDescription), shadowID))
 }
 
-func (h Handlers) NavbarNewSelectionGetHandler(c echo.Context) error {
+func (h Handlers) NavbarNewSelectionGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 
 	return extensions.Render(c, http.StatusOK, navbarCreateSelector(hub.Slug))
