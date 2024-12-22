@@ -36,7 +36,7 @@ func (h Handlers) DomainCreateGet(c echo.Context) error {
 }
 
 func (h Handlers) DomainCreatePost(c echo.Context) error {
-
+	title := "Create Domain"
 	url := c.FormValue("url")
 	name := c.FormValue("name")
 	h.Logger.Info("URL", "url", url)
@@ -46,15 +46,14 @@ func (h Handlers) DomainCreatePost(c echo.Context) error {
 	if !isValid || err != nil {
 		title := "Invalid URL"
 		message := "Please enter a valid URL; <br> " + err.Error()
-		feedback := partial.FormFeedback("error", &title, &message)
+		feedback := partial.FormFeedback("error", title, message)
 		return extensions.Render(c, http.StatusOK, CreateDomain(feedback, true))
 	}
 
 	organization, err := context.GetOrganizationFromContext(c)
 
 	if err != nil {
-		msg := err.Error()
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, err.Error())
 		return extensions.Render(c, http.StatusOK, CreateDomain(feedback, true))
 	}
 
@@ -67,14 +66,13 @@ func (h Handlers) DomainCreatePost(c echo.Context) error {
 		Save(c.Request().Context())
 
 	if err != nil {
-		title := "Error"
 		message := "An error occurred while creating the domain; <br> " + err.Error()
-		feedback := partial.FormFeedback("error", &title, &message)
+		feedback := partial.FormFeedback("error", title, message)
 		return extensions.Render(c, http.StatusOK, CreateDomain(feedback, true))
 	}
 
 	message := "Domain created successfully."
-	feedback := partial.FormFeedback("success", nil, &message)
+	feedback := partial.FormFeedback("success", title, message)
 
 	extensions.HTMXAppendTrigger(c, "newDomain, close-modal")
 	extensions.HTMXAppendSuccessToast(c, message)

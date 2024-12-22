@@ -23,8 +23,7 @@ func (h Handlers) NavbarButtonEditFormGet(c echo.Context) error {
 	if itemID != "" {
 		item, err := GetButtonByIndex(&hub.HubDetails.NavbarDescription, itemID)
 		if err != nil {
-			msg := "Error finding item"
-			feedback := partial.FormFeedback("error", &title, &msg)
+			feedback := partial.FormFeedback("error", title, "Error finding item")
 			return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(payload, feedback))
 		}
 
@@ -49,15 +48,13 @@ func (h Handlers) NavbarButtonDeleteFormGet(c echo.Context) error {
 
 	itemID := c.Param("itemID")
 	if itemID == "" {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemButtonDeleteForm(payload, feedback))
 	}
 
 	item, err := GetButtonByIndex(&hub.HubDetails.NavbarDescription, itemID)
 	if err != nil {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemButtonDeleteForm(payload, feedback))
 	}
 
@@ -80,23 +77,20 @@ func (h Handlers) NavbarButtonDeleteFormPost(c echo.Context) error {
 
 	itemID := c.Param("itemID")
 	if itemID == "" {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(payload, feedback))
 	}
 
 	_, err := GetButtonByIndex(&hub.HubDetails.NavbarDescription, itemID)
 	if err != nil {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(payload, feedback))
 	}
 
 	err = DeleteButtonByIndex(&hub.HubDetails.NavbarDescription, itemID)
 
 	if err != nil {
-		msg := "Error deleting item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(payload, feedback))
 	}
 
@@ -119,7 +113,7 @@ func (h Handlers) NavbarButtonEditFormPost(c echo.Context) error {
 	payload := new(NavbarItemButtonFormPayload)
 	if err := extensions.BindAndValidate(c, payload); err != nil {
 		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(*payload, feedback))
 	}
 
@@ -131,8 +125,7 @@ func (h Handlers) NavbarButtonEditFormPost(c echo.Context) error {
 		gettedItem, err := GetButtonByIndex(&hub.HubDetails.NavbarDescription, itemID)
 
 		if err != nil {
-			msg := "Error finding item"
-			feedback := partial.FormFeedback("error", &title, &msg)
+			feedback := partial.FormFeedback("error", title, "Error finding item")
 			return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(*payload, feedback))
 		}
 
@@ -153,16 +146,14 @@ func (h Handlers) NavbarButtonEditFormPost(c echo.Context) error {
 		err := ReplaceButtonByIndex(&hub.HubDetails.NavbarDescription, itemID, *item)
 
 		if err != nil {
-			msg := "Error updating item"
-			feedback := partial.FormFeedback("error", &title, &msg)
+			feedback := partial.FormFeedback("error", title, "Error updating item")
 			return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(*payload, feedback))
 		}
 	}
 
 	hub, err := h.Ent.Hub.UpdateOne(hub).SetHubDetails(hub.HubDetails).Save(c.Request().Context())
 	if err != nil {
-		msg := "Error updating item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error updating item")
 		return extensions.Render(c, http.StatusOK, NavbarItemButtonForm(*payload, feedback))
 	}
 

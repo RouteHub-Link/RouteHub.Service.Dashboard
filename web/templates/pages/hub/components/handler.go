@@ -32,6 +32,7 @@ func NewHandlers(logger *slog.Logger, ent *ent.Client) *Handlers {
 }
 
 func (h Handlers) AttachHubGet(c echo.Context) error {
+	title := "Attach Hub"
 	isHXRequest := c.Request().Header.Get("HX-Request") != ""
 	if !isHXRequest {
 		return c.Redirect(http.StatusFound, "/hubs")
@@ -40,7 +41,7 @@ func (h Handlers) AttachHubGet(c echo.Context) error {
 	organization, err := context.GetOrganizationFromContext(c)
 	if err != nil {
 		msg := strings.Join([]string{"Error fetching user organization", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, domainComponents.CreateDomain(feedback, false))
 	}
 
@@ -49,7 +50,7 @@ func (h Handlers) AttachHubGet(c echo.Context) error {
 	domains, err := h.Ent.Organization.QueryDomains(organization).All(c.Request().Context())
 	if err != nil || len(domains) == 0 {
 		msg := "Error fetching organization domains \nPlease add at least one domain"
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, domainComponents.CreateDomain(feedback, false))
 	}
 
@@ -68,7 +69,7 @@ func (h Handlers) AttachHubPost(c echo.Context) error {
 
 	if err != nil {
 		msg := strings.Join([]string{"Error fetching user organization", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, AttachHub(slug, nil, feedback, true))
 	}
 
@@ -77,7 +78,7 @@ func (h Handlers) AttachHubPost(c echo.Context) error {
 	mqc, err := hubConnection.TryConnectToHub(address)
 	if err != nil {
 		msg := strings.Join([]string{"Error connecting to hub", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, AttachHub(slug, domains, feedback, true))
 	}
 
@@ -88,8 +89,7 @@ func (h Handlers) AttachHubPost(c echo.Context) error {
 	}).First().(*ent.Domain)
 
 	if domain == nil {
-		msg := "Domain not found"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Domain not found")
 		return extensions.Render(c, http.StatusOK, AttachHub(slug, domains, feedback, true))
 	}
 
@@ -105,7 +105,7 @@ func (h Handlers) AttachHubPost(c echo.Context) error {
 
 	if err != nil {
 		msg := strings.Join([]string{"Error creating hub", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, AttachHub(slug, domains, feedback, true))
 	}
 

@@ -39,7 +39,25 @@ func (h Handlers) CustomizeGetHandler(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, index(userInfo, hub))
 }
 
-func (h Handlers) MetaGet(c echo.Context) error {
+func (h Handlers) MetaPageGet(c echo.Context) error {
+	hub, _ := context.GetHubFromContext(c)
+	userInfo, _ := context.GetUserFromContext(c)
+
+	hubMeta := hub.HubDetails.MetaDescription
+
+	MetaPayload := MetaPayload{
+		Title:         hubMeta.Title,
+		Description:   hubMeta.Description,
+		OGDescription: hubMeta.OGDescription,
+		OGTitle:       hubMeta.OGTitle,
+		Locale:        hubMeta.Locale,
+	}
+
+	extensions.HTMXAppendPrelineRefresh(c)
+	return extensions.Render(c, http.StatusOK, MetaPage(userInfo, hub, MetaPayload, hub.Slug, nil))
+}
+
+func (h Handlers) MetaPartialGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 
 	hubMeta := hub.HubDetails.MetaDescription
@@ -53,11 +71,12 @@ func (h Handlers) MetaGet(c echo.Context) error {
 	}
 
 	extensions.HTMXAppendPrelineRefresh(c)
-	return extensions.Render(c, http.StatusOK, meta(MetaPayload))
+	return extensions.Render(c, http.StatusOK, metaForm(MetaPayload, hub.Slug, nil))
 }
 
-func (h Handlers) MetaPost(c echo.Context) error {
+func (h Handlers) MetaPartialPost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
+	title := "Meta Data Form"
 
 	payload := new(MetaPayload)
 	if err := extensions.BindAndValidate(c, payload); err != nil {
@@ -76,8 +95,8 @@ func (h Handlers) MetaPost(c echo.Context) error {
 		SetHubDetails(hubDetails).
 		Save(c.Request().Context()); err != nil {
 
-		h.Logger.Error("Error updating hub", "error", err)
-		return c.NoContent(http.StatusInternalServerError)
+		feedback := partial.FormFeedbackFromErr(title, err)
+		return extensions.Render(c, http.StatusOK, metaForm(*payload, hub.Slug, feedback))
 	}
 
 	extensions.HTMXAppendSuccessToast(c, "Meta Updated Successfully")
@@ -86,28 +105,58 @@ func (h Handlers) MetaPost(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-func (h Handlers) NavbarGet(c echo.Context) error {
+type NavbarCustomizePayload struct {
+	BrandName string `json:"brand_name" form:"brand_name" validate:"required"`
+	BrandURL  string `json:"brand_url" form:"brand_url" validate:"required,url"`
+}
+
+func (h Handlers) NavbarPageGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
-	//mockMetaDescription := types.MetaDescription{Title: "RouteHub", Description: "RouteHub is a platform that allows you to create, share, and discover routes for your favorite activities."}
+	userInfo, _ := context.GetUserFromContext(c)
 
-	//brandImg := types.ImageDescription{SRC: "https://avatars.githubusercontent.com/u/153122518?s=250", Alt: "RouteHub", Width: "30", Height: "30"}
-	//navbarItems := []types.NavbarItem{{Text: "Home", URL: "/", Target: "_self", Icon: "home"}, {Text: "About", URL: "/about", Target: "_self", Icon: "info", Dropdown: &[]types.NavbarItem{{Text: "Contact", URL: "/contact", Target: "_self", Icon: "contact_mail"}}}}
-	//navbarEndButtons := []types.NavbarButton{{Text: "Login", URL: "/login", Target: "_self", ColorClass: "is-secondary"}, {Text: "Sign Up", URL: "/signup", Target: "_self", ColorClass: "is-primary"}}
+	return extensions.Render(c, http.StatusOK, NavbarPage(userInfo, hub))
+}
 
-	//navbarDescription := types.NavbarDescription{BrandName: "RouteHub", BrandURL: "https://routehub.link", BrandImg: &brandImg, StartItems: &navbarItems, EndButtons: &navbarEndButtons}
+func (h Handlers) NavbarPartialGet(c echo.Context) error {
+	hub, _ := context.GetHubFromContext(c)
 
-	//socialMediaList := []types.ASocialMedia{{Icon: "facebook", Link: "https://www.facebook.com", Target: "_blank"}, {Icon: "twitter", Link: "https://www.twitter.com", Target: "_blank"}, {Icon: "instagram", Link: "https://www.instagram.com", Target: "_blank"}, {Icon: "linkedin", Link: "https://www.linkedin.com", Target: "_blank"}}
-	//socialMediaContainer := types.SocialMediaContainer{SocialMediaLinks: &socialMediaList, SocialMediaPeddingClass: "pt-5", SocialMediaSizeClass: "is-medium", SocialMediaColorClass: "has-text-white"}
+	payload := NavbarCustomizePayload{
+		BrandName: hub.HubDetails.NavbarDescription.BrandName,
+		BrandURL:  hub.HubDetails.NavbarDescription.BrandURL,
+	}
 
-	//footerDescription := types.FooterDescription{ShowRouteHubBranding: true, CompanyBrandingHTML: "<strong>X Company</strong> <a href=''> X Company</a> Has Rights of this site since 1111</strong>", SocialMediaContainer: &socialMediaContainer}
+	return extensions.Render(c, http.StatusOK, navbarForm(payload, hub.HubDetails.NavbarDescription, hub.Slug, nil))
+}
 
-	//hub.HubDetails.FooterDescription = footerDescription
-	//hub.HubDetails.NavbarDescription = navbarDescription
-	//hub.HubDetails.MetaDescription = mockMetaDescription
+func (h Handlers) NavbarPartialPost(c echo.Context) error {
+	hub, _ := context.GetHubFromContext(c)
+	title := "Navbar Form"
 
-	//hub, _ = h.Ent.Hub.UpdateOne(hub).SetHubDetails(hub.HubDetails).Save(c.Request().Context())
+	payload := new(NavbarCustomizePayload)
+	if err := extensions.BindAndValidate(c, payload); err != nil {
+		feedback := partial.FormFeedback("error", title, err.Error())
+		return extensions.Render(c, http.StatusOK, navbarForm(*payload, hub.HubDetails.NavbarDescription, hub.Slug, feedback))
+	}
 
-	return extensions.Render(c, http.StatusOK, navbar(hub.HubDetails.NavbarDescription, hub.Slug))
+	hubDetails := hub.HubDetails
+	hubDetails.NavbarDescription.BrandName = payload.BrandName
+	hubDetails.NavbarDescription.BrandURL = payload.BrandURL
+
+	if _, err := h.Ent.Hub.
+		UpdateOne(hub).
+		SetHubDetails(hubDetails).
+		Save(c.Request().Context()); err != nil {
+		feedback := partial.FormFeedbackFromErr(title, err)
+		return extensions.Render(c, http.StatusOK, navbarForm(*payload, hub.HubDetails.NavbarDescription, hub.Slug, feedback))
+	}
+
+	extensions.HTMXAppendSuccessToast(c, "Navbar Updated Successfully")
+	extensions.HTMXAppendPrelineRefresh(c)
+	extensions.HTMXAppendEventsAfterSwap(c, map[string]interface{}{
+		"navbarUpdated": "",
+	})
+
+	return nil
 }
 
 func (h Handlers) NavbarItemEditFormGet(c echo.Context) error {
@@ -152,22 +201,21 @@ func (h Handlers) NavbarItemEditFormPost(c echo.Context) error {
 	payload := new(NavbarItemFormPayload)
 	if err := extensions.BindAndValidate(c, payload); err != nil {
 		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
+
 		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 	}
 
 	// itemId
 	itemID := c.Param("itemID")
 	if itemID == "" {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 	}
 
 	item, err := GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
 	if err != nil {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 	}
 
@@ -179,8 +227,7 @@ func (h Handlers) NavbarItemEditFormPost(c echo.Context) error {
 	err = ReplaceItemByIndex(&hub.HubDetails.NavbarDescription, itemID, *item)
 
 	if err != nil {
-		msg := "Error updating item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error updating item")
 		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 	}
 
@@ -212,7 +259,7 @@ func (h Handlers) NavbarItemAddFormGet(c echo.Context) error {
 	_, err := GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
 	if err != nil {
 		message := fmt.Sprintf("Error finding item with id %s", itemID)
-		feedback := partial.FormFeedback("error", nil, &message)
+		feedback := partial.FormFeedback("error", "", message)
 		return extensions.Render(c, http.StatusOK, NavbarItemAddForm(NavbarItemFormPayload{}, feedback))
 	}
 
@@ -226,14 +273,13 @@ func (h Handlers) NavbarItemAddFormPost(c echo.Context) error {
 	payload := new(NavbarItemFormPayload)
 	if err := extensions.BindAndValidate(c, payload); err != nil {
 		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 	}
 
 	itemID := c.Param("itemID")
 	if itemID == "" {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 	}
 
@@ -256,16 +302,14 @@ func (h Handlers) NavbarItemAddFormPost(c echo.Context) error {
 		_, err := navbarItemAppendToItem(&hub.HubDetails.NavbarDescription, itemID, newItem)
 
 		if err != nil {
-			msg := "Error finding item"
-			feedback := partial.FormFeedback("error", &title, &msg)
+			feedback := partial.FormFeedback("error", title, "Error finding item")
 			return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 		}
 	}
 
 	hub, err := h.Ent.Hub.UpdateOne(hub).SetHubDetails(hub.HubDetails).Save(c.Request().Context())
 	if err != nil {
-		msg := "Error updating item"
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, "Error updating item")
 		return extensions.Render(c, http.StatusOK, NavbarItemForm(*payload, feedback))
 	}
 
@@ -338,6 +382,7 @@ func (h Handlers) NavbarItemDeleteFormGet(c echo.Context) error {
 
 func (h Handlers) NavbarItemDeletePost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
+	title := "Navbar Item Form"
 
 	payload := NavbarItemFormPayload{
 		HubSlug: hub.Slug,
@@ -345,23 +390,20 @@ func (h Handlers) NavbarItemDeletePost(c echo.Context) error {
 
 	itemID := c.Param("itemID")
 	if itemID == "" {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemDeleteForm(payload, feedback))
 	}
 
 	_, err := GetItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
 	if err != nil {
-		msg := "Error finding item"
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, "Error finding item")
 		return extensions.Render(c, http.StatusOK, NavbarItemDeleteForm(payload, feedback))
 	}
 
 	err = DeleteItemByIndex(&hub.HubDetails.NavbarDescription, itemID)
 
 	if err != nil {
-		msg := "Error deleting item"
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, "Error deleting item")
 		return extensions.Render(c, http.StatusOK, NavbarItemDeleteForm(payload, feedback))
 	}
 

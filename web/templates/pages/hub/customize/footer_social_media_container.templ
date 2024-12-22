@@ -157,6 +157,11 @@ templ footerSocialMediaLinkList(hubSlug string) {
                                 level : response.ok ? 'success' : 'error'
                             }
                         }));
+
+                        document.body.dispatchEvent(new CustomEvent('close-modal'));
+                        document.body.dispatchEvent(new CustomEvent('footerItemUpdated'));
+                        document.body.dispatchEvent(new CustomEvent('footerUpdated'));
+
                     })
                     .catch(error => {
                         console.error('Error saving changes:', error);

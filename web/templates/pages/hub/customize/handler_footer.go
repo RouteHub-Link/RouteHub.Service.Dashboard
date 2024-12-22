@@ -11,10 +11,63 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h Handlers) FooterGet(c echo.Context) error {
+type FooterPayload struct {
+	ShowRouteHubBranding bool `json:"show_routehub_branding" form:"show_routehub_branding"`
+}
+
+func (h Handlers) FooterPageGet(c echo.Context) error {
+	hub, _ := context.GetHubFromContext(c)
+	userInfo, _ := context.GetUserFromContext(c)
+
+	return extensions.Render(c, http.StatusOK, FooterPage(userInfo, hub))
+}
+
+func (h Handlers) FooterPartialGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 
-	return extensions.Render(c, http.StatusOK, footer(hub.HubDetails.FooterDescription, hub.Slug))
+	payload := FooterPayload{
+		ShowRouteHubBranding: hub.HubDetails.FooterDescription.ShowRouteHubBranding,
+	}
+
+	extensions.HTMXAppendPrelineRefresh(c)
+
+	return extensions.Render(c, http.StatusOK, footerForm(payload, hub.HubDetails.FooterDescription, hub.Slug, nil))
+}
+
+func (h Handlers) FooterPartialPost(c echo.Context) error {
+	hub, _ := context.GetHubFromContext(c)
+	title := "Footer Customization"
+
+	payload := new(FooterPayload)
+	if err := extensions.BindAndValidate(c, payload); err != nil {
+		payload = &FooterPayload{
+			ShowRouteHubBranding: hub.HubDetails.FooterDescription.ShowRouteHubBranding,
+		}
+		feedback := partial.FormFeedback("error", title, err.Error())
+		return extensions.Render(c, http.StatusBadRequest, footerForm(*payload, hub.HubDetails.FooterDescription, hub.Slug, feedback))
+	}
+
+	hubDetails := hub.HubDetails
+	hubDetails.FooterDescription.ShowRouteHubBranding = payload.ShowRouteHubBranding
+
+	if _, err := h.Ent.Hub.UpdateOne(hub).SetHubDetails(hubDetails).Save(c.Request().Context()); err != nil {
+		payload = &FooterPayload{
+			ShowRouteHubBranding: hub.HubDetails.FooterDescription.ShowRouteHubBranding,
+		}
+		feedback := partial.FormFeedback("error", title, err.Error())
+		return extensions.Render(c, http.StatusBadRequest, footerForm(*payload, hub.HubDetails.FooterDescription, hub.Slug, feedback))
+	}
+
+	extensions.HTMXAppendSuccessToast(c, "Footer updated successfully")
+	extensions.HTMXAppendEventsAfterSwap(c, map[string]interface{}{
+		"footerUpdated": "",
+	})
+	extensions.HTMXAppendPrelineRefresh(c)
+	extensions.HTMXCloseModal(c)
+
+	feedback := partial.FormFeedback("success", title, "Footer updated successfully")
+
+	return extensions.Render(c, http.StatusOK, footerForm(*payload, hub.HubDetails.FooterDescription, hub.Slug, feedback))
 }
 
 func (h Handlers) FooterSocialMediaContainerGet(c echo.Context) error {
@@ -40,7 +93,15 @@ func (h Handlers) FooterSocialMediaLinksPost(c echo.Context) error {
 	}
 
 	hub.HubDetails.FooterDescription.SocialMediaContainer.SocialMediaLinks = &payload.SocialMediaLinks
-	h.Ent.Hub.UpdateOne(hub).SetHubDetails(hub.HubDetails).Save(c.Request().Context())
+	if _, err := h.Ent.Hub.UpdateOne(hub).SetHubDetails(hub.HubDetails).Save(c.Request().Context()); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	extensions.HTMXAppendSuccessToast(c, "Branding HTML updated successfully")
+	extensions.HTMXAppendEventsAfterSwap(c, map[string]interface{}{
+		"footerItemUpdated": "",
+	})
+	extensions.HTMXCloseModal(c)
 
 	return c.NoContent(http.StatusOK)
 }

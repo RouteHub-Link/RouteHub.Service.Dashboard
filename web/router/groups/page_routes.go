@@ -53,10 +53,13 @@ func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.
 
 func mapCustomize(hubGroup *echo.Group, customizeHandlers *customize.Handlers) {
 	hubGroup.GET("/customize", customizeHandlers.CustomizeGetHandler)
-	hubGroup.GET("/customize/meta", customizeHandlers.MetaGet)
-	hubGroup.POST("/customize/meta", customizeHandlers.MetaPost)
+	hubGroup.GET("/customize/meta", customizeHandlers.MetaPageGet)
+	hubGroup.GET("/customize/partial/meta", customizeHandlers.MetaPartialGet)
+	hubGroup.POST("/customize/partial/meta", customizeHandlers.MetaPartialPost)
 
-	hubGroup.GET("/customize/navbar", customizeHandlers.NavbarGet)
+	hubGroup.GET("/customize/navbar", customizeHandlers.NavbarPageGet)
+	hubGroup.GET("/customize/partial/navbar", customizeHandlers.NavbarPartialGet)
+	hubGroup.POST("/customize/partial/navbar", customizeHandlers.NavbarPartialPost)
 
 	// Two button for new navbar item and new navbar button
 	hubGroup.GET("/customize/navbar/new/selection", customizeHandlers.NavbarNewSelectionGet)
@@ -82,7 +85,10 @@ func mapCustomize(hubGroup *echo.Group, customizeHandlers *customize.Handlers) {
 	hubGroup.GET("/customize/partial/navbar/tree", customizeHandlers.NavbarItemsTreeGet)
 	hubGroup.GET("/customize/partial/navbar/shadow", customizeHandlers.NavbarItemsShadowGet)
 
-	hubGroup.GET("/customize/footer", customizeHandlers.FooterGet)
+	hubGroup.GET("/customize/footer", customizeHandlers.FooterPageGet)
+	hubGroup.GET("/customize/partial/footer", customizeHandlers.FooterPartialGet)
+	hubGroup.POST("/customize/partial/footer", customizeHandlers.FooterPartialPost)
+
 	hubGroup.GET("/customize/footer/social-media-container", customizeHandlers.FooterSocialMediaContainerGet)
 	hubGroup.GET("/customize/footer/social-media-links", customizeHandlers.FooterSocialMediaLinksGet)
 	hubGroup.POST("/customize/footer/social-media-links", customizeHandlers.FooterSocialMediaLinksPost)

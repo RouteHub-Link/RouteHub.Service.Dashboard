@@ -44,7 +44,7 @@ templ indexPage(hub *ent.Hub) {
 								>
 									Meta
 								</div>
-								<div hx-get={ fmt.Sprintf("/hub/%s/customize/meta", hub.Slug) } hx-swap="innerHTML" hx-trigger="load"></div>
+								<div hx-get={ fmt.Sprintf("/hub/%s/customize/partial/meta", hub.Slug) } hx-swap="innerHTML" hx-trigger="load"></div>
 							</div>
 							<div>
 								<div
@@ -52,7 +52,7 @@ templ indexPage(hub *ent.Hub) {
 								>
 									Navbar
 								</div>
-								<div hx-get={ fmt.Sprintf("/hub/%s/customize/navbar", hub.Slug) } hx-swap="innerHTML" hx-trigger="load"></div>
+								<div hx-get={ fmt.Sprintf("/hub/%s/customize/partial/navbar", hub.Slug) } hx-swap="innerHTML" hx-trigger="load"></div>
 							</div>
 							<div>
 								<div
@@ -60,7 +60,7 @@ templ indexPage(hub *ent.Hub) {
 								>
 									Footer
 								</div>
-								<div hx-get={ fmt.Sprintf("/hub/%s/customize/footer", hub.Slug) } hx-swap="innerHTML" hx-trigger="load"></div>
+								<div hx-get={ fmt.Sprintf("/hub/%s/customize/partial/footer", hub.Slug) } hx-swap="innerHTML" hx-trigger="load"></div>
 							</div>
 						</div>
 					</div>

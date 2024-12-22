@@ -1,13 +1,59 @@
 package customize
 
 import (
+	"RouteHub.Service.Dashboard/ent"
 	"RouteHub.Service.Dashboard/ent/schema/types"
+	layouts "RouteHub.Service.Dashboard/web/templates/layouts"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"fmt"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
 )
 
-templ footer(fd types.FooterDescription, hubSlug string) {
-	<div class="grid gap-4 lg:gap-6">
+templ FooterPage(userInfo *oidc.UserInfo, hub *ent.Hub) {
+	@layouts.Main(layouts.PageDescription{
+		MainContent: footerPage(hub.Slug),
+		UserInfo:    userInfo,
+		Hub:         hub,
+	})
+}
+
+templ footerPage(hubSlug string) {
+	<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+		<div class="flex flex-col">
+			<div class="-m-1.5 overflow-x-auto">
+				<div class="p-1.5 min-w-full inline-block align-middle">
+					<div
+						class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-800 dark:border-neutral-700"
+					>
+						<!-- Header -->
+						<div
+							class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-neutral-700"
+						>
+							<div>
+								<h2 class="text-xl font-semibold text-gray-800 dark:text-neutral-200">
+									HUB Customize
+								</h2>
+								<p class="text-sm text-gray-600 dark:text-neutral-400">
+									Edit the meta information of your hub.
+								</p>
+							</div>
+						</div>
+						<!-- End Header -->
+						<div
+							class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 px-8 py-4"
+							hx-get={ fmt.Sprintf("/hub/%s/customize/partial/footer", hubSlug) }
+							hx-trigger="load, footerUpdated from:body"
+							hx-swap="innerHTML"
+						></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ footerForm(payload FooterPayload, fd types.FooterDescription, hubSlug string, feedback templ.Component) {
+	<div id="footerForm">
 		<div
 			class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
 		>
@@ -18,41 +64,101 @@ templ footer(fd types.FooterDescription, hubSlug string) {
 			hx-trigger="load, footerItemUpdated from:body"
 			hx-swap="innerHTML"
 		></div>
-		<div
-			class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
-		>
-			Footer Configuration
-		</div>
-		<div class="grid grid-cols-1 sm:grid-cols-1 gap-4 lg:gap-6">
-			<div
-				hx-get={ fmt.Sprintf("/hub/%s/customize/footer/branding-html", hubSlug) }
-				hx-trigger="load, footerItemUpdated from:body"
-				hx-swap="innerHTML"
-			></div>
-			<div>
-				<label for="hs-checkbox-in-form" class="flex p-3 w-full bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
-					<input
-						type="checkbox"
-						name="show_routehub_branding"
-						checked={ fmt.Sprintf("%t", fd.ShowRouteHubBranding) }
-						class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-						id="hs-checkbox-in-form"
-					/>
-					<span class="text-sm text-gray-500 ms-3 dark:text-neutral-400">Show RouteHUB Branding</span>
-				</label>
+		if feedback != nil {
+			@feedback
+		}
+		@footerPartial(payload, fd, hubSlug)
+	</div>
+}
+
+templ footerPartial(footerPayload FooterPayload, fd types.FooterDescription, hubSlug string) {
+	<div class="grid gap-4 lg:gap-6">
+		<!-- Card Section -->
+		<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+			<!-- Grid -->
+			<div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+				<!-- Card -->
+				<div class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+					<div class="p-4 md:p-5">
+						<div class="flex justify-between items-center gap-x-3">
+							<div class="grow">
+								<div class="flex group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+									<input
+										hx-post={ fmt.Sprintf("/hub/%s/customize/partial/footer", hubSlug) }
+										hx-swap="#footerForm"
+										hx-trigger="change"
+										type="checkbox"
+										id="showRouteHubBranding"
+										if footerPayload.ShowRouteHubBranding {
+											checked
+										}
+										hx-vals="js:{show_routehub_branding:document.getElementById('showRouteHubBranding').checked}"
+										class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+									/>
+									<h3 class="pl-2 group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+										RouteHUB Branding
+									</h3>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Card -->
+				<!-- Card -->
+				<a
+					class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800"
+					hx-get={ fmt.Sprintf("/hub/%s/customize/footer/branding-html", hubSlug) }
+					hx-target="#hs-modal-content"
+					hx-swap="innerHTML"
+					aria-haspopup="dialog"
+					aria-expanded="false"
+					aria-controls="hs-modal"
+					data-hs-overlay="#hs-modal"
+				>
+					<div class="p-4 md:p-5">
+						<div class="flex justify-between items-center gap-x-3">
+							<div class="grow">
+								<h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+									Edit Branding HTML
+								</h3>
+							</div>
+							<div>
+								<svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+							</div>
+						</div>
+					</div>
+				</a>
+				<!-- End Card -->
+				<!-- Card -->
+				<a
+					class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800"
+					hx-get={ fmt.Sprintf("/hub/%s/customize/footer/social-media-container", hubSlug) }
+					hx-target="#hs-modal-content"
+					hx-swap="innerHTML"
+					aria-haspopup="dialog"
+					aria-expanded="false"
+					aria-controls="hs-modal"
+					data-hs-overlay="#hs-modal"
+				>
+					<div class="p-4 md:p-5">
+						<div class="flex justify-between items-center gap-x-3">
+							<div class="grow">
+								<h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+									Edit Social Media
+								</h3>
+							</div>
+							<div>
+								<svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+							</div>
+						</div>
+					</div>
+				</a>
+				<!-- End Card -->
 			</div>
+			<!-- End Grid -->
 		</div>
+		<!-- End Card Section -->
 	</div>
-	<div
-		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
-	>
-		Social Media Container
-	</div>
-	<div
-		hx-get={ fmt.Sprintf("/hub/%s/customize/footer/social-media-container", hubSlug) }
-		hx-trigger="load, footerItemUpdated from:body"
-		hx-swap="innerHTML"
-	></div>
 }
 
 templ BrandingHTML(fd types.FooterDescription, hubSlug string) {
@@ -62,11 +168,15 @@ templ BrandingHTML(fd types.FooterDescription, hubSlug string) {
 			class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
 		>Company Branding HTML</label>
 		@partial.QuillHTMLEditor("companyBrandingHTML", fd.CompanyBrandingHTML)
-		<button
-			type="submit"
-			class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-500 dark:focus:ring-offset-gray-800"
-		>
-			Save
-		</button>
+		<div class="flex items-center justify-end w-full">
+			<div class="gap-2 pt-4">
+				<button
+					type="submit"
+					class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-teal-500 text-teal-500 hover:border-teal-400 hover:text-teal-400 focus:outline-none focus:border-teal-400 focus:text-teal-400 disabled:opacity-50 disabled:pointer-events-none"
+				>
+					Save Changes
+				</button>
+			</div>
+		</div>
 	</form>
 }

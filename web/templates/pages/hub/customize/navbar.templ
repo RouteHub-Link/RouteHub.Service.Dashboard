@@ -1,13 +1,88 @@
 package customize
 
 import (
+	"RouteHub.Service.Dashboard/ent"
 	"RouteHub.Service.Dashboard/ent/schema/types"
+	layouts "RouteHub.Service.Dashboard/web/templates/layouts"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"fmt"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
 )
 
-templ navbar(nd types.NavbarDescription, hubSlug string) {
-	<div class="grid gap-4 lg:gap-6">
+templ NavbarPage(userInfo *oidc.UserInfo, hub *ent.Hub) {
+	@layouts.Main(layouts.PageDescription{
+		MainContent: navbarPage(hub.Slug),
+		UserInfo:    userInfo,
+		Hub:         hub,
+	})
+}
+
+templ navbarPage(hubSlug string) {
+	<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+		<div class="flex flex-col">
+			<div class="-m-1.5 overflow-x-auto">
+				<div class="p-1.5 min-w-full inline-block align-middle">
+					<div
+						class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-800 dark:border-neutral-700"
+					>
+						<!-- Header -->
+						<div
+							class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-neutral-700"
+						>
+							<div>
+								<h2 class="text-xl font-semibold text-gray-800 dark:text-neutral-200">
+									HUB Customize
+								</h2>
+								<p class="text-sm text-gray-600 dark:text-neutral-400">
+									Edit the meta information of your hub.
+								</p>
+							</div>
+						</div>
+						<!-- End Header -->
+						<div
+							class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 px-8 py-4"
+							hx-get={ fmt.Sprintf("/hub/%s/customize/partial/navbar", hubSlug) }
+							hx-trigger="load, navbarUpdated from:body"
+							hx-swap="innerHTML"
+						></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ navbarForm(payload NavbarCustomizePayload, nd types.NavbarDescription, hubSlug string, feedback templ.Component) {
+	<form hx-post={ fmt.Sprintf("/hub/%s/customize/partial/navbar", hubSlug) } hx-indicator="#spinner" hx-swap="outerHTML">
+		if feedback != nil {
+			@feedback
+		}
+		@navbarPartial(payload, nd, hubSlug)
+		<div class="mt-5 flex justify-end gap-x-2">
+			<button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+				Save changes
+				<div class="htmx-indicator" id="spinner">
+					<div class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500" role="status" aria-label="loading">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</div>
+			</button>
+		</div>
+	</form>
+}
+
+templ navbarPartial(payload NavbarCustomizePayload, nd types.NavbarDescription, hubSlug string) {
+	<div
+		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
+	>
+		Navbar Preview
+	</div>
+	<div
+		hx-get={ fmt.Sprintf("/hub/%s/customize/partial/navbar/shadow", hubSlug) }
+		hx-trigger="load, navbarItemUpdated from:body"
+		hx-swap="innerHTML"
+	></div>
+	<div class="grid gap-4 lg:gap-6 pt-4">
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
 			<div>
 				<label
@@ -18,7 +93,7 @@ templ navbar(nd types.NavbarDescription, hubSlug string) {
 					type="text"
 					name="brand_name"
 					placeholder="Brand Name will be visible at Navbar."
-					value={ nd.BrandName }
+					value={ payload.BrandName }
 					aria-describedby="brand_name"
 					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
 				/>
@@ -32,23 +107,13 @@ templ navbar(nd types.NavbarDescription, hubSlug string) {
 					type="url"
 					name="brand_url"
 					placeholder="Brand URL will be redirected when clicked on Brand Name."
-					value={ nd.BrandURL }
+					value={ payload.BrandURL }
 					aria-describedby="brand_url"
 					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
 				/>
 			</div>
 		</div>
 	</div>
-	<div
-		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
-	>
-		Navbar Preview
-	</div>
-	<div
-		hx-get={ fmt.Sprintf("/hub/%s/customize/partial/navbar/shadow", hubSlug) }
-		hx-trigger="load, navbarItemUpdated from:body"
-		hx-swap="innerHTML"
-	></div>
 	<div
 		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
 	>

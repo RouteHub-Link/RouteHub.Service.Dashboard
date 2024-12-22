@@ -73,7 +73,7 @@ func (h Handlers) HubLinkCreatePost(c echo.Context) error {
 
 	if err := extensions.BindAndValidate(c, linkCreateRequest); err != nil {
 		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 
 		randSlug := utils.RandomShortKey()
 		hubSlug := c.Param("slug")
@@ -93,7 +93,7 @@ func (h Handlers) HubLinkCreatePost(c echo.Context) error {
 
 	if err != nil {
 		msg := strings.Join([]string{"Error Scraping URL", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, components.CreateLink(hub.Slug, linkCreateRequest.Slug, feedback, true))
 	}
 
@@ -117,7 +117,7 @@ func (h Handlers) HubLinkCreatePost(c echo.Context) error {
 	if err != nil {
 		h.Logger.Error("Error creating link", "error", err)
 		msg := strings.Join([]string{"Error Creating Link", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", &title, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, components.CreateLink(hub.Slug, linkCreateRequest.Slug, feedback, true))
 	}
 
@@ -146,6 +146,7 @@ func (h Handlers) HubLinkEditGet(c echo.Context) error {
 }
 
 func (h Handlers) HubLinkEditPost(c echo.Context) error {
+	title := "Edit Link"
 	linkPath := c.Param("path")
 	link, err := h.Ent.Link.Query().Where(entLink.PathEQ(linkPath)).Only(c.Request().Context())
 
@@ -161,13 +162,13 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 
 	if err := extensions.BindAndValidate(c, LinkUpdatePayload); err != nil {
 		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
 	if err := extensions.BindAndValidate(c, MetaPayload); err != nil {
 		msg := strings.Join([]string{"Error Validating Data", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
@@ -178,7 +179,7 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 
 	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.FavIcon, "meta_description_favicon", "links", "images", favIconName); err != nil {
 		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
@@ -186,7 +187,7 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 
 	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGBigImage, "meta_description_og_big_image", "links", "images", ogImageName); err != nil {
 		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
@@ -208,7 +209,7 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 	if err != nil {
 		h.Logger.Error("Error updating link", "error", err)
 		msg := strings.Join([]string{"Error Updating Link", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", nil, &msg)
+		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
