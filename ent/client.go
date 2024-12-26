@@ -545,7 +545,8 @@ func (c *HubClient) QueryLinks(h *Hub) *LinkQuery {
 
 // Hooks returns the client hooks.
 func (c *HubClient) Hooks() []Hook {
-	return c.hooks.Hub
+	hooks := c.hooks.Hub
+	return append(hooks[:len(hooks):len(hooks)], hub.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

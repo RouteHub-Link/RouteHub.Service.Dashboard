@@ -2,8 +2,6 @@ package configuration
 
 import (
 	"fmt"
-
-	"github.com/caarlos0/env"
 )
 
 type S3ClientConfig struct {
@@ -46,13 +44,4 @@ func (c *S3ClientConfig) Validate() (isValid bool, err error) {
 
 func (c *S3ClientConfig) IsEmpty() bool {
 	return c.API == "" && c.BucketDomain == "" && c.BucketName == "" && c.DefaultEndpoint == "" && c.EUEndpoint == "" && c.SecretAccessKey == "" && c.PublicAccessKey == ""
-}
-
-func (c *S3ClientConfig) Parse(config *Config) {
-	if err := env.Parse(c); err != nil {
-		logger.Warn("Failed to parse cache database configuration from enviroment", "error", err)
-	}
-	if !c.IsEmpty() {
-		config.S3Config = c
-	}
 }

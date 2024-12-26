@@ -6,6 +6,7 @@ import (
 	"RouteHub.Service.Dashboard/web/templates/pages/domain"
 	"RouteHub.Service.Dashboard/web/templates/pages/hub/customize"
 	"RouteHub.Service.Dashboard/web/templates/pages/hub/link"
+	"RouteHub.Service.Dashboard/web/templates/pages/settings"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,6 +19,8 @@ func ConfigurePageRoutes(e *echo.Echo, handlers *handlers.WebHandlers) {
 	mainGroup.GET("accounts", handlers.AccountHandlers.IndexHandler)
 
 	configureDomainRoutes(mainGroup, handlers.DomainHandlers)
+	configureSettingRoutes(mainGroup, handlers.SettingsHandlers)
+
 	configureHubRoutes(mainGroup, e, handlers)
 }
 
@@ -27,6 +30,10 @@ func configureDomainRoutes(group *echo.Group, handlers *domain.Handlers) {
 	group.POST("domains/create", handlers.ComponentHandlers.DomainCreatePost)
 
 	group.GET("domains/partial/table", handlers.ComponentHandlers.PartialDomainTable)
+}
+
+func configureSettingRoutes(group *echo.Group, handlers *settings.Handlers) {
+	group.GET("settings", handlers.IndexHandler)
 }
 
 func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.WebHandlers) {

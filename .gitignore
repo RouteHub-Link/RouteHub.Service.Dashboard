@@ -29,15 +29,15 @@ node_modules
 
 # build
 main
+RouteHub.Service.Dashboard
 
 # templ runtime files
 *.txt
-
 
 # .DSSotrage
 .DS_Store
 /.vscode
 
+# Runtime Variables
 .env
-
-RouteHub.Service.Dashboard
+config.json

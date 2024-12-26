@@ -8,10 +8,12 @@ package hub
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
-import "github.com/zitadel/oidc/v3/pkg/oidc"
-import "RouteHub.Service.Dashboard/ent"
-import "RouteHub.Service.Dashboard/web/templates/pages/hub/components"
+import (
+	"RouteHub.Service.Dashboard/ent"
+	layouts "RouteHub.Service.Dashboard/web/templates/layouts"
+	"RouteHub.Service.Dashboard/web/templates/pages/hub/components"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
+)
 
 func Hubs(userInfo *oidc.UserInfo, hubs []*ent.Hub) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

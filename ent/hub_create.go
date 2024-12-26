@@ -142,7 +142,9 @@ func (hc *HubCreate) Mutation() *HubMutation {
 
 // Save creates the Hub in the database.
 func (hc *HubCreate) Save(ctx context.Context) (*Hub, error) {
-	hc.defaults()
+	if err := hc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, hc.sqlSave, hc.mutation, hc.hooks)
 }
 
@@ -169,15 +171,22 @@ func (hc *HubCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (hc *HubCreate) defaults() {
+func (hc *HubCreate) defaults() error {
 	if _, ok := hc.mutation.CreatedAt(); !ok {
+		if hub.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized hub.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := hub.DefaultCreatedAt()
 		hc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := hc.mutation.ID(); !ok {
+		if hub.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized hub.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := hub.DefaultID()
 		hc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

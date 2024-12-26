@@ -51,6 +51,7 @@ func (h Handlers) MetaPageGet(c echo.Context) error {
 		OGDescription: hubMeta.OGDescription,
 		OGTitle:       hubMeta.OGTitle,
 		Locale:        hubMeta.Locale,
+		TracingScript: hubMeta.TracingScript,
 	}
 
 	extensions.HTMXAppendPrelineRefresh(c)
@@ -68,6 +69,7 @@ func (h Handlers) MetaPartialGet(c echo.Context) error {
 		OGDescription: hubMeta.OGDescription,
 		OGTitle:       hubMeta.OGTitle,
 		Locale:        hubMeta.Locale,
+		TracingScript: hubMeta.TracingScript,
 	}
 
 	extensions.HTMXAppendPrelineRefresh(c)
@@ -89,6 +91,7 @@ func (h Handlers) MetaPartialPost(c echo.Context) error {
 	hubDetails.MetaDescription.OGDescription = payload.OGDescription
 	hubDetails.MetaDescription.OGTitle = payload.OGTitle
 	hubDetails.MetaDescription.Locale = payload.Locale
+	hubDetails.MetaDescription.TracingScript = payload.TracingScript
 
 	if _, err := h.Ent.Hub.
 		UpdateOne(hub).
@@ -102,7 +105,7 @@ func (h Handlers) MetaPartialPost(c echo.Context) error {
 	extensions.HTMXAppendSuccessToast(c, "Meta Updated Successfully")
 	extensions.HTMXAppendPrelineRefresh(c)
 
-	return c.NoContent(http.StatusOK)
+	return extensions.Render(c, http.StatusOK, metaForm(*payload, hub.Slug, nil))
 }
 
 type NavbarCustomizePayload struct {

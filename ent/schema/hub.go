@@ -1,11 +1,16 @@
 package schema
 
 import (
+	"context"
+	"log"
 	"time"
 
+	gen "RouteHub.Service.Dashboard/ent"
+	"RouteHub.Service.Dashboard/ent/hook"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
+	"RouteHub.Service.Dashboard/features/hubConnection"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -81,4 +86,57 @@ func (Hub) Edges() []ent.Edge {
 			StorageKey(edge.Column("link_fk")).
 			Annotations(entgql.RelayConnection()), // Customize the foreign key if needed
 	}
+}
+
+func (Hub) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hook.On(
+			func(next ent.Mutator) ent.Mutator {
+				return hubMutatorWithMHQTT(next)
+			},
+			ent.OpCreate|ent.OpUpdate|ent.OpUpdateOne|ent.OpDelete,
+		),
+	}
+}
+
+func hubMutatorWithMHQTT(next ent.Mutator) ent.Mutator {
+	return hook.HubFunc(func(ctx context.Context, m *gen.HubMutation) (ent.Value, error) {
+
+		if m.Op() == ent.OpCreate {
+			brandName, _ := m.Name()
+			m.SetHubDetails(types.HubDetails{
+				NavbarDescription: types.NavbarDescription{
+					BrandName: brandName,
+				},
+				FooterDescription: types.FooterDescription{
+					ShowRouteHubBranding: true,
+				},
+				MetaDescription: types.MetaDescription{
+					Title: brandName,
+				},
+			})
+		}
+
+		result, err := next.Mutate(ctx, m)
+		if err != nil {
+			return nil, err
+		}
+
+		hub, _ := result.(*gen.Hub)
+
+		mqttClient, err := hubConnection.NewMQTTPublisher(hub.TCPAddress)
+		if err != nil {
+			log.Printf("Error creating mqtt client: %v, TCPAddress:%s", err, hub.TCPAddress)
+			return nil, err
+		}
+
+		if m.Op() == ent.OpCreate || m.Op() == ent.OpUpdate || m.Op() == ent.OpUpdateOne {
+			err := mqttClient.PublishPlatformSet(hub)
+			if err != nil {
+				log.Printf("Error publishing link set: %v", err)
+			}
+		}
+
+		return hub, nil
+	})
 }

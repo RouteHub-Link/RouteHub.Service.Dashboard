@@ -23,11 +23,27 @@ type Config struct {
 	OTEL     *OTELConfig
 	Database *DatabaseConfig
 	CacheDB  *CacheDatabaseConfig
-	S3Config *S3ClientConfig
 }
 
 func (c *Config) String() string {
 	return `Config; Server:` + c.Server.String() + ` OAuth: ` + c.OAuth.String() + ` OTEL: ` + c.OTEL.String() + ` Database: ` + c.Database.String()
+}
+
+func (c *Config) GetStaticConfigX() (*StaticConfig, error) {
+	return getStaticConfig()
+}
+
+func (c *Config) GetStaticConfig() *StaticConfig {
+	config, err := getStaticConfig()
+	if err != nil {
+		logger.Error("Failed to get static config", "error", err)
+	}
+
+	return config
+}
+
+func (c *Config) SetStaticConfig(sc *StaticConfig) error {
+	return updateStaticConfig(sc)
 }
 
 type ConfigurationOptionFunc func(*Config) error
@@ -78,16 +94,17 @@ func Configure(opts ...ConfigurationOptionFunc) error {
 		otelConfig := &OTELConfig{}
 		databaseConfig := &DatabaseConfig{}
 		cacheConfig := &CacheDatabaseConfig{}
-		s3Config := &S3ClientConfig{}
 
 		serverConfig.Parse(config)
 		oauthConfig.Parse(config)
 		otelConfig.Parse(config)
 		databaseConfig.Parse(config)
 		cacheConfig.Parse(config)
-		s3Config.Parse(config)
 
 		logger.Debug("Configuration loaded", slog.Any("config", config))
+
+		initializeStaticConfig()
+
 	})
 
 	if config.Server == nil {

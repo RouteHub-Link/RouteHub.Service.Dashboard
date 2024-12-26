@@ -23,7 +23,13 @@ var (
 type S3ClientService struct{ configuration configuration.S3ClientConfig }
 
 func GetS3ClientService() (service *S3ClientService, err error) {
-	cc := configuration.Get().S3Config
+	sc, err := configuration.Get().GetStaticConfigX()
+	if err != nil {
+		return nil, err
+	}
+
+	cc := sc.S3
+
 	if isValid, err := cc.Validate(); !isValid {
 		return nil, err
 	}
@@ -49,7 +55,7 @@ func GetS3ClientService() (service *S3ClientService, err error) {
 
 		client = s3.NewFromConfig(cfg)
 		service = &S3ClientService{
-			configuration: *cc,
+			configuration: cc,
 		}
 	})
 

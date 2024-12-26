@@ -21,6 +21,8 @@ type MetaPayload struct {
 	OGTitle string `json:"meta_description_og_title" form:"meta_description_og_title"`
 
 	Locale string `json:"meta_description_locale" form:"meta_description_locale"`
+
+	TracingScript string `json:"meta_description_tracing_script" form:"meta_description_tracing_script"`
 }
 
 templ MetaPage(userInfo *oidc.UserInfo, hub *ent.Hub, metaPayload MetaPayload, hubSlug string, feedback templ.Component) {
@@ -152,6 +154,21 @@ templ metaPartial(metaPayload MetaPayload, hubSlug string) {
 					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
 				>Locale</label>
 				@partial.FormSelectWithSearch(utils.LocaleOptions(metaPayload.Locale), "meta_description_locale", "Select an Locale")
+			</div>
+		</div>
+		<div class="grid grid-cols-1 sm:grid-cols-1 gap-4 lg:gap-6">
+			<div>
+				<label
+					for="meta_description_locale"
+					class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
+				>Tracing Script (Be carefull this will be rendered as RAW)</label>
+				<textarea
+					name="meta_description_tracing_script"
+					aria-describedby="meta_description_tracing_script"
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					rows="8"
+					placeholder="This will be Added to the end of the Head Tag. As raw HTML. You can use this for tracing scripts. Tracing scripts are used for tracking user interactions. For example, Google Analytics, Umami, Plausible, etc. Example Plausible: <script async defer data-domain='example.com' src='https://plausible.io/js/plausible.js'></script> Also you could add the raw script of the tracing script. <script></script>"
+				>{ metaPayload.TracingScript }</textarea>
 			</div>
 		</div>
 	</div>

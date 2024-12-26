@@ -30,4 +30,5 @@ type MetaDescription struct {
 	OGCard        string
 	OGType        string
 	OGCreator     string
+	TracingScript string
 }

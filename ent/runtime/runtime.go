@@ -41,6 +41,8 @@ func init() {
 	// entdomain.DefaultID holds the default value on creation for the id field.
 	entdomain.DefaultID = entdomainDescID.Default.(func() mixin.ID)
 	hubMixin := schema.Hub{}.Mixin()
+	hubHooks := schema.Hub{}.Hooks()
+	hub.Hooks[0] = hubHooks[0]
 	hubMixinFields0 := hubMixin[0].Fields()
 	_ = hubMixinFields0
 	hubFields := schema.Hub{}.Fields()
