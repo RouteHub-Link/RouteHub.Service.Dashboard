@@ -2,6 +2,9 @@ package scrape
 
 import (
 	"encoding/base64"
+	"log"
+	"net/url"
+	"strings"
 
 	"RouteHub.Service.Dashboard/ent/schema/types"
 	"RouteHub.Service.Dashboard/web/utils"
@@ -96,8 +99,11 @@ func (cc CollyClient) VisitScrapeOG(url string) (meta *types.MetaDescription, er
 
 	// download favicon
 	c.OnResponse(func(r *colly.Response) {
+		log.Println("Content-Type: ", r.Headers.Get("Content-Type"))
 		if isImage, err := utils.CheckHeaderIsImage(r.Headers.Get("Content-Type")); err == nil && isImage {
 			// check file size
+			log.Println("Image Size: ", len(r.Body))
+			log.Println("File name ", r.FileName())
 			if len(r.Body) < cc.MaxImageSizeInBytes {
 				fileName := r.FileName()
 				images[fileName] = base64.StdEncoding.EncodeToString(r.Body)
@@ -107,6 +113,11 @@ func (cc CollyClient) VisitScrapeOG(url string) (meta *types.MetaDescription, er
 
 	err = c.Visit(url)
 	c.Wait()
+
+	metaImageConcat(url, meta)
+
+	log.Println("Meta: ", meta)
+	log.Println("Images: ", images)
 
 	if err != nil {
 		return nil, err
@@ -135,4 +146,36 @@ func transformMetaImages(meta *types.MetaDescription, cc CollyClient, images map
 			meta.OGSmallImage = images[meta.OGSmallImage]
 		}
 	}
+}
+
+func metaImageConcat(url string, metaDescription *types.MetaDescription) {
+	domain := getDomainFromLink(url)
+	imageUrlConcat(domain, &metaDescription.FavIcon)
+	imageUrlConcat(domain, &metaDescription.OGBigImage)
+	imageUrlConcat(domain, &metaDescription.OGSmallImage)
+}
+
+func imageUrlConcat(url string, imageUrl *string) {
+	if *imageUrl == "" {
+		return
+	}
+
+	_imageUrl := *imageUrl
+
+	if _imageUrl[0] == '/' {
+		*imageUrl = url + *imageUrl
+	}
+
+	return
+}
+
+func getDomainFromLink(link string) string {
+	url, err := url.Parse(link)
+	if err != nil {
+		log.Fatal(err)
+	}
+	parts := strings.Split(url.Hostname(), ".")
+	domain := parts[len(parts)-2] + "." + parts[len(parts)-1]
+
+	return domain
 }
