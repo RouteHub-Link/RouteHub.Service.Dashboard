@@ -8,9 +8,11 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "RouteHub.Service.Dashboard/ent"
-import "RouteHub.Service.Dashboard/ent/schema/enums"
-import "fmt"
+import (
+	"RouteHub.Service.Dashboard/ent"
+	"RouteHub.Service.Dashboard/ent/schema/enums"
+	"fmt"
+)
 
 func LinksTable(links []*ent.Link) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -33,7 +35,7 @@ func LinksTable(links []*ent.Link) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- Table --><table class=\"min-w-full divide-y divide-gray-200 dark:divide-neutral-700\"><thead class=\"bg-gray-50 dark:bg-neutral-800\"><tr><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Link <svg class=\"shrink-0 size-3.5 text-gray-800 dark:text-neutral-200\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"></path> <path d=\"m7 9 5-5 5 5\"></path></svg></p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Target <svg class=\"shrink-0 size-3.5 text-gray-800 dark:text-neutral-200\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"></path> <path d=\"m7 9 5-5 5 5\"></path></svg></p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Status <svg class=\"shrink-0 size-3.5 text-gray-800 dark:text-neutral-200\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"></path> <path d=\"m7 9 5-5 5 5\"></path></svg></p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Observations <svg class=\"shrink-0 size-3.5 text-gray-800 dark:text-neutral-200\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"></path> <path d=\"m7 9 5-5 5 5\"></path></svg></p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Redirection Choice <svg class=\"shrink-0 size-3.5 text-gray-800 dark:text-neutral-200\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"></path> <path d=\"m7 9 5-5 5 5\"></path></svg></p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Created <svg class=\"shrink-0 size-3.5 text-gray-800 dark:text-neutral-200\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"></path> <path d=\"m7 9 5-5 5 5\"></path></svg></p></th><th scope=\"col\" class=\"px-6 py-3 text-end\"></th></tr></thead> <tbody class=\"divide-y divide-gray-200 dark:divide-neutral-700\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- Table --><table class=\"min-w-full divide-y divide-gray-200 dark:divide-neutral-700\"><thead class=\"bg-gray-50 dark:bg-neutral-800\"><tr><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Link</p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Target</p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Status</p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Redirection Choice</p></th><th scope=\"col\" class=\"px-6 py-3 text-start\"><p class=\"group inline-flex items-center gap-x-2 text-xs font-semibold uppercase text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-500 dark:focus:text-neutral-500\">Created</p></th><th scope=\"col\" class=\"px-6 py-3 text-end\"></th></tr></thead> <tbody class=\"divide-y divide-gray-200 dark:divide-neutral-700\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -88,7 +90,7 @@ func linkTableItem(link *ent.Link) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(link.Path)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/linkTable.templ`, Line: 101, Col: 107}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/linkTable.templ`, Line: 56, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -101,7 +103,7 @@ func linkTableItem(link *ent.Link) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(link.Target)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/linkTable.templ`, Line: 108, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/linkTable.templ`, Line: 63, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -115,14 +117,14 @@ func linkTableItem(link *ent.Link) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></a></td><td class=\"size-px whitespace-nowrap\"><a class=\"block relative z-10\" href=\"#\"><div class=\"px-6 py-3\"><div class=\"flex items-center gap-x-3\"><span class=\"text-xs text-gray-500\">100/40</span><div class=\"flex w-full h-1.5 bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700\"><div class=\"flex flex-col justify-center overflow-hidden bg-gray-800 dark:bg-gray-200\" role=\"progressbar\" style=\"width: 25%\" aria-valuenow=\"40\" aria-valuemin=\"0\" aria-valuemax=\"100\"></div></div></div></div></a></td><td class=\"size-px whitespace-nowrap\"><div class=\"px-6 py-2\"><span class=\"text-sm text-gray-500 dark:text-neutral-500\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></a></td><td class=\"size-px whitespace-nowrap\"><div class=\"px-6 py-2\"><span class=\"text-sm text-gray-500 dark:text-neutral-500\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(link.RedirectionChoice.Humanize())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/linkTable.templ`, Line: 136, Col: 100}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/linkTable.templ`, Line: 76, Col: 97}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -135,7 +137,7 @@ func linkTableItem(link *ent.Link) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(link.CreatedAt.Local().String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/linkTable.templ`, Line: 141, Col: 98}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/linkTable.templ`, Line: 81, Col: 95}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {

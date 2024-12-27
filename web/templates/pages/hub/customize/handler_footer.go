@@ -72,12 +72,26 @@ func (h Handlers) FooterPartialPost(c echo.Context) error {
 
 func (h Handlers) FooterSocialMediaContainerGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
-	return extensions.Render(c, http.StatusOK, footerSocialMediaContainer(hub.HubDetails.FooterDescription.SocialMediaContainer, hub.Slug))
+	socialMediaContainer := types.SocialMediaContainer{}
+	if hub.HubDetails.FooterDescription.SocialMediaContainer != nil {
+		socialMediaContainer = *hub.HubDetails.FooterDescription.SocialMediaContainer
+	}
+
+	return extensions.Render(c, http.StatusOK, footerSocialMediaContainer(&socialMediaContainer, hub.Slug))
 }
 
 func (h Handlers) FooterSocialMediaLinksGet(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
-	return c.JSON(http.StatusOK, hub.HubDetails.FooterDescription.SocialMediaContainer.SocialMediaLinks)
+	socialMediaLinks := []types.ASocialMedia{}
+	if hub.HubDetails.FooterDescription.SocialMediaContainer == nil {
+		return c.JSON(http.StatusOK, socialMediaLinks)
+	}
+
+	_socialMediaLinks := hub.HubDetails.FooterDescription.SocialMediaContainer.SocialMediaLinks
+	if _socialMediaLinks != nil {
+		socialMediaLinks = *_socialMediaLinks
+	}
+	return c.JSON(http.StatusOK, socialMediaLinks)
 }
 
 type SocialMediaPayload struct {
@@ -90,6 +104,10 @@ func (h Handlers) FooterSocialMediaLinksPost(c echo.Context) error {
 	payload := new(SocialMediaPayload)
 	if err := c.Bind(&payload); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if hub.HubDetails.FooterDescription.SocialMediaContainer == nil {
+		hub.HubDetails.FooterDescription.SocialMediaContainer = &types.SocialMediaContainer{}
 	}
 
 	hub.HubDetails.FooterDescription.SocialMediaContainer.SocialMediaLinks = &payload.SocialMediaLinks

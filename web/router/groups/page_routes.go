@@ -15,9 +15,6 @@ func ConfigurePageRoutes(e *echo.Echo, handlers *handlers.WebHandlers) {
 	mainGroup.Use(context.UserContextMiddleware(handlers.Authorizer),
 		context.OrganizationContextMiddleware(handlers.Ent))
 
-	mainGroup.GET("", handlers.HomeHandlers.IndexHandler)
-	mainGroup.GET("accounts", handlers.AccountHandlers.IndexHandler)
-
 	configureDomainRoutes(mainGroup, handlers.DomainHandlers)
 	configureSettingRoutes(mainGroup, handlers.SettingsHandlers)
 
@@ -39,6 +36,7 @@ func configureSettingRoutes(group *echo.Group, handlers *settings.Handlers) {
 func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.WebHandlers) {
 	hubHandlers := handlers.HubHandlers
 
+	mainGroup.GET("", hubHandlers.HubsHandler)
 	mainGroup.GET("hubs", hubHandlers.HubsHandler)
 	mainGroup.GET("hubs/attach", hubHandlers.ComponentHandlers.AttachHubGet)
 	mainGroup.POST("hubs/attach", hubHandlers.ComponentHandlers.AttachHubPost)
