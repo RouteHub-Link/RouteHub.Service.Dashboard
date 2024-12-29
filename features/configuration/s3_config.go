@@ -5,13 +5,13 @@ import (
 )
 
 type S3ClientConfig struct {
-	API             string `env:"S3_API" envDefault:""`
-	BucketDomain    string `env:"S3_BUCKET_DOMAIN" envDefault:""`
-	BucketName      string `env:"S3_BUCKET_NAME" envDefault:""`
-	DefaultEndpoint string `env:"S3_DEFAULT_ENDPOINT" envDefault:""`
-	EUEndpoint      string `env:"S3_EU_ENDPOINT" envDefault:""`
-	SecretAccessKey string `env"S3_SECRET_ACCESS" envDefault:""`
-	PublicAccessKey string `env"S3_PUBLIC_ACCESS" envDefault:""`
+	API             string `env:"S3_API" envDefault:"" form:"api" validate:"required,url"`
+	BucketDomain    string `env:"S3_BUCKET_DOMAIN" envDefault:"" form:"bucket_domain" validate:"required"`
+	BucketName      string `env:"S3_BUCKET_NAME" envDefault:"" form:"bucket_name" validate:"required"`
+	DefaultEndpoint string `env:"S3_DEFAULT_ENDPOINT" envDefault:"" form:"default_endpoint" validate:"required,url"`
+	EUEndpoint      string `env:"S3_EU_ENDPOINT" envDefault:"" form:"eu_endpoint" validate:"required,url""`
+	SecretAccessKey string `env:"S3_SECRET_ACCESS" envDefault:"" form:"secret_access_key" validate:"required"`
+	PublicAccessKey string `env:"S3_PUBLIC_ACCESS" envDefault:"" form:"public_access_key" validate:"required"`
 }
 
 func (c *S3ClientConfig) String() string {
@@ -39,7 +39,7 @@ func (c *S3ClientConfig) Validate() (isValid bool, err error) {
 		return false, err
 	}
 
-	return
+	return true, nil
 }
 
 func (c *S3ClientConfig) IsEmpty() bool {

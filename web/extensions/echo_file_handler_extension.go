@@ -6,22 +6,31 @@ import (
 	"log"
 	"mime/multipart"
 	"path/filepath"
+	"strings"
+	"time"
 
+	"RouteHub.Service.Dashboard/features/configuration"
 	"RouteHub.Service.Dashboard/features/fileUpload"
 	"github.com/labstack/echo/v4"
 )
 
-func ProcessFile(ctx context.Context, filePart *multipart.FileHeader, bucket string, path string, fileName string) (uploadedBucketPath string, hasFile bool, err error) {
+func ProcessFile(ctx context.Context, filePart *multipart.FileHeader, path string, fileName string) (uploadedBucketPath string, hasFile bool, err error) {
 	if filePart != nil && filePart.Size > 0 {
 		hasFile = true
-		favLink := FileBucketLocation(bucket, path, fileName)
 
 		s3ClientService, err := fileUpload.GetS3ClientService()
 		if err != nil {
 			return "", hasFile, err
 		}
 
-		uploadedPath, err := s3ClientService.UploadFormFileThroughS3(ctx, *filePart, favLink)
+		staticConfig := configuration.Get().GetStaticConfig()
+		if staticConfig == nil {
+			return "", hasFile, fmt.Errorf("S3 configuration is not set")
+		}
+
+		fileLink := strings.Join([]string{path, fileName}, "/")
+
+		uploadedPath, err := s3ClientService.UploadFormFileThroughS3(ctx, *filePart, fileLink)
 		if err != nil {
 			return "", hasFile, err
 		}
@@ -32,10 +41,23 @@ func ProcessFile(ctx context.Context, filePart *multipart.FileHeader, bucket str
 	return "", hasFile, nil
 }
 
-func ProcessFileFromEchoContext(c echo.Context, field *string, formKey string, bucket string, path string, fileName string) error {
+func ProcessFileFromEchoContext(c echo.Context, field *string, formKey string, path string, fileName string) error {
 	if file, err := c.FormFile(formKey); err == nil {
 		ctx := c.Request().Context()
-		filePath, hasFile, err := ProcessFile(ctx, file, bucket, path, fileName)
+
+		if fileName == "" {
+			fileName = file.Filename
+			ext := filepath.Ext(fileName)
+
+			timeStamp := time.Now().Unix()
+			fileName = fmt.Sprintf("file_%d%s", timeStamp, ext)
+		} else {
+			if filepath.Ext(fileName) == "" {
+				fileName = fmt.Sprintf("%s%s", fileName, filepath.Ext(file.Filename))
+			}
+		}
+
+		filePath, hasFile, err := ProcessFile(ctx, file, path, fileName)
 		if filePath != "" && err == nil && hasFile {
 			log.Printf("Uploaded successfully: %s", filePath)
 			*field = filePath
@@ -46,10 +68,4 @@ func ProcessFileFromEchoContext(c echo.Context, field *string, formKey string, b
 	}
 
 	return nil
-}
-
-func FileBucketLocation(bucket string, path string, fileName string) string {
-	filePath := filepath.Ext(fileName)
-
-	return fmt.Sprintf("%s/%s/%s%s", bucket, path, fileName, filePath)
 }

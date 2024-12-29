@@ -12,6 +12,7 @@ import (
 	"RouteHub.Service.Dashboard/web/context"
 	"RouteHub.Service.Dashboard/web/extensions"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
+	"RouteHub.Service.Dashboard/web/utils"
 
 	"github.com/labstack/echo/v4"
 )
@@ -52,6 +53,7 @@ func (h Handlers) MetaPageGet(c echo.Context) error {
 		OGTitle:       hubMeta.OGTitle,
 		Locale:        hubMeta.Locale,
 		TracingScript: hubMeta.TracingScript,
+		FavIcon:       utils.LinkToS3Path(hubMeta.FavIcon),
 	}
 
 	extensions.HTMXAppendPrelineRefresh(c)
@@ -70,6 +72,7 @@ func (h Handlers) MetaPartialGet(c echo.Context) error {
 		OGTitle:       hubMeta.OGTitle,
 		Locale:        hubMeta.Locale,
 		TracingScript: hubMeta.TracingScript,
+		FavIcon:       utils.LinkToS3Path(hubMeta.FavIcon),
 	}
 
 	extensions.HTMXAppendPrelineRefresh(c)
@@ -93,6 +96,15 @@ func (h Handlers) MetaPartialPost(c echo.Context) error {
 	hubDetails.MetaDescription.Locale = payload.Locale
 	hubDetails.MetaDescription.TracingScript = payload.TracingScript
 
+	bucketPath := strings.Join([]string{"hubs", hub.Slug}, "/")
+
+	if err := extensions.ProcessFileFromEchoContext(c, &payload.FavIcon, "meta_description_favicon", bucketPath, "favicon"); err != nil {
+		feedback := partial.FormFeedbackFromErr(title, fmt.Errorf("Error Processing File: %w", err))
+		return extensions.Render(c, http.StatusOK, metaForm(*payload, hub.Slug, feedback))
+	}
+
+	hubDetails.MetaDescription.FavIcon = payload.FavIcon
+
 	if _, err := h.Ent.Hub.
 		UpdateOne(hub).
 		SetHubDetails(hubDetails).
@@ -104,6 +116,8 @@ func (h Handlers) MetaPartialPost(c echo.Context) error {
 
 	extensions.HTMXAppendSuccessToast(c, "Meta Updated Successfully")
 	extensions.HTMXAppendPrelineRefresh(c)
+
+	payload.FavIcon = utils.LinkToS3Path(payload.FavIcon)
 
 	return extensions.Render(c, http.StatusOK, metaForm(*payload, hub.Slug, nil))
 }

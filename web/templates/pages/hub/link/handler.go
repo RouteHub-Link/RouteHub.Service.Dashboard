@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
-	"time"
 
 	"RouteHub.Service.Dashboard/ent"
 	entLink "RouteHub.Service.Dashboard/ent/link"
@@ -174,18 +173,15 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 
 	isPathChanged := linkPath != LinkUpdatePayload.Path
 
-	timeStamp := time.Now().Unix()
-	favIconName := fmt.Sprintf("favicon_%d", timeStamp)
+	bucketPath := strings.Join([]string{"hubs", hub.Slug, "links", link.Path}, "/")
 
-	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.FavIcon, "meta_description_favicon", "links", "images", favIconName); err != nil {
+	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.FavIcon, "meta_description_favicon", bucketPath, "favicon"); err != nil {
 		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
 		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
-	ogImageName := fmt.Sprintf("og_image_%d", timeStamp)
-
-	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGBigImage, "meta_description_og_big_image", "links", "images", ogImageName); err != nil {
+	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGBigImage, "meta_description_og_big_image", bucketPath, "og_image"); err != nil {
 		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
 		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))

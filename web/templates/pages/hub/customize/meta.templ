@@ -66,7 +66,7 @@ templ metaPage(payload MetaPayload, hubSlug string, feedback templ.Component) {
 }
 
 templ metaForm(payload MetaPayload, hubSlug string, feedback templ.Component) {
-	<form hx-post={ fmt.Sprintf("/hub/%s/customize/partial/meta", hubSlug) } hx-indicator="#spinner" hx-swap="outerHTML">
+	<form hx-post={ fmt.Sprintf("/hub/%s/customize/partial/meta", hubSlug) } enctype="multipart/form-data" hx-indicator="#spinner" hx-swap="outerHTML">
 		if feedback != nil {
 			@feedback
 		}

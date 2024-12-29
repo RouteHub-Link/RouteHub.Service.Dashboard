@@ -137,7 +137,7 @@ func metaForm(payload MetaPayload, hubSlug string, feedback templ.Component) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-indicator=\"#spinner\" hx-swap=\"outerHTML\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" enctype=\"multipart/form-data\" hx-indicator=\"#spinner\" hx-swap=\"outerHTML\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

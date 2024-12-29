@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"mime/multipart"
-	"strings"
 	"sync"
 
 	"RouteHub.Service.Dashboard/features/configuration"
@@ -71,6 +70,7 @@ func (cs S3ClientService) GetClient() (*s3.Client, error) {
 	if client == nil {
 		return nil, errors.New("S3 client is not initialized")
 	}
+
 	return client, nil
 }
 
@@ -98,5 +98,5 @@ func (cs S3ClientService) UploadFormFileThroughS3(ctx context.Context, fileHeade
 		return "", err
 	}
 
-	return strings.Join([]string{cs.configuration.BucketName, objectPath}, "/"), nil
+	return objectPath, nil
 }

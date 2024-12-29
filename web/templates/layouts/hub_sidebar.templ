@@ -84,7 +84,7 @@ templ HubSidebar(hub ent.Hub) {
 								Links
 							</a>
 						</li>
-						<li class="hs-accordion" id="settings-accordion">
+						<li class="hs-accordion" id="customize-accordion">
 							<button
 								type="button"
 								class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg focus:outline-none focus:bg-zinc-700 hover:bg-zinc-500 dark:hover:bg-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-300"
@@ -99,10 +99,10 @@ templ HubSidebar(hub ent.Hub) {
 									fill="currentColor"
 								>
 									<path
-										d="M680-280q25 0 42.5-17.5T740-340q0-25-17.5-42.5T680-400q-25 0-42.5 17.5T620-340q0 25 17.5 42.5T680-280Zm0 120q31 0 57-14.5t42-38.5q-22-13-47-20t-52-7q-27 0-52 7t-47 20q16 24 42 38.5t57 14.5ZM480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v227q-19-8-39-14.5t-41-9.5v-147l-240-90-240 90v188q0 47 12.5 94t35 89.5Q310-290 342-254t71 60q11 32 29 61t41 52q-1 0-1.5.5t-1.5.5Zm200 0q-83 0-141.5-58.5T480-280q0-83 58.5-141.5T680-480q83 0 141.5 58.5T880-280q0 83-58.5 141.5T680-80ZM480-494Z"
+										d="M240-120q-45 0-89-22t-71-58q26 0 53-20.5t27-59.5q0-50 35-85t85-35q50 0 85 35t35 85q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T320-280q0-17-11.5-28.5T280-320q-17 0-28.5 11.5T240-280q0 23-5.5 42T220-202q5 2 10 2h10Zm230-160L360-470l358-358q11-11 27.5-11.5T774-828l54 54q12 12 12 28t-12 28L470-360Zm-190 80Z"
 									></path>
 								</svg>
-								Settings
+								Customize
 								<svg
 									class="hs-accordion-active:block ms-auto hidden size-4"
 									xmlns="http://www.w3.org/2000/svg"
@@ -136,31 +136,31 @@ templ HubSidebar(hub ent.Hub) {
 								id="settings-accordion-child"
 								class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
 								role="region"
-								aria-labelledby="settings-accordion"
+								aria-labelledby="customize-accordion"
 							>
 								<ul class="ps-8 pt-1 space-y-1">
 									<li>
 										<a
 											class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg focus:outline-none focus:bg-zinc-700 hover:bg-zinc-500 dark:hover:bg-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-300"
-											href="#"
+											href={ templ.URL(fmt.Sprintf("/hub/%v/customize/meta", hub.Slug)) }
 										>
-											Domain
+											Meta
 										</a>
 									</li>
 									<li>
 										<a
 											class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg focus:outline-none focus:bg-zinc-700 hover:bg-zinc-500 dark:hover:bg-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-300"
-											href="#"
+											href={ templ.URL(fmt.Sprintf("/hub/%v/customize/navbar", hub.Slug)) }
 										>
-											Deployments
+											Navbar
 										</a>
 									</li>
 									<li>
 										<a
 											class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg focus:outline-none focus:bg-zinc-700 hover:bg-zinc-500 dark:hover:bg-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-300"
-											href="#"
+											href={ templ.URL(fmt.Sprintf("/hub/%v/customize/footer", hub.Slug)) }
 										>
-											Configuration
+											Footer
 										</a>
 									</li>
 								</ul>
