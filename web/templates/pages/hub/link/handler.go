@@ -174,16 +174,15 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 	isPathChanged := linkPath != LinkUpdatePayload.Path
 
 	bucketPath := strings.Join([]string{"hubs", hub.Slug, "links", link.Path}, "/")
-
-	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.FavIcon, "meta_description_favicon", bucketPath, "favicon"); err != nil {
-		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", title, msg)
+	err = handleFavIcon(MetaPayload, link, c, bucketPath)
+	if err != nil {
+		feedback := partial.FormFeedbackFromErr(title, err)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
-	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGBigImage, "meta_description_og_big_image", bucketPath, "og_image"); err != nil {
-		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
-		feedback := partial.FormFeedback("error", title, msg)
+	err = handleOGImage(MetaPayload, link, c, bucketPath)
+	if err != nil {
+		feedback := partial.FormFeedbackFromErr(title, err)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
@@ -221,6 +220,26 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 	MetaPayload.FromModel(link.LinkContent.MetaDescription)
 
 	return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, nil))
+}
+
+func handleFavIcon(MetaPayload *EditLinkMetaDescriptionPayload, link *ent.Link, c echo.Context, bucketPath string) error {
+	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.FavIcon, "meta_description_favicon", bucketPath, "favicon"); err != nil {
+		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
+		return fmt.Errorf("%s", msg)
+	} else {
+		MetaPayload.FavIcon = utils.LinkToS3Path(MetaPayload.FavIcon)
+	}
+	return nil
+}
+
+func handleOGImage(MetaPayload *EditLinkMetaDescriptionPayload, link *ent.Link, c echo.Context, bucketPath string) error {
+	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGBigImage, "meta_description_og_big_image", bucketPath, "og_image"); err != nil {
+		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
+		return fmt.Errorf("%s", msg)
+	} else {
+		MetaPayload.OGBigImage = utils.LinkToS3Path(MetaPayload.OGBigImage)
+	}
+	return nil
 }
 
 func (h Handlers) HubLinkStatusGet(c echo.Context) error {
