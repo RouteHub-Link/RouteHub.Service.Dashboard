@@ -53,7 +53,7 @@ func (h Handlers) MetaPageGet(c echo.Context) error {
 		OGTitle:       hubMeta.OGTitle,
 		Locale:        hubMeta.Locale,
 		TracingScript: hubMeta.TracingScript,
-		FavIcon:       utils.LinkToS3Path(hubMeta.FavIcon),
+		FavIcon:       hubMeta.FavIcon,
 	}
 
 	extensions.HTMXAppendPrelineRefresh(c)
@@ -72,7 +72,7 @@ func (h Handlers) MetaPartialGet(c echo.Context) error {
 		OGTitle:       hubMeta.OGTitle,
 		Locale:        hubMeta.Locale,
 		TracingScript: hubMeta.TracingScript,
-		FavIcon:       utils.LinkToS3Path(hubMeta.FavIcon),
+		FavIcon:       hubMeta.FavIcon,
 	}
 
 	extensions.HTMXAppendPrelineRefresh(c)
@@ -103,7 +103,7 @@ func (h Handlers) MetaPartialPost(c echo.Context) error {
 		return extensions.Render(c, http.StatusOK, metaForm(*payload, hub.Slug, feedback))
 	}
 
-	hubDetails.MetaDescription.FavIcon = payload.FavIcon
+	hubDetails.MetaDescription.FavIcon = utils.LinkToS3Path(payload.FavIcon)
 
 	if _, err := h.Ent.Hub.
 		UpdateOne(hub).
@@ -116,8 +116,6 @@ func (h Handlers) MetaPartialPost(c echo.Context) error {
 
 	extensions.HTMXAppendSuccessToast(c, "Meta Updated Successfully")
 	extensions.HTMXAppendPrelineRefresh(c)
-
-	payload.FavIcon = utils.LinkToS3Path(payload.FavIcon)
 
 	return extensions.Render(c, http.StatusOK, metaForm(*payload, hub.Slug, nil))
 }
