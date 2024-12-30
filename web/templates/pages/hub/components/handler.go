@@ -9,6 +9,7 @@ import (
 	"RouteHub.Service.Dashboard/ent"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
+	"RouteHub.Service.Dashboard/ent/schema/types"
 	"RouteHub.Service.Dashboard/features/hubConnection"
 	"RouteHub.Service.Dashboard/web/context"
 	"RouteHub.Service.Dashboard/web/extensions"
@@ -105,6 +106,28 @@ func (h Handlers) AttachHubPost(c echo.Context) error {
 
 	if err != nil {
 		msg := strings.Join([]string{"Error creating hub", err.Error()}, " ")
+		feedback := partial.FormFeedback("error", title, msg)
+		return extensions.Render(c, http.StatusOK, AttachHub(slug, domains, feedback, true))
+	}
+
+	_, err = h.Ent.Page.Create().
+		SetHub(createdHub).
+		SetSlug("home").
+		SetName("Home Page").
+		SetPageDescription("Home Page").
+		SetStatus(enums.StatusActive).
+		SetPageContentHTML(homePageContentHTML).
+		SetPageContentJSON(homePageContentJSON).
+		SetMetaDescription(&types.MetaDescription{
+			Title:         "Home Page",
+			Description:   "Home Page",
+			OGTitle:       "Home Page",
+			OGDescription: "Home Page",
+		}).
+		Save(c.Request().Context())
+
+	if err != nil {
+		msg := strings.Join([]string{"Hub Is Attached but Error creating home page", err.Error()}, " ")
 		feedback := partial.FormFeedback("error", title, msg)
 		return extensions.Render(c, http.StatusOK, AttachHub(slug, domains, feedback, true))
 	}
