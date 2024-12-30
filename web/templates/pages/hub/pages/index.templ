@@ -1,0 +1,79 @@
+package pages
+
+import (
+	"RouteHub.Service.Dashboard/ent"
+	layouts "RouteHub.Service.Dashboard/web/templates/layouts"
+	"fmt"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
+)
+
+templ index(userInfo *oidc.UserInfo, hub *ent.Hub, pages *[]PagePayload) {
+	@layouts.Main(layouts.PageDescription{
+		MainContent: pagesList(hub.Slug, pages),
+		UserInfo:    userInfo,
+		Hub:         hub,
+	})
+}
+
+templ pagesList(hubSlug string, pages *[]PagePayload) {
+	<div class="max-h-full overflow-hidden flex flex-col bg-white border shadow-sm rounded-xl pointer-events-auto dark:bg-neutral-900 dark:border-neutral-800 dark:shadow-neutral-700/70">
+		<div class="flex justify-between items-center py-3 px-4 border-b dark:border-neutral-800">
+			<h3 id="hs-bg-gray-on-hover-cards-label" class="font-bold text-gray-800 dark:text-neutral-200">Pages</h3>
+		</div>
+		<div class="p-4 overflow-y-auto">
+			<div class="sm:divide-y divide-gray-200 dark:divide-neutral-700">
+				<div class="py-3 sm:py-6">
+					<h4 class="mb-2 text-xs font-semibold uppercase text-gray-600 dark:text-neutral-400">Create or Modify pages</h4>
+					<!-- Grid -->
+					<div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+						for _, page := range *pages {
+							@pagesListItem(hubSlug, page)
+						}
+						<!-- Card -->
+						@pagesListAddItem(hubSlug)
+						<!-- End Card -->
+					</div>
+					<!-- End Grid -->
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ pagesListItem(hubSlug string, page PagePayload) {
+	<a
+		href={ templ.SafeURL(fmt.Sprintf("/hub/%s/pages/%s", hubSlug, page.PageSlug)) }
+		class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-800 cursor-pointer"
+	>
+		<div class="flex flex-col gap-x-6 text-center p-2">
+			<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl p-2">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7"><path d="M460-420h200v-80H460v80Zm-60 60v-200h320v200H400ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H160v400Z"></path></svg>
+			</div>
+			<div class="grow">
+				<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500 p-2">{ page.Name } </h3>
+				<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500 p-2">{ page.Description }</p>
+				<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500 p-2">{ page.PageSlug }</p>
+			</div>
+		</div>
+	</a>
+}
+
+templ pagesListAddItem(hubSlug string) {
+	<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-800 cursor-pointer" hx-get={ fmt.Sprintf("/hub/%s/pages/new", hubSlug) } hx-target="#hs-modal-content" hx-swap="innerHTML" aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-modal" data-hs-overlay="#hs-modal">
+		<div class="flex flex-col gap-x-6 text-center p-2">
+			<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl p-2">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h360v80H200v560h560v-360h80v360q0 33-23.5 56.5T760-120H200Zm120-160v-80h320v80H320Zm0-120v-80h320v80H320Zm0-120v-80h320v80H320Zm360-80v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z"></path></svg>
+			</div>
+			<div class="grow">
+				<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500 p-2">New Page</h3>
+				<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500 p-2">Create new hub page.</p>
+			</div>
+		</div>
+	</a>
+}
+
+templ testgjs(projectId string, dataName string) {
+	<input id={ fmt.Sprintf("gjs-html-%s", projectId) } type="hidden"/>
+	<input id={ fmt.Sprintf("gjs-data-%s", projectId) } type="hidden" name={ dataName } value='{"pages": [{"component": "<div>Initial content</div>"}]}'/>
+	<div id={ fmt.Sprintf("gjs-%s", projectId) } x-init={ fmt.Sprintf("GrapeJSInitializer('%s')", projectId) } data-theme="dark"></div>
+}

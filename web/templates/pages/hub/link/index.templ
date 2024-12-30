@@ -1,70 +1,83 @@
 package link
 
-import "RouteHub.Service.Dashboard/ent"
-import "github.com/zitadel/oidc/v3/pkg/oidc"
-import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
-import "fmt"
-import "RouteHub.Service.Dashboard/web/templates/pages/hub/link/components"
-import "RouteHub.Service.Dashboard/web/templates/pages/partial"
+import (
+	"RouteHub.Service.Dashboard/ent"
+	layouts "RouteHub.Service.Dashboard/web/templates/layouts"
+	"RouteHub.Service.Dashboard/web/templates/pages/hub/link/components"
+	"RouteHub.Service.Dashboard/web/templates/pages/partial"
+	"fmt"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
+)
 
-templ index(userInfo *oidc.UserInfo,hub *ent.Hub, links []*ent.Link) {
-@layouts.Main(layouts.PageDescription{
-MainContent: hubLinksPage(hub,links),
-UserInfo: userInfo,
-Hub: hub,
-})
+templ index(userInfo *oidc.UserInfo, hub *ent.Hub, links []*ent.Link) {
+	@layouts.Main(layouts.PageDescription{
+		MainContent: hubLinksPage(hub, links),
+		UserInfo:    userInfo,
+		Hub:         hub,
+	})
 }
 
-templ hubLinksPage(hub *ent.Hub,links []*ent.Link) {
-
-    
-<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-    <div class="flex flex-col">
-        <div class="-m-1.5 overflow-x-auto">
-            <div class="p-1.5 min-w-full inline-block align-middle">
-                <div
-                    class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-800 dark:border-neutral-700">
-                    <!-- Header -->
-                    <div
-                        class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-neutral-700">
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-800 dark:text-neutral-200">
-                                Links
-                            </h2>
-                            <p class="text-sm text-gray-600 dark:text-neutral-400">
-                                Your Shortened Links
-                            </p>
-                        </div>
-
-                        <div>
-                            <div class="inline-flex gap-x-2">
-                                <button
-                                    class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-teal-700 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
-                                    hx-get={fmt.Sprintf("/hub/%v/links/create",hub.Slug)} hx-target="#hs-modal-content" hx-swap="innerHTML"
-                                    aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-modal"
-                                    data-hs-overlay="#hs-modal">
-                                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M5 12h14" />
-                                        <path d="M12 5v14" />
-                                    </svg>
-                                    Add New Link
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End Header -->
-
-                    if len(links) == 0 {
-                    @partial.TableEmpty("Link's", "Start by creating a new link")
-                    } else {
-                       @components.LinksTable(links)
-                    }
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+templ hubLinksPage(hub *ent.Hub, links []*ent.Link) {
+	<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+		<div class="flex flex-col">
+			<div class="-m-1.5 overflow-x-auto">
+				<div class="p-1.5 min-w-full inline-block align-middle">
+					<div
+						class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-800 dark:border-neutral-700"
+					>
+						<!-- Header -->
+						<div
+							class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-neutral-700"
+						>
+							<div>
+								<h2 class="text-xl font-semibold text-gray-800 dark:text-neutral-200">
+									Links
+								</h2>
+								<p class="text-sm text-gray-600 dark:text-neutral-400">
+									Your Shortened Links
+								</p>
+							</div>
+							<div>
+								<div class="inline-flex gap-x-2">
+									<button
+										class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-teal-700 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+										hx-get={ fmt.Sprintf("/hub/%v/links/create", hub.Slug) }
+										hx-target="#hs-modal-content"
+										hx-swap="innerHTML"
+										aria-haspopup="dialog"
+										aria-expanded="false"
+										aria-controls="hs-modal"
+										data-hs-overlay="#hs-modal"
+									>
+										<svg
+											class="shrink-0 size-4"
+											xmlns="http://www.w3.org/2000/svg"
+											width="24"
+											height="24"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<path d="M5 12h14"></path>
+											<path d="M12 5v14"></path>
+										</svg>
+										Add New Link
+									</button>
+								</div>
+							</div>
+						</div>
+						<!-- End Header -->
+						if len(links) == 0 {
+							@partial.TableEmpty("Link's", "Start by creating a new link")
+						} else {
+							@components.LinksTable(links)
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 }

@@ -12,6 +12,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/page"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"entgo.io/ent"
@@ -30,6 +31,7 @@ type HubQuery struct {
 	withDomain       *DomainQuery
 	withOrganization *OrganizationQuery
 	withLinks        *LinkQuery
+	withPages        *PageQuery
 	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -126,6 +128,28 @@ func (hq *HubQuery) QueryLinks() *LinkQuery {
 			sqlgraph.From(hub.Table, hub.FieldID, selector),
 			sqlgraph.To(link.Table, link.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, hub.LinksTable, hub.LinksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPages chains the current query on the "pages" edge.
+func (hq *HubQuery) QueryPages() *PageQuery {
+	query := (&PageClient{config: hq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := hq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := hq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(hub.Table, hub.FieldID, selector),
+			sqlgraph.To(page.Table, page.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, hub.PagesTable, hub.PagesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
 		return fromU, nil
@@ -328,6 +352,7 @@ func (hq *HubQuery) Clone() *HubQuery {
 		withDomain:       hq.withDomain.Clone(),
 		withOrganization: hq.withOrganization.Clone(),
 		withLinks:        hq.withLinks.Clone(),
+		withPages:        hq.withPages.Clone(),
 		// clone intermediate query.
 		sql:  hq.sql.Clone(),
 		path: hq.path,
@@ -364,6 +389,17 @@ func (hq *HubQuery) WithLinks(opts ...func(*LinkQuery)) *HubQuery {
 		opt(query)
 	}
 	hq.withLinks = query
+	return hq
+}
+
+// WithPages tells the query-builder to eager-load the nodes that are connected to
+// the "pages" edge. The optional arguments are used to configure the query builder of the edge.
+func (hq *HubQuery) WithPages(opts ...func(*PageQuery)) *HubQuery {
+	query := (&PageClient{config: hq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	hq.withPages = query
 	return hq
 }
 
@@ -446,10 +482,11 @@ func (hq *HubQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Hub, err
 		nodes       = []*Hub{}
 		withFKs     = hq.withFKs
 		_spec       = hq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			hq.withDomain != nil,
 			hq.withOrganization != nil,
 			hq.withLinks != nil,
+			hq.withPages != nil,
 		}
 	)
 	if hq.withDomain != nil || hq.withOrganization != nil {
@@ -492,6 +529,13 @@ func (hq *HubQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Hub, err
 		if err := hq.loadLinks(ctx, query, nodes,
 			func(n *Hub) { n.Edges.Links = []*Link{} },
 			func(n *Hub, e *Link) { n.Edges.Links = append(n.Edges.Links, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := hq.withPages; query != nil {
+		if err := hq.loadPages(ctx, query, nodes,
+			func(n *Hub) { n.Edges.Pages = []*Page{} },
+			func(n *Hub, e *Page) { n.Edges.Pages = append(n.Edges.Pages, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -588,6 +632,37 @@ func (hq *HubQuery) loadLinks(ctx context.Context, query *LinkQuery, nodes []*Hu
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "link_fk" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (hq *HubQuery) loadPages(ctx context.Context, query *PageQuery, nodes []*Hub, init func(*Hub), assign func(*Hub, *Page)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[mixin.ID]*Hub)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Page(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(hub.PagesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.hub_fk
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "hub_fk" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "hub_fk" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

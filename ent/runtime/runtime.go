@@ -9,6 +9,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/page"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/schema"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -111,6 +112,29 @@ func init() {
 	organizationDescID := organizationMixinFields0[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
 	organization.DefaultID = organizationDescID.Default.(func() mixin.ID)
+	pageMixin := schema.Page{}.Mixin()
+	pageHooks := schema.Page{}.Hooks()
+	page.Hooks[0] = pageHooks[0]
+	pageMixinFields0 := pageMixin[0].Fields()
+	_ = pageMixinFields0
+	pageFields := schema.Page{}.Fields()
+	_ = pageFields
+	// pageDescName is the schema descriptor for name field.
+	pageDescName := pageFields[0].Descriptor()
+	// page.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	page.NameValidator = pageDescName.Validators[0].(func(string) error)
+	// pageDescSlug is the schema descriptor for slug field.
+	pageDescSlug := pageFields[1].Descriptor()
+	// page.SlugValidator is a validator for the "slug" field. It is called by the builders before save.
+	page.SlugValidator = pageDescSlug.Validators[0].(func(string) error)
+	// pageDescCreatedAt is the schema descriptor for created_at field.
+	pageDescCreatedAt := pageFields[7].Descriptor()
+	// page.DefaultCreatedAt holds the default value on creation for the created_at field.
+	page.DefaultCreatedAt = pageDescCreatedAt.Default.(func() time.Time)
+	// pageDescID is the schema descriptor for id field.
+	pageDescID := pageMixinFields0[0].Descriptor()
+	// page.DefaultID holds the default value on creation for the id field.
+	page.DefaultID = pageDescID.Default.(func() mixin.ID)
 	personMixin := schema.Person{}.Mixin()
 	personMixinFields0 := personMixin[0].Fields()
 	_ = personMixinFields0

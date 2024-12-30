@@ -53,9 +53,11 @@ type HubEdges struct {
 	Organization *Organization `json:"organization,omitempty"`
 	// Links holds the value of the links edge.
 	Links []*Link `json:"links,omitempty"`
+	// Pages holds the value of the pages edge.
+	Pages []*Page `json:"pages,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // DomainOrErr returns the Domain value or an error if the edge
@@ -87,6 +89,15 @@ func (e HubEdges) LinksOrErr() ([]*Link, error) {
 		return e.Links, nil
 	}
 	return nil, &NotLoadedError{edge: "links"}
+}
+
+// PagesOrErr returns the Pages value or an error if the edge
+// was not loaded in eager-loading.
+func (e HubEdges) PagesOrErr() ([]*Page, error) {
+	if e.loadedTypes[3] {
+		return e.Pages, nil
+	}
+	return nil, &NotLoadedError{edge: "pages"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -213,6 +224,11 @@ func (h *Hub) QueryOrganization() *OrganizationQuery {
 // QueryLinks queries the "links" edge of the Hub entity.
 func (h *Hub) QueryLinks() *LinkQuery {
 	return NewHubClient(h.config).QueryLinks(h)
+}
+
+// QueryPages queries the "pages" edge of the Hub entity.
+func (h *Hub) QueryPages() *PageQuery {
+	return NewHubClient(h.config).QueryPages(h)
 }
 
 // Update returns a builder for updating this Hub.

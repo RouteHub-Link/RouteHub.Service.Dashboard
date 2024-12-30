@@ -24,6 +24,7 @@ templ Main(pd PageDescription) {
 			<script src="/static/js/file-upload.js"></script>
 			<script src="/static/js/quill-initializer.js"></script>
 			<script src="/static/js/shadow-initializer.js"></script>
+			@grapeJS()
 			if pd.AdditionalHead != nil {
 				@pd.GetAdditionalHead()
 			}
@@ -75,4 +76,24 @@ templ editorJS() {
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/attaches@latest"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@latest"></script>
 	<script src="/static/js/editorjs-initializer.js"></script>
+}
+
+templ grapeJS() {
+	<script src="https://unpkg.com/grapesjs"></script>
+	<script src="https://unpkg.com/grapesjs-preset-webpage"></script>
+	<link rel="stylesheet" type="text/css" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css"/>
+	<script src="https://unpkg.com/grapesjs-blocks-basic@1.0.2"></script>
+	<script src="https://unpkg.com/grapesjs-plugin-forms"></script>
+	<script src="https://unpkg.com/grapesjs-component-countdown"></script>
+	<script src="https://unpkg.com/grapesjs-plugin-export"></script>
+	<script src="https://unpkg.com/grapesjs-tabs"></script>
+	<script src="https://unpkg.com/grapesjs-custom-code"></script>
+	<script src="https://unpkg.com/grapesjs-touch"></script>
+	<script src="https://unpkg.com/grapesjs-parser-postcss"></script>
+	<script src="https://unpkg.com/grapesjs-tooltip"></script>
+	<script src="https://unpkg.com/grapesjs-tui-image-editor"></script>
+	<script src="https://unpkg.com/grapesjs-typed"></script>
+	<script src="https://unpkg.com/grapesjs-style-bg"></script>
+	<script src="/static/js/grapejs-bulma.js"></script>
+	<script src="/static/js/grapejs-init.js"></script>
 }

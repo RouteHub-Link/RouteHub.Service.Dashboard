@@ -33,5 +33,7 @@ func configureHubRoutes(mainGroup *echo.Group, e *echo.Echo, handlers *handlers.
 	hubGroup.GET("", hubHandlers.IndexHandler)
 
 	hubHandlers.CustomizeHandlers.ConfigureRoutes(hubGroup)
+	hubHandlers.PagesHandlers.ConfigureRoutes(hubGroup)
+
 	handlers.LinkHandlers.ConfigureRoutes(hubGroup)
 }

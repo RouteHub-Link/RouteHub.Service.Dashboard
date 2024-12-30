@@ -2,7 +2,6 @@ package components
 
 import (
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	"RouteHub.Service.Dashboard/web/templates/pages/hub"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"fmt"
 )
@@ -17,7 +16,7 @@ templ LinkStatusForm(payload EditLinkStatusPayload) {
 	// hx target select element changed
 	<form hx-post={ fmt.Sprintf("/hub/%s/links/%s/status", payload.HubSlug, payload.LinkPath) } hx-trigger="change from:#link_status" hx-swap="outerHTML">
 		<div>
-			@partial.FormSelect(hub.StatusStateOptions(payload.Status), "link_status")
+			@partial.FormSelect(partial.StatusStateOptions(payload.Status), "link_status")
 		</div>
 	</form>
 }

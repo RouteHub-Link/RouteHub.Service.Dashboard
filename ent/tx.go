@@ -20,6 +20,8 @@ type Tx struct {
 	Link *LinkClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// Page is the client for interacting with the Page builders.
+	Page *PageClient
 	// Person is the client for interacting with the Person builders.
 	Person *PersonClient
 
@@ -157,6 +159,7 @@ func (tx *Tx) init() {
 	tx.Hub = NewHubClient(tx.config)
 	tx.Link = NewLinkClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
+	tx.Page = NewPageClient(tx.config)
 	tx.Person = NewPersonClient(tx.config)
 }
 

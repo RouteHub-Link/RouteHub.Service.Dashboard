@@ -17,6 +17,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/page"
 	"RouteHub.Service.Dashboard/ent/person"
 )
 
@@ -82,6 +83,7 @@ func checkColumn(table, column string) error {
 			hub.Table:          hub.ValidColumn,
 			link.Table:         link.ValidColumn,
 			organization.Table: organization.ValidColumn,
+			page.Table:         page.ValidColumn,
 			person.Table:       person.ValidColumn,
 		})
 	})

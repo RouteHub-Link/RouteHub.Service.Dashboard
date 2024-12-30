@@ -105,6 +105,33 @@ var (
 		Columns:    OrganizationsColumns,
 		PrimaryKey: []*schema.Column{OrganizationsColumns[0]},
 	}
+	// PagesColumns holds the columns for the "pages" table.
+	PagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString},
+		{Name: "slug", Type: field.TypeString},
+		{Name: "page_description", Type: field.TypeString, Nullable: true},
+		{Name: "page_content_json", Type: field.TypeString, Nullable: true},
+		{Name: "page_content_html", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"STATUS_INACTIVE", "STATUS_ACTIVE"}, Default: "STATUS_INACTIVE"},
+		{Name: "meta_description", Type: field.TypeJSON, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "hub_fk", Type: field.TypeString},
+	}
+	// PagesTable holds the schema information for the "pages" table.
+	PagesTable = &schema.Table{
+		Name:       "pages",
+		Columns:    PagesColumns,
+		PrimaryKey: []*schema.Column{PagesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "pages_hubs_pages",
+				Columns:    []*schema.Column{PagesColumns[9]},
+				RefColumns: []*schema.Column{HubsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// PersonsColumns holds the columns for the "persons" table.
 	PersonsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -157,6 +184,7 @@ var (
 		HubsTable,
 		LinksTable,
 		OrganizationsTable,
+		PagesTable,
 		PersonsTable,
 		OrganizationPersonsTable,
 	}
@@ -167,6 +195,7 @@ func init() {
 	HubsTable.ForeignKeys[0].RefTable = DomainsTable
 	HubsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	LinksTable.ForeignKeys[0].RefTable = HubsTable
+	PagesTable.ForeignKeys[0].RefTable = HubsTable
 	OrganizationPersonsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationPersonsTable.ForeignKeys[1].RefTable = PersonsTable
 }

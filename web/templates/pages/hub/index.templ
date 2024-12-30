@@ -60,36 +60,6 @@ templ hubPage(hub *ent.Hub) {
 							</a>
 							<!-- End Card -->
 							<!-- Card -->
-							<a
-								class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
-								href={ templ.URL(fmt.Sprintf("/hub/%v/links", hub.Slug)) }
-							>
-								<div class="flex gap-x-6">
-									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
-										<svg
-											class="size-5 text-gray-800 dark:text-neutral-200"
-											width="16"
-											height="16"
-											fill="currentColor"
-											viewBox="0 0 16 16"
-										>
-											<path
-												d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H3zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2zm0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14z"
-											></path>
-										</svg>
-									</div>
-									<div class="grow">
-										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
-											Links
-										</h3>
-										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
-											List of all links in the hub.
-										</p>
-									</div>
-								</div>
-							</a>
-							<!-- End Card -->
-							<!-- Card -->
 							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer">
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
@@ -227,6 +197,69 @@ templ hubPage(hub *ent.Hub) {
 							</a>
 							<!-- End Card -->
 							<!-- Card -->
+							<a
+								class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								href={ templ.URL(fmt.Sprintf("/hub/%v/links", hub.Slug)) }
+							>
+								<div class="flex gap-x-6">
+									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
+										<svg
+											class="size-5 text-gray-800 dark:text-neutral-200"
+											width="16"
+											height="16"
+											fill="currentColor"
+											viewBox="0 0 16 16"
+										>
+											<path
+												d="M3 4.5h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H3zM1 2a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 2zm0 12a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 14z"
+											></path>
+										</svg>
+									</div>
+									<div class="grow">
+										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
+											Links
+										</h3>
+										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
+											List of all links in the hub.
+										</p>
+									</div>
+								</div>
+							</a>
+							<!-- End Card -->
+							<!-- Card -->
+							<a
+								href={ templ.URL(fmt.Sprintf("/hub/%v/pages", hub.Slug)) }
+								class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+							>
+								<div class="flex gap-x-6">
+									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
+										<svg
+											class="size-5 text-gray-800 dark:text-neutral-200"
+											width="16"
+											height="16"
+											fill="currentColor"
+											viewBox="0 0 16 16"
+										>
+											<path
+												d="M13 6.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm-.5 2.5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1h5z"
+											></path>
+											<path
+												d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM2 1a1 1 0 0 0-1 1v1h14V2a1 1 0 0 0-1-1H2zM1 4v10a1 1 0 0 0 1 1h2V4H1zm4 0v11h9a1 1 0 0 0 1-1V4H5z"
+											></path>
+										</svg>
+									</div>
+									<div class="grow">
+										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
+											Pages
+										</h3>
+										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
+											View and edit custom pages.
+										</p>
+									</div>
+								</div>
+							</a>
+							<!-- End Card -->
+							<!-- Card -->
 							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer">
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
@@ -253,39 +286,6 @@ templ hubPage(hub *ent.Hub) {
 										</h3>
 										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
 											Edit and create new templates for your pages.
-										</p>
-									</div>
-								</div>
-							</a>
-							<!-- End Card -->
-							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer">
-								<div class="flex gap-x-6">
-									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
-										<svg
-											class="size-5 text-gray-800 dark:text-neutral-200"
-											width="16"
-											height="16"
-											fill="currentColor"
-											viewBox="0 0 16 16"
-										>
-											<path
-												d="M13 6.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm0 3a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5zm-.5 2.5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1h5z"
-											></path>
-											<path
-												d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM2 1a1 1 0 0 0-1 1v1h14V2a1 1 0 0 0-1-1H2zM1 4v10a1 1 0 0 0 1 1h2V4H1zm4 0v11h9a1 1 0 0 0 1-1V4H5z"
-											></path>
-										</svg>
-									</div>
-									<div class="grow">
-										<h3 class="text-sm font-semibold text-blue-600 dark:text-blue-500">
-											Pages
-											<span
-												class="ms-1 inline bg-blue-50 border border-gray-300 text-blue-600 text-[.6125rem] leading-4 uppercase rounded-full py-0.5 px-2 dark:bg-gray-900/70 dark:border-gray-700 dark:text-blue-500"
-											>Planned</span>
-										</h3>
-										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
-											View and edit custom pages.
 										</p>
 									</div>
 								</div>

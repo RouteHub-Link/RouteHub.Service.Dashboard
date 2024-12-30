@@ -10,7 +10,6 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	"RouteHub.Service.Dashboard/web/templates/pages/hub"
 	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"fmt"
 )
@@ -49,7 +48,7 @@ func LinkStatusForm(payload EditLinkStatusPayload) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%s/links/%s/status", payload.HubSlug, payload.LinkPath))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/status.templ`, Line: 18, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/components/status.templ`, Line: 17, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -59,7 +58,7 @@ func LinkStatusForm(payload EditLinkStatusPayload) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = partial.FormSelect(hub.StatusStateOptions(payload.Status), "link_status").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = partial.FormSelect(partial.StatusStateOptions(payload.Status), "link_status").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

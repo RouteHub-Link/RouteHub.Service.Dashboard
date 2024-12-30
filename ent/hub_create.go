@@ -12,6 +12,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/page"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
 	"RouteHub.Service.Dashboard/ent/schema/types"
@@ -133,6 +134,21 @@ func (hc *HubCreate) AddLinks(l ...*Link) *HubCreate {
 		ids[i] = l[i].ID
 	}
 	return hc.AddLinkIDs(ids...)
+}
+
+// AddPageIDs adds the "pages" edge to the Page entity by IDs.
+func (hc *HubCreate) AddPageIDs(ids ...mixin.ID) *HubCreate {
+	hc.mutation.AddPageIDs(ids...)
+	return hc
+}
+
+// AddPages adds the "pages" edges to the Page entity.
+func (hc *HubCreate) AddPages(p ...*Page) *HubCreate {
+	ids := make([]mixin.ID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return hc.AddPageIDs(ids...)
 }
 
 // Mutation returns the HubMutation object of the builder.
@@ -346,6 +362,22 @@ func (hc *HubCreate) createSpec() (*Hub, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := hc.mutation.PagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   hub.PagesTable,
+			Columns: []string{hub.PagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

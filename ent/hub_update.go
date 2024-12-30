@@ -12,6 +12,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/page"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
 	"RouteHub.Service.Dashboard/ent/schema/mixin"
@@ -175,6 +176,21 @@ func (hu *HubUpdate) AddLinks(l ...*Link) *HubUpdate {
 	return hu.AddLinkIDs(ids...)
 }
 
+// AddPageIDs adds the "pages" edge to the Page entity by IDs.
+func (hu *HubUpdate) AddPageIDs(ids ...mixin.ID) *HubUpdate {
+	hu.mutation.AddPageIDs(ids...)
+	return hu
+}
+
+// AddPages adds the "pages" edges to the Page entity.
+func (hu *HubUpdate) AddPages(p ...*Page) *HubUpdate {
+	ids := make([]mixin.ID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return hu.AddPageIDs(ids...)
+}
+
 // Mutation returns the HubMutation object of the builder.
 func (hu *HubUpdate) Mutation() *HubMutation {
 	return hu.mutation
@@ -211,6 +227,27 @@ func (hu *HubUpdate) RemoveLinks(l ...*Link) *HubUpdate {
 		ids[i] = l[i].ID
 	}
 	return hu.RemoveLinkIDs(ids...)
+}
+
+// ClearPages clears all "pages" edges to the Page entity.
+func (hu *HubUpdate) ClearPages() *HubUpdate {
+	hu.mutation.ClearPages()
+	return hu
+}
+
+// RemovePageIDs removes the "pages" edge to Page entities by IDs.
+func (hu *HubUpdate) RemovePageIDs(ids ...mixin.ID) *HubUpdate {
+	hu.mutation.RemovePageIDs(ids...)
+	return hu
+}
+
+// RemovePages removes "pages" edges to Page entities.
+func (hu *HubUpdate) RemovePages(p ...*Page) *HubUpdate {
+	ids := make([]mixin.ID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return hu.RemovePageIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -415,6 +452,51 @@ func (hu *HubUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if hu.mutation.PagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   hub.PagesTable,
+			Columns: []string{hub.PagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := hu.mutation.RemovedPagesIDs(); len(nodes) > 0 && !hu.mutation.PagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   hub.PagesTable,
+			Columns: []string{hub.PagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := hu.mutation.PagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   hub.PagesTable,
+			Columns: []string{hub.PagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, hu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{hub.Label}
@@ -576,6 +658,21 @@ func (huo *HubUpdateOne) AddLinks(l ...*Link) *HubUpdateOne {
 	return huo.AddLinkIDs(ids...)
 }
 
+// AddPageIDs adds the "pages" edge to the Page entity by IDs.
+func (huo *HubUpdateOne) AddPageIDs(ids ...mixin.ID) *HubUpdateOne {
+	huo.mutation.AddPageIDs(ids...)
+	return huo
+}
+
+// AddPages adds the "pages" edges to the Page entity.
+func (huo *HubUpdateOne) AddPages(p ...*Page) *HubUpdateOne {
+	ids := make([]mixin.ID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return huo.AddPageIDs(ids...)
+}
+
 // Mutation returns the HubMutation object of the builder.
 func (huo *HubUpdateOne) Mutation() *HubMutation {
 	return huo.mutation
@@ -612,6 +709,27 @@ func (huo *HubUpdateOne) RemoveLinks(l ...*Link) *HubUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return huo.RemoveLinkIDs(ids...)
+}
+
+// ClearPages clears all "pages" edges to the Page entity.
+func (huo *HubUpdateOne) ClearPages() *HubUpdateOne {
+	huo.mutation.ClearPages()
+	return huo
+}
+
+// RemovePageIDs removes the "pages" edge to Page entities by IDs.
+func (huo *HubUpdateOne) RemovePageIDs(ids ...mixin.ID) *HubUpdateOne {
+	huo.mutation.RemovePageIDs(ids...)
+	return huo
+}
+
+// RemovePages removes "pages" edges to Page entities.
+func (huo *HubUpdateOne) RemovePages(p ...*Page) *HubUpdateOne {
+	ids := make([]mixin.ID, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return huo.RemovePageIDs(ids...)
 }
 
 // Where appends a list predicates to the HubUpdate builder.
@@ -839,6 +957,51 @@ func (huo *HubUpdateOne) sqlSave(ctx context.Context) (_node *Hub, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(link.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if huo.mutation.PagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   hub.PagesTable,
+			Columns: []string{hub.PagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := huo.mutation.RemovedPagesIDs(); len(nodes) > 0 && !huo.mutation.PagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   hub.PagesTable,
+			Columns: []string{hub.PagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := huo.mutation.PagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   hub.PagesTable,
+			Columns: []string{hub.PagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

@@ -13,6 +13,7 @@ import (
 	"RouteHub.Service.Dashboard/ent/hub"
 	"RouteHub.Service.Dashboard/ent/link"
 	"RouteHub.Service.Dashboard/ent/organization"
+	"RouteHub.Service.Dashboard/ent/page"
 	"RouteHub.Service.Dashboard/ent/person"
 	"RouteHub.Service.Dashboard/ent/predicate"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
@@ -37,6 +38,7 @@ const (
 	TypeHub          = "Hub"
 	TypeLink         = "Link"
 	TypeOrganization = "Organization"
+	TypePage         = "Page"
 	TypePerson       = "Person"
 )
 
@@ -622,6 +624,9 @@ type HubMutation struct {
 	links               map[mixin.ID]struct{}
 	removedlinks        map[mixin.ID]struct{}
 	clearedlinks        bool
+	pages               map[mixin.ID]struct{}
+	removedpages        map[mixin.ID]struct{}
+	clearedpages        bool
 	done                bool
 	oldValue            func(context.Context) (*Hub, error)
 	predicates          []predicate.Hub
@@ -1128,6 +1133,60 @@ func (m *HubMutation) ResetLinks() {
 	m.removedlinks = nil
 }
 
+// AddPageIDs adds the "pages" edge to the Page entity by ids.
+func (m *HubMutation) AddPageIDs(ids ...mixin.ID) {
+	if m.pages == nil {
+		m.pages = make(map[mixin.ID]struct{})
+	}
+	for i := range ids {
+		m.pages[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPages clears the "pages" edge to the Page entity.
+func (m *HubMutation) ClearPages() {
+	m.clearedpages = true
+}
+
+// PagesCleared reports if the "pages" edge to the Page entity was cleared.
+func (m *HubMutation) PagesCleared() bool {
+	return m.clearedpages
+}
+
+// RemovePageIDs removes the "pages" edge to the Page entity by IDs.
+func (m *HubMutation) RemovePageIDs(ids ...mixin.ID) {
+	if m.removedpages == nil {
+		m.removedpages = make(map[mixin.ID]struct{})
+	}
+	for i := range ids {
+		delete(m.pages, ids[i])
+		m.removedpages[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPages returns the removed IDs of the "pages" edge to the Page entity.
+func (m *HubMutation) RemovedPagesIDs() (ids []mixin.ID) {
+	for id := range m.removedpages {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PagesIDs returns the "pages" edge IDs in the mutation.
+func (m *HubMutation) PagesIDs() (ids []mixin.ID) {
+	for id := range m.pages {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPages resets all changes to the "pages" edge.
+func (m *HubMutation) ResetPages() {
+	m.pages = nil
+	m.clearedpages = false
+	m.removedpages = nil
+}
+
 // Where appends a list predicates to the HubMutation builder.
 func (m *HubMutation) Where(ps ...predicate.Hub) {
 	m.predicates = append(m.predicates, ps...)
@@ -1372,7 +1431,7 @@ func (m *HubMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *HubMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.domain != nil {
 		edges = append(edges, hub.EdgeDomain)
 	}
@@ -1381,6 +1440,9 @@ func (m *HubMutation) AddedEdges() []string {
 	}
 	if m.links != nil {
 		edges = append(edges, hub.EdgeLinks)
+	}
+	if m.pages != nil {
+		edges = append(edges, hub.EdgePages)
 	}
 	return edges
 }
@@ -1403,15 +1465,24 @@ func (m *HubMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case hub.EdgePages:
+		ids := make([]ent.Value, 0, len(m.pages))
+		for id := range m.pages {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *HubMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedlinks != nil {
 		edges = append(edges, hub.EdgeLinks)
+	}
+	if m.removedpages != nil {
+		edges = append(edges, hub.EdgePages)
 	}
 	return edges
 }
@@ -1426,13 +1497,19 @@ func (m *HubMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case hub.EdgePages:
+		ids := make([]ent.Value, 0, len(m.removedpages))
+		for id := range m.removedpages {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *HubMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.cleareddomain {
 		edges = append(edges, hub.EdgeDomain)
 	}
@@ -1441,6 +1518,9 @@ func (m *HubMutation) ClearedEdges() []string {
 	}
 	if m.clearedlinks {
 		edges = append(edges, hub.EdgeLinks)
+	}
+	if m.clearedpages {
+		edges = append(edges, hub.EdgePages)
 	}
 	return edges
 }
@@ -1455,6 +1535,8 @@ func (m *HubMutation) EdgeCleared(name string) bool {
 		return m.clearedorganization
 	case hub.EdgeLinks:
 		return m.clearedlinks
+	case hub.EdgePages:
+		return m.clearedpages
 	}
 	return false
 }
@@ -1485,6 +1567,9 @@ func (m *HubMutation) ResetEdge(name string) error {
 		return nil
 	case hub.EdgeLinks:
 		m.ResetLinks()
+		return nil
+	case hub.EdgePages:
+		m.ResetPages()
 		return nil
 	}
 	return fmt.Errorf("unknown Hub edge %s", name)
@@ -3119,6 +3204,862 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Organization edge %s", name)
+}
+
+// PageMutation represents an operation that mutates the Page nodes in the graph.
+type PageMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *mixin.ID
+	name              *string
+	slug              *string
+	page_description  *string
+	page_content_json *string
+	page_content_html *string
+	status            *enums.StatusState
+	meta_description  **types.MetaDescription
+	created_at        *time.Time
+	clearedFields     map[string]struct{}
+	hub               *mixin.ID
+	clearedhub        bool
+	done              bool
+	oldValue          func(context.Context) (*Page, error)
+	predicates        []predicate.Page
+}
+
+var _ ent.Mutation = (*PageMutation)(nil)
+
+// pageOption allows management of the mutation configuration using functional options.
+type pageOption func(*PageMutation)
+
+// newPageMutation creates new mutation for the Page entity.
+func newPageMutation(c config, op Op, opts ...pageOption) *PageMutation {
+	m := &PageMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePage,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPageID sets the ID field of the mutation.
+func withPageID(id mixin.ID) pageOption {
+	return func(m *PageMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Page
+		)
+		m.oldValue = func(ctx context.Context) (*Page, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Page.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPage sets the old Page of the mutation.
+func withPage(node *Page) pageOption {
+	return func(m *PageMutation) {
+		m.oldValue = func(context.Context) (*Page, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PageMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PageMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Page entities.
+func (m *PageMutation) SetID(id mixin.ID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PageMutation) ID() (id mixin.ID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PageMutation) IDs(ctx context.Context) ([]mixin.ID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []mixin.ID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Page.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *PageMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *PageMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *PageMutation) ResetName() {
+	m.name = nil
+}
+
+// SetSlug sets the "slug" field.
+func (m *PageMutation) SetSlug(s string) {
+	m.slug = &s
+}
+
+// Slug returns the value of the "slug" field in the mutation.
+func (m *PageMutation) Slug() (r string, exists bool) {
+	v := m.slug
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSlug returns the old "slug" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldSlug(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSlug is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSlug requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSlug: %w", err)
+	}
+	return oldValue.Slug, nil
+}
+
+// ResetSlug resets all changes to the "slug" field.
+func (m *PageMutation) ResetSlug() {
+	m.slug = nil
+}
+
+// SetPageDescription sets the "page_description" field.
+func (m *PageMutation) SetPageDescription(s string) {
+	m.page_description = &s
+}
+
+// PageDescription returns the value of the "page_description" field in the mutation.
+func (m *PageMutation) PageDescription() (r string, exists bool) {
+	v := m.page_description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPageDescription returns the old "page_description" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldPageDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPageDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPageDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPageDescription: %w", err)
+	}
+	return oldValue.PageDescription, nil
+}
+
+// ClearPageDescription clears the value of the "page_description" field.
+func (m *PageMutation) ClearPageDescription() {
+	m.page_description = nil
+	m.clearedFields[page.FieldPageDescription] = struct{}{}
+}
+
+// PageDescriptionCleared returns if the "page_description" field was cleared in this mutation.
+func (m *PageMutation) PageDescriptionCleared() bool {
+	_, ok := m.clearedFields[page.FieldPageDescription]
+	return ok
+}
+
+// ResetPageDescription resets all changes to the "page_description" field.
+func (m *PageMutation) ResetPageDescription() {
+	m.page_description = nil
+	delete(m.clearedFields, page.FieldPageDescription)
+}
+
+// SetPageContentJSON sets the "page_content_json" field.
+func (m *PageMutation) SetPageContentJSON(s string) {
+	m.page_content_json = &s
+}
+
+// PageContentJSON returns the value of the "page_content_json" field in the mutation.
+func (m *PageMutation) PageContentJSON() (r string, exists bool) {
+	v := m.page_content_json
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPageContentJSON returns the old "page_content_json" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldPageContentJSON(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPageContentJSON is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPageContentJSON requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPageContentJSON: %w", err)
+	}
+	return oldValue.PageContentJSON, nil
+}
+
+// ClearPageContentJSON clears the value of the "page_content_json" field.
+func (m *PageMutation) ClearPageContentJSON() {
+	m.page_content_json = nil
+	m.clearedFields[page.FieldPageContentJSON] = struct{}{}
+}
+
+// PageContentJSONCleared returns if the "page_content_json" field was cleared in this mutation.
+func (m *PageMutation) PageContentJSONCleared() bool {
+	_, ok := m.clearedFields[page.FieldPageContentJSON]
+	return ok
+}
+
+// ResetPageContentJSON resets all changes to the "page_content_json" field.
+func (m *PageMutation) ResetPageContentJSON() {
+	m.page_content_json = nil
+	delete(m.clearedFields, page.FieldPageContentJSON)
+}
+
+// SetPageContentHTML sets the "page_content_html" field.
+func (m *PageMutation) SetPageContentHTML(s string) {
+	m.page_content_html = &s
+}
+
+// PageContentHTML returns the value of the "page_content_html" field in the mutation.
+func (m *PageMutation) PageContentHTML() (r string, exists bool) {
+	v := m.page_content_html
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPageContentHTML returns the old "page_content_html" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldPageContentHTML(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPageContentHTML is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPageContentHTML requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPageContentHTML: %w", err)
+	}
+	return oldValue.PageContentHTML, nil
+}
+
+// ClearPageContentHTML clears the value of the "page_content_html" field.
+func (m *PageMutation) ClearPageContentHTML() {
+	m.page_content_html = nil
+	m.clearedFields[page.FieldPageContentHTML] = struct{}{}
+}
+
+// PageContentHTMLCleared returns if the "page_content_html" field was cleared in this mutation.
+func (m *PageMutation) PageContentHTMLCleared() bool {
+	_, ok := m.clearedFields[page.FieldPageContentHTML]
+	return ok
+}
+
+// ResetPageContentHTML resets all changes to the "page_content_html" field.
+func (m *PageMutation) ResetPageContentHTML() {
+	m.page_content_html = nil
+	delete(m.clearedFields, page.FieldPageContentHTML)
+}
+
+// SetStatus sets the "status" field.
+func (m *PageMutation) SetStatus(es enums.StatusState) {
+	m.status = &es
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *PageMutation) Status() (r enums.StatusState, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldStatus(ctx context.Context) (v enums.StatusState, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *PageMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetMetaDescription sets the "meta_description" field.
+func (m *PageMutation) SetMetaDescription(td *types.MetaDescription) {
+	m.meta_description = &td
+}
+
+// MetaDescription returns the value of the "meta_description" field in the mutation.
+func (m *PageMutation) MetaDescription() (r *types.MetaDescription, exists bool) {
+	v := m.meta_description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetaDescription returns the old "meta_description" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldMetaDescription(ctx context.Context) (v *types.MetaDescription, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetaDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetaDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetaDescription: %w", err)
+	}
+	return oldValue.MetaDescription, nil
+}
+
+// ClearMetaDescription clears the value of the "meta_description" field.
+func (m *PageMutation) ClearMetaDescription() {
+	m.meta_description = nil
+	m.clearedFields[page.FieldMetaDescription] = struct{}{}
+}
+
+// MetaDescriptionCleared returns if the "meta_description" field was cleared in this mutation.
+func (m *PageMutation) MetaDescriptionCleared() bool {
+	_, ok := m.clearedFields[page.FieldMetaDescription]
+	return ok
+}
+
+// ResetMetaDescription resets all changes to the "meta_description" field.
+func (m *PageMutation) ResetMetaDescription() {
+	m.meta_description = nil
+	delete(m.clearedFields, page.FieldMetaDescription)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PageMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PageMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PageMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetHubID sets the "hub" edge to the Hub entity by id.
+func (m *PageMutation) SetHubID(id mixin.ID) {
+	m.hub = &id
+}
+
+// ClearHub clears the "hub" edge to the Hub entity.
+func (m *PageMutation) ClearHub() {
+	m.clearedhub = true
+}
+
+// HubCleared reports if the "hub" edge to the Hub entity was cleared.
+func (m *PageMutation) HubCleared() bool {
+	return m.clearedhub
+}
+
+// HubID returns the "hub" edge ID in the mutation.
+func (m *PageMutation) HubID() (id mixin.ID, exists bool) {
+	if m.hub != nil {
+		return *m.hub, true
+	}
+	return
+}
+
+// HubIDs returns the "hub" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// HubID instead. It exists only for internal usage by the builders.
+func (m *PageMutation) HubIDs() (ids []mixin.ID) {
+	if id := m.hub; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetHub resets all changes to the "hub" edge.
+func (m *PageMutation) ResetHub() {
+	m.hub = nil
+	m.clearedhub = false
+}
+
+// Where appends a list predicates to the PageMutation builder.
+func (m *PageMutation) Where(ps ...predicate.Page) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PageMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PageMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Page, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PageMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PageMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Page).
+func (m *PageMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PageMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.name != nil {
+		fields = append(fields, page.FieldName)
+	}
+	if m.slug != nil {
+		fields = append(fields, page.FieldSlug)
+	}
+	if m.page_description != nil {
+		fields = append(fields, page.FieldPageDescription)
+	}
+	if m.page_content_json != nil {
+		fields = append(fields, page.FieldPageContentJSON)
+	}
+	if m.page_content_html != nil {
+		fields = append(fields, page.FieldPageContentHTML)
+	}
+	if m.status != nil {
+		fields = append(fields, page.FieldStatus)
+	}
+	if m.meta_description != nil {
+		fields = append(fields, page.FieldMetaDescription)
+	}
+	if m.created_at != nil {
+		fields = append(fields, page.FieldCreatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PageMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case page.FieldName:
+		return m.Name()
+	case page.FieldSlug:
+		return m.Slug()
+	case page.FieldPageDescription:
+		return m.PageDescription()
+	case page.FieldPageContentJSON:
+		return m.PageContentJSON()
+	case page.FieldPageContentHTML:
+		return m.PageContentHTML()
+	case page.FieldStatus:
+		return m.Status()
+	case page.FieldMetaDescription:
+		return m.MetaDescription()
+	case page.FieldCreatedAt:
+		return m.CreatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PageMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case page.FieldName:
+		return m.OldName(ctx)
+	case page.FieldSlug:
+		return m.OldSlug(ctx)
+	case page.FieldPageDescription:
+		return m.OldPageDescription(ctx)
+	case page.FieldPageContentJSON:
+		return m.OldPageContentJSON(ctx)
+	case page.FieldPageContentHTML:
+		return m.OldPageContentHTML(ctx)
+	case page.FieldStatus:
+		return m.OldStatus(ctx)
+	case page.FieldMetaDescription:
+		return m.OldMetaDescription(ctx)
+	case page.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown Page field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PageMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case page.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case page.FieldSlug:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSlug(v)
+		return nil
+	case page.FieldPageDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPageDescription(v)
+		return nil
+	case page.FieldPageContentJSON:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPageContentJSON(v)
+		return nil
+	case page.FieldPageContentHTML:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPageContentHTML(v)
+		return nil
+	case page.FieldStatus:
+		v, ok := value.(enums.StatusState)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case page.FieldMetaDescription:
+		v, ok := value.(*types.MetaDescription)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetaDescription(v)
+		return nil
+	case page.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Page field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PageMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PageMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PageMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Page numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PageMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(page.FieldPageDescription) {
+		fields = append(fields, page.FieldPageDescription)
+	}
+	if m.FieldCleared(page.FieldPageContentJSON) {
+		fields = append(fields, page.FieldPageContentJSON)
+	}
+	if m.FieldCleared(page.FieldPageContentHTML) {
+		fields = append(fields, page.FieldPageContentHTML)
+	}
+	if m.FieldCleared(page.FieldMetaDescription) {
+		fields = append(fields, page.FieldMetaDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PageMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PageMutation) ClearField(name string) error {
+	switch name {
+	case page.FieldPageDescription:
+		m.ClearPageDescription()
+		return nil
+	case page.FieldPageContentJSON:
+		m.ClearPageContentJSON()
+		return nil
+	case page.FieldPageContentHTML:
+		m.ClearPageContentHTML()
+		return nil
+	case page.FieldMetaDescription:
+		m.ClearMetaDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown Page nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PageMutation) ResetField(name string) error {
+	switch name {
+	case page.FieldName:
+		m.ResetName()
+		return nil
+	case page.FieldSlug:
+		m.ResetSlug()
+		return nil
+	case page.FieldPageDescription:
+		m.ResetPageDescription()
+		return nil
+	case page.FieldPageContentJSON:
+		m.ResetPageContentJSON()
+		return nil
+	case page.FieldPageContentHTML:
+		m.ResetPageContentHTML()
+		return nil
+	case page.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case page.FieldMetaDescription:
+		m.ResetMetaDescription()
+		return nil
+	case page.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown Page field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PageMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.hub != nil {
+		edges = append(edges, page.EdgeHub)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PageMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case page.EdgeHub:
+		if id := m.hub; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PageMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PageMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PageMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedhub {
+		edges = append(edges, page.EdgeHub)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PageMutation) EdgeCleared(name string) bool {
+	switch name {
+	case page.EdgeHub:
+		return m.clearedhub
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PageMutation) ClearEdge(name string) error {
+	switch name {
+	case page.EdgeHub:
+		m.ClearHub()
+		return nil
+	}
+	return fmt.Errorf("unknown Page unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PageMutation) ResetEdge(name string) error {
+	switch name {
+	case page.EdgeHub:
+		m.ResetHub()
+		return nil
+	}
+	return fmt.Errorf("unknown Page edge %s", name)
 }
 
 // PersonMutation represents an operation that mutates the Person nodes in the graph.

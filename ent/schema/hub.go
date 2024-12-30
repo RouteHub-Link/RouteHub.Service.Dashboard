@@ -71,7 +71,7 @@ func (Hub) Edges() []ent.Edge {
 	return []ent.Edge{
 		// One-to-One relationship: One Hub has one Domain (required for Hub)
 		edge.To("domain", Domain.Type).
-			StorageKey(edge.Column("domain_fk")). // Optional: customize the FK column name
+			StorageKey(edge.Column("domain_fk")).
 			Unique().
 			Required(), // Hub must have a Domain
 
@@ -84,7 +84,12 @@ func (Hub) Edges() []ent.Edge {
 		// One Hub has many Links
 		edge.To("links", Link.Type).
 			StorageKey(edge.Column("link_fk")).
-			Annotations(entgql.RelayConnection()), // Customize the foreign key if needed
+			Annotations(entgql.RelayConnection()),
+
+		// One Hub has many Pages
+		edge.To("pages", Page.Type).
+			StorageKey(edge.Column("hub_fk")).
+			Annotations(entgql.RelayConnection()),
 	}
 }
 

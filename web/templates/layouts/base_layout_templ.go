@@ -33,6 +33,10 @@ func Main(pd PageDescription) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = grapeJS().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		if pd.AdditionalHead != nil {
 			templ_7745c5c3_Err = pd.GetAdditionalHead().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -122,6 +126,35 @@ func editorJS() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest\"></script><script src=\"/static/js/editorjs-html.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/header@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/list@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/nested-list@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/image@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/embed@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/table@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/link@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/marker@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/code@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/quote@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/warning@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/attaches@latest\"></script><script src=\"https://cdn.jsdelivr.net/npm/@editorjs/raw@latest\"></script><script src=\"/static/js/editorjs-initializer.js\"></script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func grapeJS() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"https://unpkg.com/grapesjs\"></script><script src=\"https://unpkg.com/grapesjs-preset-webpage\"></script><link rel=\"stylesheet\" type=\"text/css\" href=\"https://unpkg.com/grapesjs/dist/css/grapes.min.css\"><script src=\"https://unpkg.com/grapesjs-blocks-basic@1.0.2\"></script><script src=\"https://unpkg.com/grapesjs-plugin-forms\"></script><script src=\"https://unpkg.com/grapesjs-component-countdown\"></script><script src=\"https://unpkg.com/grapesjs-plugin-export\"></script><script src=\"https://unpkg.com/grapesjs-tabs\"></script><script src=\"https://unpkg.com/grapesjs-custom-code\"></script><script src=\"https://unpkg.com/grapesjs-touch\"></script><script src=\"https://unpkg.com/grapesjs-parser-postcss\"></script><script src=\"https://unpkg.com/grapesjs-tooltip\"></script><script src=\"https://unpkg.com/grapesjs-tui-image-editor\"></script><script src=\"https://unpkg.com/grapesjs-typed\"></script><script src=\"https://unpkg.com/grapesjs-style-bg\"></script><script src=\"/static/js/grapejs-bulma.js\"></script><script src=\"/static/js/grapejs-init.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

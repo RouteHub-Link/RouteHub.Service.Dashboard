@@ -431,6 +431,29 @@ func HasLinksWith(preds ...predicate.Link) predicate.Hub {
 	})
 }
 
+// HasPages applies the HasEdge predicate on the "pages" edge.
+func HasPages() predicate.Hub {
+	return predicate.Hub(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PagesTable, PagesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPagesWith applies the HasEdge predicate on the "pages" edge with a given conditions (other predicates).
+func HasPagesWith(preds ...predicate.Page) predicate.Hub {
+	return predicate.Hub(func(s *sql.Selector) {
+		step := newPagesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Hub) predicate.Hub {
 	return predicate.Hub(sql.AndPredicates(predicates...))

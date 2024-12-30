@@ -8,12 +8,14 @@ package link
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "RouteHub.Service.Dashboard/ent"
-import "github.com/zitadel/oidc/v3/pkg/oidc"
-import layouts "RouteHub.Service.Dashboard/web/templates/layouts"
-import "fmt"
-import "RouteHub.Service.Dashboard/web/templates/pages/hub/link/components"
-import "RouteHub.Service.Dashboard/web/templates/pages/partial"
+import (
+	"RouteHub.Service.Dashboard/ent"
+	layouts "RouteHub.Service.Dashboard/web/templates/layouts"
+	"RouteHub.Service.Dashboard/web/templates/pages/hub/link/components"
+	"RouteHub.Service.Dashboard/web/templates/pages/partial"
+	"fmt"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
+)
 
 func index(userInfo *oidc.UserInfo, hub *ent.Hub, links []*ent.Link) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -76,7 +78,7 @@ func hubLinksPage(hub *ent.Hub, links []*ent.Link) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%v/links/create", hub.Slug))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/index.templ`, Line: 43, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/link/index.templ`, Line: 44, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

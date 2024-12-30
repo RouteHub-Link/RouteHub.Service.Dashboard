@@ -38,6 +38,8 @@ const (
 	EdgeOrganization = "organization"
 	// EdgeLinks holds the string denoting the links edge name in mutations.
 	EdgeLinks = "links"
+	// EdgePages holds the string denoting the pages edge name in mutations.
+	EdgePages = "pages"
 	// Table holds the table name of the hub in the database.
 	Table = "hubs"
 	// DomainTable is the table that holds the domain relation/edge.
@@ -61,6 +63,13 @@ const (
 	LinksInverseTable = "links"
 	// LinksColumn is the table column denoting the links relation/edge.
 	LinksColumn = "link_fk"
+	// PagesTable is the table that holds the pages relation/edge.
+	PagesTable = "pages"
+	// PagesInverseTable is the table name for the Page entity.
+	// It exists in this package in order to avoid circular dependency with the "page" package.
+	PagesInverseTable = "pages"
+	// PagesColumn is the table column denoting the pages relation/edge.
+	PagesColumn = "hub_fk"
 )
 
 // Columns holds all SQL columns for hub fields.
@@ -201,6 +210,20 @@ func ByLinks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newLinksStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByPagesCount orders the results by pages count.
+func ByPagesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPagesStep(), opts...)
+	}
+}
+
+// ByPages orders the results by pages terms.
+func ByPages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPagesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newDomainStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -220,5 +243,12 @@ func newLinksStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LinksInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, LinksTable, LinksColumn),
+	)
+}
+func newPagesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PagesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PagesTable, PagesColumn),
 	)
 }

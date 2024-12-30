@@ -33,6 +33,7 @@ Hub:
 	| domain       | Domain       | false   |         | M2O      | true   | false    |         |
 	| organization | Organization | true    | hubs    | M2O      | true   | false    |         |
 	| links        | Link         | false   |         | O2M      | false  | true     |         |
+	| pages        | Page         | false   |         | O2M      | false  | true     |         |
 	+--------------+--------------+---------+---------+----------+--------+----------+---------+
 	
 Link:
@@ -42,7 +43,7 @@ Link:
 	| id                 | mixin.ID                | false  | false    | false    | true    | false         | false     | json:"id,omitempty"                 |          0 |         |
 	| target             | string                  | false  | false    | false    | false   | false         | false     | json:"target,omitempty"             |          1 |         |
 	| path               | string                  | true   | false    | false    | false   | false         | false     | json:"path,omitempty"               |          1 |         |
-	| link_content       | types.LinkContent       | false  | true     | false    | false   | false         | false     | json:"link_content,omitempty"       |          0 |         |
+	| link_content       | *types.LinkContent      | false  | true     | false    | true    | false         | false     | json:"link_content,omitempty"       |          0 |         |
 	| status             | enums.StatusState       | false  | false    | false    | false   | false         | false     | json:"status,omitempty"             |          0 |         |
 	| redirection_choice | enums.RedirectionChoice | false  | false    | false    | false   | false         | false     | json:"redirection_choice,omitempty" |          0 |         |
 	| created_at         | time.Time               | false  | false    | false    | true    | false         | false     | json:"created_at,omitempty"         |          0 |         |
@@ -72,6 +73,26 @@ Organization:
 	| hubs    | Hub    | false   |         | O2M      | false  | true     |         |
 	| persons | Person | false   |         | M2M      | false  | true     |         |
 	+---------+--------+---------+---------+----------+--------+----------+---------+
+	
+Page:
+	+-------------------+-----------------------+--------+----------+----------+---------+---------------+-----------+------------------------------------+------------+---------+
+	|       Field       |         Type          | Unique | Optional | Nillable | Default | UpdateDefault | Immutable |             StructTag              | Validators | Comment |
+	+-------------------+-----------------------+--------+----------+----------+---------+---------------+-----------+------------------------------------+------------+---------+
+	| id                | mixin.ID              | false  | false    | false    | true    | false         | false     | json:"id,omitempty"                |          0 |         |
+	| name              | string                | false  | false    | false    | false   | false         | false     | json:"name,omitempty"              |          1 |         |
+	| slug              | string                | false  | false    | false    | false   | false         | false     | json:"slug,omitempty"              |          1 |         |
+	| page_description  | string                | false  | true     | false    | false   | false         | false     | json:"page_description,omitempty"  |          0 |         |
+	| page_content_json | string                | false  | true     | false    | false   | false         | false     | json:"page_content_json,omitempty" |          0 |         |
+	| page_content_html | string                | false  | true     | false    | false   | false         | false     | json:"page_content_html,omitempty" |          0 |         |
+	| status            | enums.StatusState     | false  | false    | false    | false   | false         | false     | json:"status,omitempty"            |          0 |         |
+	| meta_description  | types.MetaDescription | false  | true     | false    | false   | false         | false     | json:"meta_description,omitempty"  |          0 |         |
+	| created_at        | time.Time             | false  | false    | false    | true    | false         | false     | json:"created_at,omitempty"        |          0 |         |
+	+-------------------+-----------------------+--------+----------+----------+---------+---------------+-----------+------------------------------------+------------+---------+
+	+------+------+---------+---------+----------+--------+----------+---------+
+	| Edge | Type | Inverse | BackRef | Relation | Unique | Optional | Comment |
+	+------+------+---------+---------+----------+--------+----------+---------+
+	| hub  | Hub  | true    | pages   | M2O      | true   | false    |         |
+	+------+------+---------+---------+----------+--------+----------+---------+
 	
 Person:
 	+------------+---------------+--------+----------+----------+---------+---------------+-----------+-----------------------------+------------+---------+

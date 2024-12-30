@@ -1,18 +1,17 @@
-package hub
+package partial
 
 import (
 	"strconv"
 
 	"RouteHub.Service.Dashboard/ent/schema/enums"
-	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 )
 
-func StatusStateOptions(selected enums.StatusState) partial.SelectOptions {
+func StatusStateOptions(selected enums.StatusState) SelectOptions {
 	optionsArray := enums.StatusInactive.HumanizeWithValue()
-	selectOptionArray := make([]partial.SelectOption, len(optionsArray))
+	selectOptionArray := make([]SelectOption, len(optionsArray))
 	for i, option := range optionsArray {
 		valueAsString := strconv.Itoa(option.Value)
-		selectOptionArray[i] = partial.SelectOption{
+		selectOptionArray[i] = SelectOption{
 			Value: valueAsString,
 			Label: option.Label,
 		}
@@ -21,7 +20,7 @@ func StatusStateOptions(selected enums.StatusState) partial.SelectOptions {
 		}
 	}
 
-	options := partial.NewSelectOptions(selectOptionArray)
+	options := NewSelectOptions(selectOptionArray)
 
 	return options
 }

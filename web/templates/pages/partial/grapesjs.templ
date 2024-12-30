@@ -1,0 +1,9 @@
+package partial
+
+import "fmt"
+
+templ GrapesJSEditor(projectId string, dataName string, htmlName string, jsonData string) {
+	<input id={ fmt.Sprintf("gjs-html-%s", projectId) } type="hidden" name={ htmlName }/>
+	<input id={ fmt.Sprintf("gjs-data-%s", projectId) } type="hidden" name={ dataName } value={ fmt.Sprintf("%s", jsonData) }/>
+	<div id={ fmt.Sprintf("gjs-%s", projectId) } x-init={ fmt.Sprintf("GrapeJSInitializer('%s')", projectId) } data-theme="dark"></div>
+}
