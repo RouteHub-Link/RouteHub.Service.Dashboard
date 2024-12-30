@@ -30,12 +30,12 @@ func NewHandlers(logger *slog.Logger, ent *ent.Client) *Handlers {
 }
 
 type PagePayload struct {
-	PageSlug    string                 `json:"page_slug" form:"page_slug" validate:"required"`
-	Name        string                 `json:"page_name" form:"page_name" validate:"required"`
-	Description string                 `json:"page_description" form:"page_description" validate:"required"`
-	ContentJSON string                 `json:"page_content_json" form:"page_content_json"`
-	ContentHTML string                 `json:"page_content_html" form:"page_content_html"`
-	MetaData    *types.MetaDescription `json:"meta_data" form:"meta_data"`
+	PageSlug    string `json:"page_slug" form:"page_slug" validate:"required"`
+	Name        string `json:"page_name" form:"page_name" validate:"required"`
+	Description string `json:"page_description" form:"page_description" validate:"required"`
+	ContentJSON string `json:"page_content_json" form:"page_content_json"`
+	ContentHTML string `json:"page_content_html" form:"page_content_html"`
+	MetaData    *types.MetaDescription
 }
 
 func (p *PagePayload) UpdateFromEntity(page *ent.Page) {
@@ -150,10 +150,14 @@ func (h Handlers) EditGetHandler(c echo.Context) error {
 		return c.Redirect(http.StatusNotFound, "/hubs")
 	}
 
+	if page.PageContentJSON == "" {
+		page.PageContentJSON = EmptyPageData
+	}
+
 	payload := new(PagePayload)
 	payload.UpdateFromEntity(page)
 
-	return extensions.Render(c, http.StatusOK, editPage(userInfo, contextHub, *payload, nil))
+	return extensions.Render(c, http.StatusOK, editPage(userInfo, contextHub, *payload))
 }
 
 func (h Handlers) EditFormGetHandler(c echo.Context) error {
@@ -162,13 +166,13 @@ func (h Handlers) EditFormGetHandler(c echo.Context) error {
 	_, err := context.GetUserFromContext(c)
 	if err != nil {
 		feedback := partial.FormFeedbackFromErr("Edit Page", err)
-		return extensions.Render(c, http.StatusOK, editPageForm("", PagePayload{}, feedback))
+		return extensions.Render(c, http.StatusOK, editForm("", PagePayload{}, feedback))
 	}
 
-	contextHub, _ := context.GetHubFromContext(c)
+	contextHub, err := context.GetHubFromContext(c)
 	if err != nil {
 		feedback := partial.FormFeedbackFromErr("Edit Page", err)
-		return extensions.Render(c, http.StatusOK, editPageForm("", PagePayload{}, feedback))
+		return extensions.Render(c, http.StatusOK, editForm("", PagePayload{}, feedback))
 	}
 
 	pageSlug := c.Param("pageSlug")
@@ -180,13 +184,17 @@ func (h Handlers) EditFormGetHandler(c echo.Context) error {
 
 	if err != nil {
 		feedback := partial.FormFeedbackFromErr("Edit Page", err)
-		return extensions.Render(c, http.StatusOK, editPageForm(contextHub.Slug, PagePayload{}, feedback))
+		return extensions.Render(c, http.StatusOK, editForm(contextHub.Slug, PagePayload{}, feedback))
+	}
+
+	if page.PageContentJSON == "" {
+		page.PageContentJSON = EmptyPageData
 	}
 
 	payload := new(PagePayload)
 	payload.UpdateFromEntity(page)
 
-	return extensions.Render(c, http.StatusOK, editPageForm(contextHub.Slug, *payload, nil))
+	return extensions.Render(c, http.StatusOK, editForm(contextHub.Slug, *payload, nil))
 
 }
 
@@ -198,7 +206,7 @@ func (h Handlers) EditPostHandler(c echo.Context) error {
 		return c.Redirect(http.StatusForbidden, "/")
 	}
 
-	contextHub, _ := context.GetHubFromContext(c)
+	contextHub, err := context.GetHubFromContext(c)
 	if err != nil {
 		return c.Redirect(http.StatusNotFound, "/hubs")
 	}
@@ -218,31 +226,47 @@ func (h Handlers) EditPostHandler(c echo.Context) error {
 
 	if err := extensions.BindAndValidate(c, payload); err != nil {
 		feedback := partial.FormFeedbackFromErr("Edit Page", err)
-		return extensions.Render(c, http.StatusOK, editPageForm(contextHub.Slug, *payload, feedback))
+		return extensions.Render(c, http.StatusOK, editForm(contextHub.Slug, *payload, feedback))
 	}
 
-	updatedPage, err := h.Ent.Page.UpdateOne(page).
+	metaPayload := new(partial.MetaDescriptionPayload)
+	if err := extensions.BindAndValidate(c, metaPayload); err != nil {
+		feedback := partial.FormFeedbackFromErr("Edit Page", err)
+		return extensions.Render(c, http.StatusOK, editForm(contextHub.Slug, *payload, feedback))
+	}
+
+	payload.MetaData = metaPayload.AsModel()
+
+	query := h.Ent.Page.UpdateOne(page).
 		SetName(payload.Name).
 		SetPageDescription(payload.Description).
 		SetPageContentJSON(payload.ContentJSON).
-		SetPageContentHTML(payload.ContentHTML).
 		SetMetaDescription(payload.MetaData).
-		SetSlug(payload.PageSlug).
-		Save(ctx)
+		SetSlug(payload.PageSlug)
+
+	if payload.ContentHTML != "" {
+		query.SetPageContentHTML(payload.ContentHTML)
+	}
+
+	updatedPage, err := query.Save(ctx)
 
 	if err != nil {
 		feedback := partial.FormFeedbackFromErr("Edit Page", err)
-		return extensions.Render(c, http.StatusOK, editPageForm(contextHub.Slug, *payload, feedback))
+		return extensions.Render(c, http.StatusOK, editForm(contextHub.Slug, *payload, feedback))
 	}
 
 	extensions.HTMXAppendSuccessToast(c, "Page updated successfully")
 	extensions.HTMXCloseModal(c)
-	extensions.HTMXAppendTrigger(c, "page-updated")
 	extensions.HTMXAppendPrelineRefresh(c)
+	extensions.HTMXAppendEventsAfterSwap(c, map[string]interface{}{
+		"grapejs-reinit": map[string]interface{}{
+			"id": updatedPage.Slug,
+		},
+	})
 
 	payload.UpdateFromEntity(updatedPage)
 
-	return extensions.Render(c, http.StatusOK, editPageForm(contextHub.Slug, *payload, nil))
+	return extensions.Render(c, http.StatusOK, editForm(contextHub.Slug, *payload, nil))
 }
 
 func (h Handlers) PageStatusGet(c echo.Context) error {

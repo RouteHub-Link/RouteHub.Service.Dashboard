@@ -46,7 +46,7 @@ func (h Handlers) MetaPageGet(c echo.Context) error {
 
 	hubMeta := hub.HubDetails.MetaDescription
 
-	MetaPayload := MetaPayload{
+	MetaPayload := partial.MetaPayload{
 		Title:         hubMeta.Title,
 		Description:   hubMeta.Description,
 		OGDescription: hubMeta.OGDescription,
@@ -65,7 +65,7 @@ func (h Handlers) MetaPartialGet(c echo.Context) error {
 
 	hubMeta := hub.HubDetails.MetaDescription
 
-	MetaPayload := MetaPayload{
+	MetaPayload := partial.MetaPayload{
 		Title:         hubMeta.Title,
 		Description:   hubMeta.Description,
 		OGDescription: hubMeta.OGDescription,
@@ -83,7 +83,7 @@ func (h Handlers) MetaPartialPost(c echo.Context) error {
 	hub, _ := context.GetHubFromContext(c)
 	title := "Meta Data Form"
 
-	payload := new(MetaPayload)
+	payload := new(partial.MetaPayload)
 	if err := extensions.BindAndValidate(c, payload); err != nil {
 		return err
 	}

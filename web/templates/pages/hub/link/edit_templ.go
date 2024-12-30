@@ -18,7 +18,7 @@ import (
 	"strconv"
 )
 
-func edit(userInfo *oidc.UserInfo, hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) templ.Component {
+func edit(userInfo *oidc.UserInfo, hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload partial.MetaDescriptionPayload) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -51,7 +51,7 @@ func edit(userInfo *oidc.UserInfo, hub *ent.Hub, link *ent.Link, payload EditLin
 	})
 }
 
-func editPage(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) templ.Component {
+func editPage(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload partial.MetaDescriptionPayload) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -101,7 +101,7 @@ func editPage(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload
 	})
 }
 
-func editForm(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload, feedback templ.Component) templ.Component {
+func editForm(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload partial.MetaDescriptionPayload, feedback templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -361,7 +361,7 @@ func pageFields(payload EditLinkPayload) templ.Component {
 	})
 }
 
-func metaDescriptionFields(hub *ent.Hub, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) templ.Component {
+func metaDescriptionFields(hub *ent.Hub, payload EditLinkPayload, metaPayload partial.MetaDescriptionPayload) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

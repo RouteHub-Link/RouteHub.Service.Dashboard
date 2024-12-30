@@ -11,7 +11,6 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"RouteHub.Service.Dashboard/ent"
 	layouts "RouteHub.Service.Dashboard/web/templates/layouts"
-	"RouteHub.Service.Dashboard/web/templates/pages/partial"
 	"fmt"
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 )
@@ -88,15 +87,7 @@ func pagesList(hubSlug string, pages *[]PagePayload) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- End Card --></div><!-- End Grid --></div></div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = partial.GrapesJSEditor("new", "page_content_json", "page_content_html", EmptyPageData).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- End Card --></div><!-- End Grid --></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -141,7 +132,7 @@ func pagesListItem(hubSlug string, page PagePayload) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(page.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 55, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 53, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -154,7 +145,7 @@ func pagesListItem(hubSlug string, page PagePayload) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(page.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 56, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 54, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -167,7 +158,7 @@ func pagesListItem(hubSlug string, page PagePayload) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(page.PageSlug)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 57, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 55, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -209,7 +200,7 @@ func pagesListAddItem(hubSlug string) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%s/pages/new", hubSlug))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 64, Col: 252}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 62, Col: 252}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -251,7 +242,7 @@ func testgjs(projectId string, dataName string) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("gjs-html-%s", projectId))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 78, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 76, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -264,7 +255,7 @@ func testgjs(projectId string, dataName string) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("gjs-data-%s", projectId))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 79, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 77, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -277,7 +268,7 @@ func testgjs(projectId string, dataName string) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(dataName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 79, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 77, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -290,7 +281,7 @@ func testgjs(projectId string, dataName string) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("gjs-%s", projectId))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 80, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 78, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -303,7 +294,7 @@ func testgjs(projectId string, dataName string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("GrapeJSInitializer('%s')", projectId))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 80, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/index.templ`, Line: 78, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {

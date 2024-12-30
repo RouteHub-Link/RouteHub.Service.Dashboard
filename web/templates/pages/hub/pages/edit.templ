@@ -10,15 +10,15 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 )
 
-templ editPage(userInfo *oidc.UserInfo, hub *ent.Hub, page PagePayload, feedback templ.Component) {
+templ editPage(userInfo *oidc.UserInfo, hub *ent.Hub, page PagePayload) {
 	@layouts.Main(layouts.PageDescription{
-		MainContent: editPageForm(hub.Slug, page, feedback),
+		MainContent: editPageForm(hub.Slug, page),
 		UserInfo:    userInfo,
 		Hub:         hub,
 	})
 }
 
-templ editPageForm(hubSlug string, payload PagePayload, feedback templ.Component) {
+templ editPageForm(hubSlug string, payload PagePayload) {
 	<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 		<div class="flex flex-col">
 			<div class="-m-1.5 overflow-x-auto">
@@ -42,11 +42,7 @@ templ editPageForm(hubSlug string, payload PagePayload, feedback templ.Component
 						</div>
 						<!-- End Header -->
 						<div class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700 px-8 py-4">
-							if feedback != nil {
-								@feedback
-							} else {
-								@editForm(hubSlug, payload)
-							}
+							@editForm(hubSlug, payload, nil)
 						</div>
 					</div>
 				</div>
@@ -55,10 +51,13 @@ templ editPageForm(hubSlug string, payload PagePayload, feedback templ.Component
 	</div>
 }
 
-templ editForm(hubSlug string, payload PagePayload) {
+templ editForm(hubSlug string, payload PagePayload, feedback templ.Component) {
 	<div id="edit_page_form_center">
+		if feedback != nil {
+			@feedback
+		}
 		<form
-			hx-post={ fmt.Sprintf("/hub/%v/pages/edit", hubSlug) }
+			hx-post={ fmt.Sprintf("/hub/%s/pages/%s", hubSlug, payload.PageSlug) }
 			hx-indicator="#spinner"
 			hx-target="#edit_page_form_center"
 			hx-swap="innerHTML"
@@ -77,7 +76,7 @@ templ editForm(hubSlug string, payload PagePayload) {
 						<div class="flex rounded-lg shadow-sm">
 							<input
 								type="text"
-								name="title"
+								name="page_name"
 								class="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-s-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
 								placeholder="Awesome Page"
 								value={ payload.Name }
@@ -95,7 +94,7 @@ templ editForm(hubSlug string, payload PagePayload) {
 						<div class="flex rounded-lg shadow-sm">
 							<input
 								type="text"
-								name="description"
+								name="page_description"
 								class="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-s-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
 								placeholder="This page is about..."
 								required
@@ -105,11 +104,11 @@ templ editForm(hubSlug string, payload PagePayload) {
 						<p class="hidden text-xs text-red-600 mt-2" id="target_address-error">Please provide a description.</p>
 					</div>
 					<div>
-						<label for="slug" class="block text-sm font-medium mb-2 dark:text-white">Short Link</label>
+						<label for="slug" class="block text-sm font-medium mb-2 dark:text-white">Path</label>
 						<div class="relative">
 							<input
 								type="text"
-								name="slug"
+								name="page_slug"
 								class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
 								required
 								placeholder="/awesome-page"
@@ -194,9 +193,6 @@ templ editForm(hubSlug string, payload PagePayload) {
 				</div>
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
 					<div>
-						@partial.SimpleFileUploader("meta_description_favicon", payload.MetaData.FavIcon, "Fav Icon", "Upload a Favicon", "Please upload a favicon under 2mb.")
-					</div>
-					<div>
 						<label
 							for="meta_description_locale"
 							class="block mb-2 text-sm text-gray-700 font-medium dark:text-white"
@@ -227,7 +223,7 @@ type EditPageStatusPayload struct {
 
 templ PageStatusForm(payload EditPageStatusPayload) {
 	// hx target select element changed
-	<form hx-post={ fmt.Sprintf("/hub/%s/links/%s/status", payload.HubSlug, payload.PageSlug) } hx-trigger="change from:#link_status" hx-swap="outerHTML">
+	<form hx-post={ fmt.Sprintf("/hub/%s/pages/%s/status", payload.HubSlug, payload.PageSlug) } hx-trigger="change from:#page_status" hx-swap="outerHTML">
 		<div>
 			@partial.FormSelect(partial.StatusStateOptions(payload.Status), "page_status")
 		</div>

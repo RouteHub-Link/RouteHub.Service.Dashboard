@@ -1,5 +1,5 @@
 function GrapeJSInitializer(id) {
-  const editor = grapesjs.init({
+  var editor = grapesjs.init({
     container: `#gjs-${id}`,
     styleManager: {
       clearProperties: 1,

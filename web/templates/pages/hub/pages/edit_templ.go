@@ -18,7 +18,7 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 )
 
-func editPage(userInfo *oidc.UserInfo, hub *ent.Hub, page PagePayload, feedback templ.Component) templ.Component {
+func editPage(userInfo *oidc.UserInfo, hub *ent.Hub, page PagePayload) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -40,7 +40,7 @@ func editPage(userInfo *oidc.UserInfo, hub *ent.Hub, page PagePayload, feedback 
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = layouts.Main(layouts.PageDescription{
-			MainContent: editPageForm(hub.Slug, page, feedback),
+			MainContent: editPageForm(hub.Slug, page),
 			UserInfo:    userInfo,
 			Hub:         hub,
 		}).Render(ctx, templ_7745c5c3_Buffer)
@@ -51,7 +51,7 @@ func editPage(userInfo *oidc.UserInfo, hub *ent.Hub, page PagePayload, feedback 
 	})
 }
 
-func editPageForm(hubSlug string, payload PagePayload, feedback templ.Component) templ.Component {
+func editPageForm(hubSlug string, payload PagePayload) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -89,16 +89,9 @@ func editPageForm(hubSlug string, payload PagePayload, feedback templ.Component)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if feedback != nil {
-			templ_7745c5c3_Err = feedback.Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = editForm(hubSlug, payload).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		templ_7745c5c3_Err = editForm(hubSlug, payload, nil).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
@@ -108,7 +101,7 @@ func editPageForm(hubSlug string, payload PagePayload, feedback templ.Component)
 	})
 }
 
-func editForm(hubSlug string, payload PagePayload) templ.Component {
+func editForm(hubSlug string, payload PagePayload, feedback templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -129,53 +122,63 @@ func editForm(hubSlug string, payload PagePayload) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"edit_page_form_center\"><form hx-post=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"edit_page_form_center\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if feedback != nil {
+			templ_7745c5c3_Err = feedback.Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%v/pages/edit", hubSlug))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%s/pages/%s", hubSlug, payload.PageSlug))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 61, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 60, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-indicator=\"#spinner\" hx-target=\"#edit_page_form_center\" hx-swap=\"innerHTML\"><div class=\"pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4\">Page Details</div><div class=\"grid gap-4 lg:gap-6\"><div class=\"grid grid-cols-1 sm:grid-cols-1 gap-4 lg:gap-6\"><div><label for=\"title\" class=\"block text-sm font-medium mb-2 dark:text-white\">Title of the page</label><div class=\"flex rounded-lg shadow-sm\"><input type=\"text\" name=\"title\" class=\"py-3 px-4 block w-full border-gray-200 shadow-sm rounded-s-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600\" placeholder=\"Awesome Page\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-indicator=\"#spinner\" hx-target=\"#edit_page_form_center\" hx-swap=\"innerHTML\"><div class=\"pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4\">Page Details</div><div class=\"grid gap-4 lg:gap-6\"><div class=\"grid grid-cols-1 sm:grid-cols-1 gap-4 lg:gap-6\"><div><label for=\"title\" class=\"block text-sm font-medium mb-2 dark:text-white\">Title of the page</label><div class=\"flex rounded-lg shadow-sm\"><input type=\"text\" name=\"page_name\" class=\"py-3 px-4 block w-full border-gray-200 shadow-sm rounded-s-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600\" placeholder=\"Awesome Page\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(payload.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 83, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 82, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" required></div><p class=\"hidden text-xs text-red-600 mt-2\" id=\"target_address-error\">Please provide a title.</p></div></div><div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6\"><div><label for=\"title\" class=\"block text-sm font-medium mb-2 dark:text-white\">Description of the page</label><div class=\"flex rounded-lg shadow-sm\"><input type=\"text\" name=\"description\" class=\"py-3 px-4 block w-full border-gray-200 shadow-sm rounded-s-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600\" placeholder=\"This page is about...\" required value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" required></div><p class=\"hidden text-xs text-red-600 mt-2\" id=\"target_address-error\">Please provide a title.</p></div></div><div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6\"><div><label for=\"title\" class=\"block text-sm font-medium mb-2 dark:text-white\">Description of the page</label><div class=\"flex rounded-lg shadow-sm\"><input type=\"text\" name=\"page_description\" class=\"py-3 px-4 block w-full border-gray-200 shadow-sm rounded-s-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600\" placeholder=\"This page is about...\" required value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(payload.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 102, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 101, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div><p class=\"hidden text-xs text-red-600 mt-2\" id=\"target_address-error\">Please provide a description.</p></div><div><label for=\"slug\" class=\"block text-sm font-medium mb-2 dark:text-white\">Short Link</label><div class=\"relative\"><input type=\"text\" name=\"slug\" class=\"py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600\" required placeholder=\"/awesome-page\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div><p class=\"hidden text-xs text-red-600 mt-2\" id=\"target_address-error\">Please provide a description.</p></div><div><label for=\"slug\" class=\"block text-sm font-medium mb-2 dark:text-white\">Path</label><div class=\"relative\"><input type=\"text\" name=\"page_slug\" class=\"py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600\" required placeholder=\"/awesome-page\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(payload.PageSlug)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 116, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 115, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -196,7 +199,7 @@ func editForm(hubSlug string, payload PagePayload) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(payload.MetaData.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 147, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 146, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -209,7 +212,7 @@ func editForm(hubSlug string, payload PagePayload) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(payload.MetaData.OGTitle)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 161, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 160, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -222,7 +225,7 @@ func editForm(hubSlug string, payload PagePayload) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(payload.MetaData.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 179, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 178, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -235,21 +238,13 @@ func editForm(hubSlug string, payload PagePayload) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(payload.MetaData.OGDescription)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 192, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 191, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea></div></div><div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6\"><div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = partial.SimpleFileUploader("meta_description_favicon", payload.MetaData.FavIcon, "Fav Icon", "Upload a Favicon", "Please upload a favicon under 2mb.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div><label for=\"meta_description_locale\" class=\"block mb-2 text-sm text-gray-700 font-medium dark:text-white\">Locale</label>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea></div></div><div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6\"><div><label for=\"meta_description_locale\" class=\"block mb-2 text-sm text-gray-700 font-medium dark:text-white\">Locale</label>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -297,15 +292,15 @@ func PageStatusForm(payload EditPageStatusPayload) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%s/links/%s/status", payload.HubSlug, payload.PageSlug))
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%s/pages/%s/status", payload.HubSlug, payload.PageSlug))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 230, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/pages/edit.templ`, Line: 226, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"change from:#link_status\" hx-swap=\"outerHTML\"><div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"change from:#page_status\" hx-swap=\"outerHTML\"><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

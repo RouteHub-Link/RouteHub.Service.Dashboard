@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-templ edit(userInfo *oidc.UserInfo, hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) {
+templ edit(userInfo *oidc.UserInfo, hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload partial.MetaDescriptionPayload) {
 	@layouts.Main(layouts.PageDescription{
 		MainContent: editPage(hub, link, payload, metaPayload),
 		UserInfo:    userInfo,
@@ -18,7 +18,7 @@ templ edit(userInfo *oidc.UserInfo, hub *ent.Hub, link *ent.Link, payload EditLi
 	})
 }
 
-templ editPage(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) {
+templ editPage(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload partial.MetaDescriptionPayload) {
 	<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 		<div class="flex flex-col">
 			<div class="-m-1.5 overflow-x-auto">
@@ -51,7 +51,7 @@ templ editPage(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayloa
 	</div>
 }
 
-templ editForm(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload, feedback templ.Component) {
+templ editForm(hub *ent.Hub, link *ent.Link, payload EditLinkPayload, metaPayload partial.MetaDescriptionPayload, feedback templ.Component) {
 	<form hx-post={ fmt.Sprintf("/hub/%s/links/%s", hub.Slug, link.Path) } enctype="multipart/form-data" hx-indicator="#spinner" hx-swap="outerHTML">
 		if feedback != nil {
 			@feedback
@@ -289,7 +289,7 @@ templ pageFields(payload EditLinkPayload) {
 	</div>
 }
 
-templ metaDescriptionFields(hub *ent.Hub, payload EditLinkPayload, metaPayload EditLinkMetaDescriptionPayload) {
+templ metaDescriptionFields(hub *ent.Hub, payload EditLinkPayload, metaPayload partial.MetaDescriptionPayload) {
 	<div
 		class="pathpy-3 flex items-center text-sm text-gray-800 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-white dark:before:border-neutral-600 dark:after:border-neutral-600 py-4"
 	>

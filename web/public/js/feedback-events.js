@@ -1,23 +1,27 @@
 function tostifyCustomClose(el) {
-  const parent = el.closest('.toastify');
-  const close = parent.querySelector('.toast-close');
+  const parent = el.closest(".toastify");
+  const close = parent.querySelector(".toast-close");
 
   close.click();
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-
   document.body.addEventListener("close-modal", function (evt) {
     HSOverlay.close(document.getElementById("hs-modal"));
-  })
+  });
 
   document.body.addEventListener("preline-refresh", function (evt) {
     window.HSStaticMethods.autoInit();
-  })
+  });
 
+  document.body.addEventListener("grapejs-reinit", function (evt) {
+    id = evt.detail.id;
+    setTimeout(() => {
+      GrapeJSInitializer(id);
+    }, 1000);
+  });
 
   document.body.addEventListener("toast", function (evt) {
-
     let messsage = evt.detail.message;
 
     const toastMarkup = `
@@ -51,14 +55,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     Toastify({
       text: toastMarkup,
-      className: "bg-none p-0 hs-toastify-on:opacity-100 opacity-0 fixed -top-[150px] right-[20px] z-[90] transition-all duration-300 w-[320px] text-sm text-gray-700 border border-gray-200 rounded-xl shadow-lg [&>.toast-close]:hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400",
+      className:
+        "bg-none p-0 hs-toastify-on:opacity-100 opacity-0 fixed -top-[150px] right-[20px] z-[90] transition-all duration-300 w-[320px] text-sm text-gray-700 border border-gray-200 rounded-xl shadow-lg [&>.toast-close]:hidden dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400",
       duration: 3000,
       close: true,
-      escapeMarkup: false
+      escapeMarkup: false,
     }).showToast();
-  })
+  });
 });
 
 // document.body.dispatchEvent(new Event("toast"));
-
-

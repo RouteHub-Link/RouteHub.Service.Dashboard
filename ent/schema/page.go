@@ -2,9 +2,11 @@ package schema
 
 import (
 	"context"
+	"log"
 	"time"
 
 	gen "RouteHub.Service.Dashboard/ent"
+	"RouteHub.Service.Dashboard/features/hubConnection"
 
 	"RouteHub.Service.Dashboard/ent/hook"
 	"RouteHub.Service.Dashboard/ent/schema/enums"
@@ -92,6 +94,28 @@ func pageMutatorWithMHQTT(next ent.Mutator) ent.Mutator {
 			return nil, err
 		}
 		page, _ := result.(*gen.Page)
+
+		page.Edges.Hub = page.QueryHub().OnlyX(ctx)
+		hub := page.Edges.Hub
+
+		mqttClient, err := hubConnection.NewMQTTPublisher(hub.TCPAddress)
+		if err != nil {
+			log.Printf("Error creating mqtt client: %v, TCPAddress:%s", err, hub.TCPAddress)
+			return nil, err
+		}
+
+		if m.Op() == ent.OpCreate || m.Op() == ent.OpUpdate || m.Op() == ent.OpUpdateOne {
+			err := mqttClient.PublishPageSet(page)
+			if err != nil {
+				log.Printf("Error publishing page set: %v", err)
+			}
+		} else if m.Op() == ent.OpDelete {
+			err := mqttClient.PublishPageDel(page)
+			if err != nil {
+				log.Printf("Error publishing page delete: %v", err)
+			}
+		}
+
 		return page, nil
 	})
 }

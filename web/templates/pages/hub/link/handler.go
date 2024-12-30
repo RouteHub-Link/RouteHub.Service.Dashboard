@@ -138,7 +138,7 @@ func (h Handlers) HubLinkEditGet(c echo.Context) error {
 	hubLinkPaylod := new(EditLinkPayload)
 	hubLinkPaylod.FromModel(link)
 
-	hubLinkMetaPayload := new(EditLinkMetaDescriptionPayload)
+	hubLinkMetaPayload := new(partial.MetaDescriptionPayload)
 	hubLinkMetaPayload.FromModel(link.LinkContent.MetaDescription)
 
 	return extensions.Render(c, http.StatusOK, edit(userInfo, hub, link, *hubLinkPaylod, *hubLinkMetaPayload))
@@ -155,7 +155,7 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 	}
 
 	LinkUpdatePayload := new(EditLinkPayload)
-	MetaPayload := new(EditLinkMetaDescriptionPayload)
+	MetaPayload := new(partial.MetaDescriptionPayload)
 
 	hub, _ := context.GetHubFromContext(c)
 
@@ -222,7 +222,7 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, nil))
 }
 
-func handleFavIcon(MetaPayload *EditLinkMetaDescriptionPayload, link *ent.Link, c echo.Context, bucketPath string) error {
+func handleFavIcon(MetaPayload *partial.MetaDescriptionPayload, link *ent.Link, c echo.Context, bucketPath string) error {
 	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.FavIcon, "meta_description_favicon", bucketPath, "favicon"); err != nil {
 		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
 		return fmt.Errorf("%s", msg)
@@ -232,7 +232,7 @@ func handleFavIcon(MetaPayload *EditLinkMetaDescriptionPayload, link *ent.Link, 
 	return nil
 }
 
-func handleOGImage(MetaPayload *EditLinkMetaDescriptionPayload, link *ent.Link, c echo.Context, bucketPath string) error {
+func handleOGImage(MetaPayload *partial.MetaDescriptionPayload, link *ent.Link, c echo.Context, bucketPath string) error {
 	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGBigImage, "meta_description_og_big_image", bucketPath, "og_image"); err != nil {
 		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
 		return fmt.Errorf("%s", msg)

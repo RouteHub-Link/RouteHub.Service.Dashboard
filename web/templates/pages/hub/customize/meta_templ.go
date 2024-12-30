@@ -17,23 +17,7 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 )
 
-type MetaPayload struct {
-	Title       string `json:"meta_description_title" form:"meta_description_title"`
-	FavIcon     string `json:"meta_description_favicon" form:"meta_description_favicon"`
-	Description string `json:"meta_description_description" form:"meta_description_description"`
-
-	// og:description, twitter:description
-	OGDescription string `json:"meta_description_og_description" form:"meta_description_og_description"`
-
-	// og:title, twitter:title
-	OGTitle string `json:"meta_description_og_title" form:"meta_description_og_title"`
-
-	Locale string `json:"meta_description_locale" form:"meta_description_locale"`
-
-	TracingScript string `json:"meta_description_tracing_script" form:"meta_description_tracing_script"`
-}
-
-func MetaPage(userInfo *oidc.UserInfo, hub *ent.Hub, metaPayload MetaPayload, hubSlug string, feedback templ.Component) templ.Component {
+func MetaPage(userInfo *oidc.UserInfo, hub *ent.Hub, metaPayload partial.MetaPayload, hubSlug string, feedback templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -66,7 +50,7 @@ func MetaPage(userInfo *oidc.UserInfo, hub *ent.Hub, metaPayload MetaPayload, hu
 	})
 }
 
-func metaPage(payload MetaPayload, hubSlug string, feedback templ.Component) templ.Component {
+func metaPage(payload partial.MetaPayload, hubSlug string, feedback templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -103,7 +87,7 @@ func metaPage(payload MetaPayload, hubSlug string, feedback templ.Component) tem
 	})
 }
 
-func metaForm(payload MetaPayload, hubSlug string, feedback templ.Component) templ.Component {
+func metaForm(payload partial.MetaPayload, hubSlug string, feedback templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -131,7 +115,7 @@ func metaForm(payload MetaPayload, hubSlug string, feedback templ.Component) tem
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/hub/%s/customize/partial/meta", hubSlug))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 69, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 53, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -159,7 +143,7 @@ func metaForm(payload MetaPayload, hubSlug string, feedback templ.Component) tem
 	})
 }
 
-func metaPartial(metaPayload MetaPayload, hubSlug string) templ.Component {
+func metaPartial(metaPayload partial.MetaPayload, hubSlug string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -187,7 +171,7 @@ func metaPartial(metaPayload MetaPayload, hubSlug string) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(metaPayload.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 99, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 83, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -200,7 +184,7 @@ func metaPartial(metaPayload MetaPayload, hubSlug string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(metaPayload.OGTitle)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 113, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 97, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -213,7 +197,7 @@ func metaPartial(metaPayload MetaPayload, hubSlug string) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(metaPayload.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 131, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 115, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -226,7 +210,7 @@ func metaPartial(metaPayload MetaPayload, hubSlug string) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(metaPayload.OGDescription)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 144, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 128, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -255,7 +239,7 @@ func metaPartial(metaPayload MetaPayload, hubSlug string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(metaPayload.TracingScript)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 171, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/pages/hub/customize/meta.templ`, Line: 155, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
