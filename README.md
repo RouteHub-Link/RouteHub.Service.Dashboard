@@ -29,11 +29,12 @@ RouteHUB is CMS for Link Shortening and Management. You can deploy and manage mu
 
 - [About](#-about)
 - [Getting Started](#-getting-started)
-- [Deployment](#deployment)
-- [Usage](#usage)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
-- [Contributing](#contributing)
+- [Installation](#-installation)
+- [Deployment](#-deployment)
+- [Usage](#-usage)
+- [Authors](#-authors)
+- [Acknowledgments](#-acknowledgement)
+- [Contributing](#-contributing)
 
 ## 🧐 About
 
@@ -115,7 +116,7 @@ A step by step series of examples that tell you how to get a development env run
  make run
 ```
 
-## 🎈 Usage `<a name="usage"></a>`
+## 🎈 Usage
 
 Open your browser and navigate to access the RouteHub Service Dashboard.
 You will be signed in with Zitadel instance.
@@ -144,25 +145,25 @@ If the connection is not established you have to make sure service can reach the
 
 After the connection is established you can see the client in the dashboard. You will redirect to the hub dashboard. You can create a new page, edit home page, create a new link and many more customization options.
 
-## 🚀 Deployment `<a name = "deployment"></a>`
+## 🚀 Deployment
 
 This are will be updated soon. but you can create a custom docker-compose file for the deployment.
 The structure of network like this;
 
 <img src="https://mermaid.ink/svg/pako:eNp9VNuO2jAQ_RXLK1UgJYjrAmlVCQgtSOzCkuwLBFWGDElKYiPH2UKBf69z4Rax9YM19jkzPp4Z-4BXzAasYYeTrYvMrkWRHGG0TDcsPGWRgMF7F-mw9dk-ACosnLIeMqNlqed7klWS5i0zHtO-Yf6SweaxgTqT4eIef3kzzXk8IQP4B_BF3l0fGol_YQq2FyK9W7yhALUt-n9pOgndJSPczivTO8agO-5M9fmFkqh9qOBKznT0yMqFYo47GRvmTxljXjhbb6PiAqmqio6GYNyjDpJ3UVAvCgUL0IQ4gL6gkUc3SCeCHK-iPtGaxooPj2PpXTRe_oaVCI95nZ_maDY0O3p_NJ95gtjgo3Hn3Rxk97ihDl_N_vS1bxYKQyqAUxDFYorc44mgc5EfQDlBd1gmJUWSHlBL6vdrzVPgevdvCXz8AULmXrbCpWw9l1AHZBLiIHmv1CmuGo8zhdaMI585Hj3eC0jnlU_CUIc1gt2WhWCjtef72tO6_ayEgrMNaE-1Wi2z1T-eLVytvt19vfG-pEO5iFCyk85RMzpWcAA8IJ4t3-Mh3rOwcCEAC2vStAnfxF17kjwSCWbs6QprgkegYM4ix8XamvihXEVbmwjQPSLbP7jsbgmdMRacXeQSawe8w1pZwXusVaqNUqPZaNdarWqzXK20micF_00cyqX2edSfm-V6papgmUDZwi_p55H8Iad_Cos9zQ" alt="Network Structure" width="1000px"/>
 
-## ✍️ Authors `<a name = "authors"></a>`
+## ✍️ Authors
 
 - [@runaho](https://github.com/Runaho) - Idea & Initial work
 
-## 🎉 Acknowledgements `<a name = "acknowledgement"></a>`
+## 🎉 Acknowledgements
 
 - Hat tip to anyone whose code was used
 - Inspiration
 - References
 
 
-## 🤝 Contributing `<a name = "contributing"></a>`
+## 🤝 Contributing
 
 - Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 - This project developed as thinking Get Shit Done, Features first beutiy later.
