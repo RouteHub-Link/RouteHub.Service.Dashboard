@@ -158,15 +158,12 @@ The structure of network like this;
 
 ## 🎉 Acknowledgements
 
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
-
+A big shoutout to all amazing cod work contributed this project Your creativity and are inspiring. Special thanks to all the sources of that fueled ideas and helped this vision to. also to the valuable references that guided us this journey
 
 ## 🤝 Contributing
 
 - Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-- This project developed as thinking Get Shit Done, Features first beutiy later.
+- This project developed as thinking Get Shit Done, Features first beauty later.
 - Ask your self everytime is this the easiest way.
 - I Recommend you check this document first : (The Grug Brained Developer)[https://grugbrain.dev/]
 - Use Standart GO libraries as much as possible.
