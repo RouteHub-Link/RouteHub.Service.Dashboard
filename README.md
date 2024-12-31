@@ -73,8 +73,6 @@ docker compose up -d --force-recreate
 
 A step by step series of examples that tell you how to get a development env running.
 
-Say what the step will be
-
 ## Installation
 
 1. **Clone the repository**:
@@ -116,8 +114,6 @@ Say what the step will be
 ```sh
  make run
 ```
-
-End with an example of getting some data out of the system or using it for a little demo.
 
 ## 🎈 Usage `<a name="usage"></a>`
 
