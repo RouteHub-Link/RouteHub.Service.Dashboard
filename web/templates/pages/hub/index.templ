@@ -60,7 +60,16 @@ templ hubPage(hub *ent.Hub) {
 							</a>
 							<!-- End Card -->
 							<!-- Card -->
-							<a class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer">
+							<a
+								class="bg-white p-4 transition duration-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 cursor-pointer"
+								hx-get={ fmt.Sprintf("/hub/%s/pages/new", hub.Slug) }
+								hx-target="#hs-modal-content"
+								hx-swap="innerHTML"
+								aria-haspopup="dialog"
+								aria-expanded="false"
+								aria-controls="hs-modal"
+								data-hs-overlay="#hs-modal"
+							>
 								<div class="flex gap-x-6">
 									<div class="mt-1.5 flex justify-center shrink-0 rounded-s-xl">
 										<svg
@@ -83,7 +92,7 @@ templ hubPage(hub *ent.Hub) {
 											New Page
 											<span
 												class="ms-1 inline bg-blue-50 border border-gray-300 text-blue-600 text-[.6125rem] leading-4 uppercase rounded-full py-0.5 px-2 dark:bg-gray-900/70 dark:border-gray-700 dark:text-blue-500"
-											>Planned</span>
+											>HOT</span>
 										</h3>
 										<p class="mt-1 text-sm text-gray-600 dark:text-neutral-500">
 											Create new page in the hub.
