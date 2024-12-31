@@ -5,6 +5,19 @@
 
 <h3 align="center">RouteHUB.Service.Dashboard</h3>
 
+![rh-dashboard-hub](https://github.com/user-attachments/assets/74510644-38b2-4396-9ed0-69a6e207f252)
+
+<details>
+
+<summary>See the dashboard</summary>
+
+![rh-dashboard-index](https://github.com/user-attachments/assets/42a318c8-266c-4ff4-964a-04ec3bdaf1bd)
+![rh-dashboard-attach](https://github.com/user-attachments/assets/55429ddf-d83c-409f-94d3-976e37cf9978)
+![rh-dashboard-links](https://github.com/user-attachments/assets/26b87c50-01f7-44f4-92b1-fee67bf228c2)
+![rh-dashboard-customize-footer](https://github.com/user-attachments/assets/492c2b3f-aaca-4450-b834-e03dfba79ce6)
+
+</details>
+
 ---
 
 <p align="center">
