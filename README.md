@@ -35,11 +35,11 @@ RouteHUB is CMS for Link Shortening and Management. You can deploy and manage mu
 - [Acknowledgments](#acknowledgement)
 - [Contributing](#contributing)
 
-## 🧐 About `<a name = "about"></a>`
+## 🧐 About
 
 RouteHub Service Dashboard is a comprehensive platform designed to manage and customize various aspects of your web applications. It provides a user-friendly interface for managing domains, hubs, links, and pages, along with extensive customization options for meta descriptions, SEO fields, and more.
 
-## 🏁 Getting Started `<a name = "getting_started"></a>`
+## 🏁 Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
 
