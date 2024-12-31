@@ -29,7 +29,7 @@ RouteHUB is CMS for Link Shortening and Management. You can deploy and manage mu
 
 - [About](#-about)
 - [Getting Started](#-getting-started)
-- [Installation](#-installation)
+- [Installation](#installation)
 - [Deployment](#-deployment)
 - [Usage](#-usage)
 - [Authors](#-authors)
