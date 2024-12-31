@@ -174,13 +174,13 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 	isPathChanged := linkPath != LinkUpdatePayload.Path
 
 	bucketPath := strings.Join([]string{"hubs", hub.Slug, "links", link.Path}, "/")
-	err = handleFavIcon(MetaPayload, link, c, bucketPath)
+	err = handleOgSmallImage(MetaPayload, c, bucketPath)
 	if err != nil {
 		feedback := partial.FormFeedbackFromErr(title, err)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
 	}
 
-	err = handleOGImage(MetaPayload, link, c, bucketPath)
+	err = handleOGImage(MetaPayload, c, bucketPath)
 	if err != nil {
 		feedback := partial.FormFeedbackFromErr(title, err)
 		return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, feedback))
@@ -222,8 +222,8 @@ func (h Handlers) HubLinkEditPost(c echo.Context) error {
 	return extensions.Render(c, http.StatusOK, editForm(hub, link, *LinkUpdatePayload, *MetaPayload, nil))
 }
 
-func handleFavIcon(MetaPayload *partial.MetaDescriptionPayload, link *ent.Link, c echo.Context, bucketPath string) error {
-	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.FavIcon, "meta_description_favicon", bucketPath, "favicon"); err != nil {
+func handleOgSmallImage(MetaPayload *partial.MetaDescriptionPayload, c echo.Context, bucketPath string) error {
+	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGSmallImage, "meta_description_og_small_image", bucketPath, "og_image_small"); err != nil {
 		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
 		return fmt.Errorf("%s", msg)
 	} else {
@@ -232,7 +232,7 @@ func handleFavIcon(MetaPayload *partial.MetaDescriptionPayload, link *ent.Link, 
 	return nil
 }
 
-func handleOGImage(MetaPayload *partial.MetaDescriptionPayload, link *ent.Link, c echo.Context, bucketPath string) error {
+func handleOGImage(MetaPayload *partial.MetaDescriptionPayload, c echo.Context, bucketPath string) error {
 	if err := extensions.ProcessFileFromEchoContext(c, &MetaPayload.OGBigImage, "meta_description_og_big_image", bucketPath, "og_image"); err != nil {
 		msg := strings.Join([]string{"Error Processing File", err.Error()}, " ")
 		return fmt.Errorf("%s", msg)

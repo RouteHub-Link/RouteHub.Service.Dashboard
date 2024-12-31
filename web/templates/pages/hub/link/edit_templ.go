@@ -386,7 +386,7 @@ func metaDescriptionFields(hub *ent.Hub, payload EditLinkPayload, metaPayload pa
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = partial.SimpleFileUploader("meta_description_favicon", metaPayload.FavIcon, "Fav Icon", "Upload a Favicon", "Please upload a favicon under 2mb.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = partial.SimpleFileUploader("meta_description_og_small_image", metaPayload.OGSmallImage, "OG Small Image", "Upload a small OG Image", "Please upload a favicon under 2mb.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -394,7 +394,7 @@ func metaDescriptionFields(hub *ent.Hub, payload EditLinkPayload, metaPayload pa
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = partial.SimpleFileUploader("meta_description_og_big_image", metaPayload.OGBigImage, "OG Image", "Upload a OG Image", "Please upload a OG Image under 10mb.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = partial.SimpleFileUploader("meta_description_og_big_image", metaPayload.OGBigImage, "OG Big Image", "Upload a OG Image", "Please upload a OG Image under 10mb.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -298,10 +298,10 @@ templ metaDescriptionFields(hub *ent.Hub, payload EditLinkPayload, metaPayload p
 	<div class="grid gap-4 lg:gap-6">
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
 			<div>
-				@partial.SimpleFileUploader("meta_description_favicon", metaPayload.FavIcon, "Fav Icon", "Upload a Favicon", "Please upload a favicon under 2mb.")
+				@partial.SimpleFileUploader("meta_description_og_small_image", metaPayload.OGSmallImage, "OG Small Image", "Upload a small OG Image", "Please upload a favicon under 2mb.")
 			</div>
 			<div>
-				@partial.SimpleFileUploader("meta_description_og_big_image", metaPayload.OGBigImage, "OG Image", "Upload a OG Image", "Please upload a OG Image under 10mb.")
+				@partial.SimpleFileUploader("meta_description_og_big_image", metaPayload.OGBigImage, "OG Big Image", "Upload a OG Image", "Please upload a OG Image under 10mb.")
 			</div>
 		</div>
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
