@@ -32,9 +32,9 @@ RouteHUB is CMS for Link Shortening and Management. You can deploy and manage mu
 - [Installation](#installation)
 - [Deployment](#-deployment)
 - [Usage](#-usage)
-- [Authors](#-authors)
-- [Acknowledgments](#-acknowledgement)
+- [Acknowledgments](#-acknowledgements)
 - [Contributing](#-contributing)
+- [Authors](#authors)
 
 ## 🧐 About
 
@@ -159,9 +159,6 @@ The structure of network like this;
 
 <img src="https://mermaid.ink/svg/pako:eNp9VNuO2jAQ_RXLK1UgJYjrAmlVCQgtSOzCkuwLBFWGDElKEkeOs4UC_17nxiVi6wdr7HNmfDwz9hFvqAlYwRYjgY30vuEjMcJonW4YeE4jDqP3PlIhcOnBA58bOGU9ZEbrysB1BKsizFtmPOZDTf8lgi1jA_Vm49U9_vKm68t4QhqwD2Crors61hL_0hxMJ0Rqv3xDAd80_P9LU0lorylhZlGZ2tNG_Wlvri4vlETtQwVXcqZjQDY2lAvc2VTTf4oYy1JuvU3KKyTLMjppnDLHt5C4i4QGUciph2bEAvQFTRx_h1TCyekq6hOtaaz48DiW2kfT9W_Y8PBU1PlpjhZjvacOJ8uFw4kJLpr23vVRdo8b6vhVH85fh3qpNPY5MB94uZwi93giKC_yA6gg6A7LpKRI0gNyRf5-rXkK5MEfgtfEfEvg0w_gojCiTy41HdjEt0BkKD6h6JU6xSVlcRrRljLkUsvxT_fq0nnjkjBUYYtgH9AQTLR1XFd52nafpZAzugPlqdFoZLb8xzG5rTSD_dcb78t1pIsIKTspj5rRsYQ9YB5xTPFYj_GegbkNHhhYEaZJ2C5u6bPgkYhT7eBvsMJZBBJmNLJsrGyJG4pVFJiEg-oQ8Ta8y25A_AWlXu4illg54j1WqhI-YKVWb1Va7Va30enU29V6rdM-S_hv4lCtdPPRfG5Xm7W6hEUCRX-_pD9L8sGc_wEn7EVO" alt="Network Structure" width="1000px"/>
 
-## ✍️ Authors
-
-- [@runaho](https://github.com/Runaho) - Idea & Initial work
 
 ## 🎉 Acknowledgements
 
@@ -175,3 +172,7 @@ A big shoutout to all amazing cod work contributed this project Your creativity 
 - I Recommend you check this document first : (The Grug Brained Developer)[https://grugbrain.dev/]
 - Use Standart GO libraries as much as possible.
 - Do not send requiest's with too big commits.
+
+## Authors
+
+- [@runaho](https://github.com/Runaho) - Idea & Initial work
