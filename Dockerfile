@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN npx tailwindcss -i web/public/css/input.css -o web/public/css/output.css
+# RUN npx tailwindcss -i web/public/css/input.css -o web/public/css/output.css
 
 FROM golang:alpine AS go-build
 
@@ -19,8 +19,8 @@ RUN go mod download
 
 COPY . .
 
-RUN go install github.com/a-h/templ/cmd/templ@latest
-RUN templ generate
+# RUN go install github.com/a-h/templ/cmd/templ@latest
+# RUN templ generate
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /entrypoint
 
