@@ -16,6 +16,9 @@ func ConfigureRoutes(e *echo.Echo, config *configuration.Config, logger *slog.Lo
 	e.Static("/static", "./web/public")
 	e.Static("/static/dist/preline", "./node_modules/preline/dist")
 
+	e.Static("/static", "./public")
+	e.Static("/static/dist/preline", "./node_modules/preline/dist")
+
 	e.Pre(middleware.RemoveTrailingSlash())
 	groups.MapMiscRoutes(e)
 
