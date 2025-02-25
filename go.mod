@@ -7,7 +7,7 @@ require (
 	entgo.io/ent v0.14.1
 	github.com/99designs/gqlgen v0.17.48
 	github.com/RouteHub-Link/DomainUtils v0.0.6
-	github.com/a-h/templ v0.2.778
+	github.com/a-h/templ v0.3.833
 	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/aws/aws-sdk-go-v2 v1.32.6
 	github.com/aws/aws-sdk-go-v2/config v1.28.6
@@ -41,10 +41,10 @@ require (
 
 require (
 	ariga.io/atlas v0.25.1-0.20240717145915-af51d3945208 // indirect
-	github.com/PuerkitoBio/goquery v1.9.2 // indirect
+	github.com/PuerkitoBio/goquery v1.10.1 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
-	github.com/andybalholm/cascadia v1.3.2 // indirect
+	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.3.1 // indirect
 	github.com/antchfx/xpath v1.1.10 // indirect
